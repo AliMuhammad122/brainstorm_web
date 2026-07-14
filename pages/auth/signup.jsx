@@ -1,14 +1,17 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import { BsEye, BsEyeSlash } from "react-icons/bs";
 import { MdKeyboardArrowDown } from "react-icons/md";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { useTheme } from "../../context/ThemeContext";
 import ReactCountryFlag from "react-country-flag";
 import { countryCodes } from "../../data/countryCodes";
+import { useRequestOtpMutation, useSignupMutation } from "../../src/store/authApiSlice";
 
 export default function SignupPage() {
   const { isDark } = useTheme();
+  const router = useRouter();
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -17,22 +20,55 @@ export default function SignupPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({ phoneCode: "+357", phone: "" });
   const [phoneError, setPhoneError] = useState("");
+  const [isVerified, setIsVerified] = useState(false);
 
-  const handleSignup = (e) => {
-    e.preventDefault();
-    if (password !== confirmPassword) {
-      alert("Passwords do not match");
-      return;
+  const [requestOtp, { isLoading: isSendingOtp }] = useRequestOtpMutation();
+  const [signup, { isLoading: isSigningUp }] = useSignupMutation();
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const verified = sessionStorage.getItem("is_phone_verified") === "true";
+      const verifiedPhone = sessionStorage.getItem("verified_phone");
+      const savedDataStr = sessionStorage.getItem("signup_data");
+      
+      if (savedDataStr) {
+        try {
+          const savedData = JSON.parse(savedDataStr);
+          if (savedData.first_name) setFirstName(savedData.first_name);
+          if (savedData.last_name) setLastName(savedData.last_name);
+          if (savedData.email) setEmail(savedData.email);
+          if (savedData.password) {
+            setPassword(savedData.password);
+            setConfirmPassword(savedData.password);
+          }
+          if (savedData.phone) {
+            const matchingCountry = countryCodes.find(c => savedData.phone.startsWith(c.dial_code.replace("+", "")));
+            if (matchingCountry) {
+              const code = matchingCountry.dial_code;
+              const num = savedData.phone.substring(code.replace("+", "").length);
+              setForm({ phoneCode: code, phone: num });
+              
+              if (verified && verifiedPhone === savedData.phone) {
+                setIsVerified(true);
+              }
+            } else {
+              setForm(prev => ({ ...prev, phone: savedData.phone }));
+            }
+          }
+        } catch (e) {
+          console.error("Error restoring signup data:", e);
+        }
+      }
     }
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      console.log("Signup:", { firstName, lastName, email, password });
-    }, 1000);
-  };
+  }, []);
+
+  const hasUppercase = /[A-Z]/.test(password);
+  const hasNumber = /[0-9]/.test(password);
+  const hasSymbol = /[^A-Za-z0-9]/.test(password);
+  const hasMinLength = password.length >= 8;
+  const score = password ? [hasUppercase, hasNumber, hasSymbol, hasMinLength].filter(Boolean).length : 0;
 
   const validatePhone = (code, phone) => {
     if (!code) {
@@ -51,12 +87,85 @@ export default function SignupPage() {
     return true;
   };
 
+  const handleSendOtp = async () => {
+    const formattedPhone = `${form.phoneCode.replace("+", "")}${form.phone}`;
+    if (!validatePhone(form.phoneCode, form.phone)) {
+      return;
+    }
+    try {
+      const payload = {
+        first_name: firstName,
+        last_name: lastName,
+        email,
+        phone: formattedPhone,
+        password,
+        confirmPassword,
+      };
+      
+      await requestOtp({ phone: formattedPhone }).unwrap();
+      sessionStorage.setItem("signup_data", JSON.stringify(payload));
+      router.push(`/auth/verify-otp?phone=${formattedPhone}`);
+    } catch (error) {
+      console.error("OTP Request Error:", error);
+      alert(error?.data?.error?.message || error?.data?.message || "Failed to send OTP. Please check your phone number and try again.");
+    }
+  };
+
+  const handleSignup = async (e) => {
+    e.preventDefault();
+    if (password !== confirmPassword) {
+      alert("Passwords do not match");
+      return;
+    }
+    const formattedPhone = `${form.phoneCode.replace("+", "")}${form.phone}`;
+    if (!validatePhone(form.phoneCode, form.phone)) {
+      return;
+    }
+
+    const verifiedPhone = sessionStorage.getItem("verified_phone");
+    const isPhoneVerifiedInStorage = sessionStorage.getItem("is_phone_verified") === "true";
+
+    if (isPhoneVerifiedInStorage && verifiedPhone === formattedPhone) {
+      try {
+        const payload = {
+          first_name: firstName,
+          last_name: lastName,
+          email,
+          phone: formattedPhone,
+          password,
+          confirmPassword,
+        };
+        const response = await signup(payload).unwrap();
+        console.log("Signup Success:", response);
+        alert("Signup successful!");
+        sessionStorage.removeItem("signup_data");
+        sessionStorage.removeItem("is_phone_verified");
+        sessionStorage.removeItem("verified_phone");
+        router.push("/login");
+      } catch (error) {
+        console.error("Signup Error:", error);
+        alert(error?.data?.error?.message || error?.data?.message || "Failed to sign up. Please try again.");
+      }
+    } else {
+      await handleSendOtp();
+    }
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (name === "phone") {
       const digitsOnly = value.replace(/\D/g, "");
       setForm((prev) => ({ ...prev, phone: digitsOnly }));
       validatePhone(form.phoneCode, digitsOnly);
+      setIsVerified(false);
+      sessionStorage.removeItem("is_phone_verified");
+      sessionStorage.removeItem("verified_phone");
+    } else if (name === "phoneCode") {
+      setForm((prev) => ({ ...prev, phoneCode: value }));
+      validatePhone(value, form.phone);
+      setIsVerified(false);
+      sessionStorage.removeItem("is_phone_verified");
+      sessionStorage.removeItem("verified_phone");
     } else {
       setForm((prev) => ({ ...prev, [name]: value }));
       validatePhone(value, form.phone);
@@ -197,10 +306,11 @@ export default function SignupPage() {
 
               <button
                 type="button"
-                className="shrink-0 pr-4 text-sm font-semibold text-[#E31C3D]"
-                onClick={() => console.log("Send OTP", form.phoneCode + form.phone)}
+                className={`shrink-0 pr-4 text-sm font-semibold ${isVerified ? "text-green-500" : "text-[#E31C3D]"} disabled:opacity-50`}
+                onClick={handleSendOtp}
+                disabled={isSendingOtp || isVerified}
               >
-                Send Otp
+                {isSendingOtp ? "Sending..." : isVerified ? "Verified ✓" : "Send Otp"}
               </button>
             </div>
 
@@ -226,6 +336,131 @@ export default function SignupPage() {
                 {showPassword ? <BsEyeSlash size={20} /> : <BsEye size={20} />}
               </button>
             </div>
+            {password.length > 0 && (
+              <div className="mt-2 space-y-1.5">
+                <div className="flex justify-between items-center text-xs">
+                  <span></span>
+                  <span className={`font-semibold ${score <= 2 ? "text-[#E31C3D]" : score === 3 ? "text-[#F1C40F]" : "text-[#2ECC71]"}`}>
+                    {score <= 2 ? "Weak" : score === 3 ? "Good" : "Strong"}
+                  </span>
+                </div>
+                <div className="flex gap-2">
+                  <div className={`h-1.5 flex-1 rounded-full ${score > 0 ? (score <= 2 ? "bg-[#E31C3D]" : score === 3 ? "bg-[#F1C40F]" : "bg-[#2ECC71]") : (isDark ? "bg-[#2B2B2B]" : "bg-gray-200")}`}></div>
+                  <div className={`h-1.5 flex-1 rounded-full ${score > 2 ? (score === 3 ? "bg-[#F1C40F]" : "bg-[#2ECC71]") : (isDark ? "bg-[#2B2B2B]" : "bg-gray-200")}`}></div>
+                  <div className={`h-1.5 flex-1 rounded-full ${score > 3 ? "bg-[#2ECC71]" : (isDark ? "bg-[#2B2B2B]" : "bg-gray-200")}`}></div>
+                </div>
+                {
+                  password !== confirmPassword && (
+<div className="text-[11px] text-gray-400 mt-2 space-y-1">
+                  <p className="font-semibold text-gray-400">Must contain at least:</p>
+                  <div className="flex flex-wrap gap-x-3 gap-y-1 font-medium text-gray-500">
+                    <span className="flex items-center">
+                      {hasUppercase ? (
+                        <svg className="w-3.5 h-3.5 text-[#2ECC71] mr-0.5 shrink-0 inline-block align-middle" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                      ) : (
+                        <svg className="w-3.5 h-3.5 text-gray-400 mr-0.5 shrink-0 inline-block align-middle" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                      )}
+                      <span className={hasUppercase ? "text-[#2ECC71]" : "text-gray-400"}>At least 1 uppercase</span>
+                    </span>
+                    <span className="flex items-center">
+                      {hasNumber ? (
+                        <svg className="w-3.5 h-3.5 text-[#2ECC71] mr-0.5 shrink-0 inline-block align-middle" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                      ) : (
+                        <svg className="w-3.5 h-3.5 text-gray-400 mr-0.5 shrink-0 inline-block align-middle" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                      )}
+                      <span className={hasNumber ? "text-[#2ECC71]" : "text-gray-400"}>At least 1 number</span>
+                    </span>
+                    <span className="flex items-center">
+                      {hasSymbol ? (
+                        <svg className="w-3.5 h-3.5 text-[#2ECC71] mr-0.5 shrink-0 inline-block align-middle" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                      ) : (
+                        <svg className="w-3.5 h-3.5 text-gray-400 mr-0.5 shrink-0 inline-block align-middle" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                      )}
+                      <span className={hasSymbol ? "text-[#2ECC71]" : "text-gray-400"}>At least 1 symbol</span>
+                    </span>
+                    <span className="flex items-center">
+                      {hasMinLength ? (
+                        <svg className="w-3.5 h-3.5 text-[#2ECC71] mr-0.5 shrink-0 inline-block align-middle" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                      ) : (
+                        <svg className="w-3.5 h-3.5 text-gray-400 mr-0.5 shrink-0 inline-block align-middle" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                      )}
+                      <span className={hasMinLength ? "text-[#2ECC71]" : "text-gray-400"}>At least 8 character</span>
+                    </span>
+                  </div>
+                </div>
+                  )
+                }
+                {/* <div className="text-[11px] text-gray-400 mt-2 space-y-1">
+                  <p className="font-semibold text-gray-400">Must contain at least:</p>
+                  <div className="flex flex-wrap gap-x-3 gap-y-1 font-medium text-gray-500">
+                    <span className="flex items-center">
+                      {hasUppercase ? (
+                        <svg className="w-3.5 h-3.5 text-[#2ECC71] mr-0.5 shrink-0 inline-block align-middle" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                      ) : (
+                        <svg className="w-3.5 h-3.5 text-gray-400 mr-0.5 shrink-0 inline-block align-middle" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                      )}
+                      <span className={hasUppercase ? "text-[#2ECC71]" : "text-gray-400"}>At least 1 uppercase</span>
+                    </span>
+                    <span className="flex items-center">
+                      {hasNumber ? (
+                        <svg className="w-3.5 h-3.5 text-[#2ECC71] mr-0.5 shrink-0 inline-block align-middle" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                      ) : (
+                        <svg className="w-3.5 h-3.5 text-gray-400 mr-0.5 shrink-0 inline-block align-middle" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                      )}
+                      <span className={hasNumber ? "text-[#2ECC71]" : "text-gray-400"}>At least 1 number</span>
+                    </span>
+                    <span className="flex items-center">
+                      {hasSymbol ? (
+                        <svg className="w-3.5 h-3.5 text-[#2ECC71] mr-0.5 shrink-0 inline-block align-middle" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                      ) : (
+                        <svg className="w-3.5 h-3.5 text-gray-400 mr-0.5 shrink-0 inline-block align-middle" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                      )}
+                      <span className={hasSymbol ? "text-[#2ECC71]" : "text-gray-400"}>At least 1 symbol</span>
+                    </span>
+                    <span className="flex items-center">
+                      {hasMinLength ? (
+                        <svg className="w-3.5 h-3.5 text-[#2ECC71] mr-0.5 shrink-0 inline-block align-middle" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                      ) : (
+                        <svg className="w-3.5 h-3.5 text-gray-400 mr-0.5 shrink-0 inline-block align-middle" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                      )}
+                      <span className={hasMinLength ? "text-[#2ECC71]" : "text-gray-400"}>At least 8 character</span>
+                    </span>
+                  </div>
+                </div> */}
+              </div>
+            )}
           </div>
 
           <div className="flex flex-col gap-1.5">
@@ -247,18 +482,33 @@ export default function SignupPage() {
                 {showConfirmPassword ? <BsEyeSlash size={20} /> : <BsEye size={20} />}
               </button>
             </div>
+            {password && confirmPassword && password === confirmPassword && (
+              <div className="mt-2 space-y-1.5">
+                <div className="flex justify-between items-center text-xs">
+                  <span></span>
+                  <span className={`font-semibold ${score <= 2 ? "text-[#E31C3D]" : score === 3 ? "text-[#F1C40F]" : "text-[#2ECC71]"}`}>
+                    {score <= 2 ? "Weak" : score === 3 ? "Good" : "Strong"}
+                  </span>
+                </div>
+                <div className="flex gap-2">
+                  <div className={`h-1.5 flex-1 rounded-full ${score > 0 ? (score <= 2 ? "bg-[#E31C3D]" : score === 3 ? "bg-[#F1C40F]" : "bg-[#2ECC71]") : (isDark ? "bg-[#2B2B2B]" : "bg-gray-200")}`}></div>
+                  <div className={`h-1.5 flex-1 rounded-full ${score > 2 ? (score === 3 ? "bg-[#F1C40F]" : "bg-[#2ECC71]") : (isDark ? "bg-[#2B2B2B]" : "bg-gray-200")}`}></div>
+                  <div className={`h-1.5 flex-1 rounded-full ${score > 3 ? "bg-[#2ECC71]" : (isDark ? "bg-[#2B2B2B]" : "bg-gray-200")}`}></div>
+                </div>
+              </div>
+            )}
           </div>
 
           <button
             type="submit"
-            disabled={loading}
+            disabled={isSendingOtp || isSigningUp}
             className="
               w-full bg-[#E31C3D] text-white py-3.5 rounded-full
               text-base font-semibold tracking-wide mt-2
               active:scale-95 transition disabled:opacity-50
             "
           >
-            {loading ? "Signing up..." : "Sign Up"}
+            {isSigningUp ? "Signing up..." : isSendingOtp ? "Sending OTP..." : "Sign Up"}
           </button>
         </form>
 

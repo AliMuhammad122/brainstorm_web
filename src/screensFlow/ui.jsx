@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import { createPortal } from "react-dom";
 import Image from "next/image";
 import { useTheme } from "../../context/ThemeContext";
+import { useLogoutMutation } from "../store/authApiSlice";
 import {
   MdKeyboardArrowDown,
   MdMenu,
@@ -711,6 +712,20 @@ export function Drawer({
 }) {
   const router = useRouter();
   const { isDark } = useTheme();
+  const [logout] = useLogoutMutation();
+
+  const handleLogout = async () => {
+    try {
+      await logout().unwrap();
+    } catch (error) {
+      console.error("Logout error:", error);
+    } finally {
+      localStorage.removeItem("token");
+      if (onClose) onClose();
+      router.push("/login");
+    }
+  };
+
   useEffect(() => {
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
@@ -990,7 +1005,7 @@ export function Drawer({
             boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
           }}
         >
-          {renderRow(logoutItem, true, () => onClose())}
+          {renderRow(logoutItem, true, handleLogout)}
         </div>
       </div>
     </div>

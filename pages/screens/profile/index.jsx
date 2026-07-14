@@ -1,10 +1,46 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
+import ReactCountryFlag from "react-country-flag";
 import ScreensFrame from "../../../src/screensFlow/Frame";
 import { PageHeader } from "../../../src/screensFlow/ui";
+import { useGetProfileQuery } from "../../../src/store/authApiSlice";
+import { countryCodes } from "../../../data/countryCodes";
 
 export default function ProfilePage() {
   const router = useRouter();
+  
+  const { data, isLoading } = useGetProfileQuery();
+  const profile = data?.data;
+
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phoneCode, setPhoneCode] = useState("+357");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [gender, setGender] = useState("");
+  const [dob, setDob] = useState("");
+
+  useEffect(() => {
+    if (profile) {
+      setFirstName(profile.first_name || "");
+      setLastName(profile.last_name || "");
+      setEmail(profile.email || "");
+      setGender(profile.gender || "");
+      setDob(profile.dob || "");
+      
+      if (profile.phone) {
+        const matchingCountry = countryCodes.find(c => profile.phone.startsWith(c.dial_code.replace("+", "")));
+        if (matchingCountry) {
+          setPhoneCode(matchingCountry.dial_code);
+          setPhoneNumber(profile.phone.substring(matchingCountry.dial_code.replace("+", "").length));
+        } else {
+          setPhoneNumber(profile.phone);
+        }
+      }
+    }
+  }, [profile]);
+
+  const currentCountry = countryCodes.find((c) => c.dial_code === phoneCode);
 
   return (
     <ScreensFrame>
@@ -69,10 +105,10 @@ export default function ProfilePage() {
             </div>
             <div>
               <div style={{ fontSize: 14, fontWeight: 600, color: "var(--text)" }}>
-                David Miller
+                {isLoading ? "Loading..." : `${firstName} ${lastName}`}
               </div>
               <div style={{ fontSize: 12, color: "var(--muted)" }}>
-                DavidMiller345211@hotmail.com
+                {isLoading ? "Loading..." : email}
               </div>
             </div>
           </div>
@@ -81,6 +117,8 @@ export default function ProfilePage() {
             <label style={{ fontSize: 12, color: "var(--text)" }}>First Name</label>
             <input
               placeholder="Enter first name"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
               style={{
                 height: 44,
                 borderRadius: 10,
@@ -88,12 +126,15 @@ export default function ProfilePage() {
                 background: "var(--surface)",
                 padding: "0 12px",
                 fontSize: 13,
+                color: "var(--text)",
               }}
             />
 
             <label style={{ fontSize: 12, color: "var(--text)" }}>Last Name</label>
             <input
               placeholder="Enter last name"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
               style={{
                 height: 44,
                 borderRadius: 10,
@@ -101,12 +142,15 @@ export default function ProfilePage() {
                 background: "var(--surface)",
                 padding: "0 12px",
                 fontSize: 13,
+                color: "var(--text)",
               }}
             />
 
             <label style={{ fontSize: 12, color: "var(--text)" }}>Email</label>
             <input
               placeholder="Enter your email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               style={{
                 height: 44,
                 borderRadius: 10,
@@ -114,6 +158,7 @@ export default function ProfilePage() {
                 background: "var(--surface)",
                 padding: "0 12px",
                 fontSize: 13,
+                color: "var(--text)",
               }}
             />
 
@@ -139,11 +184,21 @@ export default function ProfilePage() {
                   color: "var(--muted)",
                 }}
               >
-                <span style={{ width: 10, height: 10, borderRadius: 5, background: "#4CAF50" }} />
-                +357
+                {currentCountry ? (
+                  <ReactCountryFlag
+                    countryCode={currentCountry.code}
+                    svg
+                    style={{ width: 18, height: 14, objectFit: "cover", borderRadius: 2 }}
+                  />
+                ) : (
+                  <span style={{ width: 10, height: 10, borderRadius: 5, background: "#4CAF50" }} />
+                )}
+                {phoneCode}
               </div>
               <input
                 placeholder="(444) 1234-5678"
+                value={phoneNumber}
+                onChange={(e) => setPhoneNumber(e.target.value)}
                 style={{
                   flex: 1,
                   height: 44,
@@ -151,6 +206,7 @@ export default function ProfilePage() {
                   background: "transparent",
                   padding: "0 10px",
                   fontSize: 13,
+                  color: "var(--text)",
                 }}
               />
               <button
@@ -178,7 +234,7 @@ export default function ProfilePage() {
                 background: "var(--surface)",
                 padding: "0 12px",
                 fontSize: 13,
-                color: "var(--muted)",
+                color: gender ? "var(--text)" : "var(--muted)",
                 textAlign: "left",
                 display: "flex",
                 alignItems: "center",
@@ -186,7 +242,7 @@ export default function ProfilePage() {
                 cursor: "pointer",
               }}
             >
-              Select Gender
+              {gender || "Select Gender"}
               <svg
                 width="12"
                 height="12"
@@ -202,6 +258,8 @@ export default function ProfilePage() {
             <label style={{ fontSize: 12, color: "var(--text)" }}>DOB</label>
             <input
               placeholder="DD/MM/YYYY"
+              value={dob}
+              onChange={(e) => setDob(e.target.value)}
               style={{
                 height: 44,
                 borderRadius: 10,
@@ -209,6 +267,7 @@ export default function ProfilePage() {
                 background: "var(--surface)",
                 padding: "0 12px",
                 fontSize: 13,
+                color: "var(--text)",
               }}
             />
           </div>

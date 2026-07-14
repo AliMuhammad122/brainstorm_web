@@ -1,24 +1,40 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { BsEye, BsEyeSlash } from "react-icons/bs";
 import { useTheme } from "../../context/ThemeContext";
+import { useLoginMutation } from "../../src/store/authApiSlice";
 
 export default function LoginPage() {
   const { isDark } = useTheme();
+  const router = useRouter();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
 
-  const handleLogin = (e) => {
+  const [login, { isLoading }] = useLoginMutation();
+
+  const handleLogin = async (e) => {
     e.preventDefault();
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      console.log({ email, password });
-    }, 1000);
+    try {
+      const response = await login({ email, password }).unwrap();
+      const {auth_token,...user } = response?.data;
+      console.log(user, auth_token)
+      console.log("Login Success:", response);
+
+      const token = response.data?.auth_token;
+      if (token) {
+        localStorage.setItem("token", token);
+        localStorage.setItem("user", JSON.stringify(user));
+      }
+      
+      router.push("/");
+    } catch (error) {
+      console.error("Login Error:", error);
+      alert(error?.data?.error?.message || error?.data?.message || "Failed to login. Please check your credentials and try again.");
+    }
   };
 
   const handleSocialLogin = (provider) => {
@@ -137,14 +153,14 @@ export default function LoginPage() {
 
           <button
             type="submit"
-            disabled={loading}
+            disabled={isLoading}
             className="
               w-full bg-[#DA1A35] text-white py-3.5 rounded-full
               text-base font-semibold tracking-wide
               active:scale-95 transition disabled:opacity-50
             "
           >
-            {loading ? "Logging in..." : "Login"}
+            {isLoading ? "Logging in..." : "Login"}
           </button>
         </form>
 

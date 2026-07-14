@@ -3,13 +3,24 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useTheme } from "../../context/ThemeContext";
+import {
+  useVerifyOtpMutation,
+  useSignupMutation,
+  useRequestOtpMutation,
+} from "../../src/store/authApiSlice";
 
 export default function EnterOTPPage() {
   const [otp, setOtp] = useState(["", "", "", ""]);
-  const [loading, setLoading] = useState(false);
   const { isDark } = useTheme();
   const router = useRouter();
+  const { phone } = router.query;
   const inputRefs = useRef([]);
+
+  const [verifyOtp, { isLoading: isVerifying }] = useVerifyOtpMutation();
+  const [signup, { isLoading: isSigningUp }] = useSignupMutation();
+  const [requestOtp, { isLoading: isResending }] = useRequestOtpMutation();
+
+  const loading = isVerifying || isSigningUp;
 
   const isComplete = otp.every((d) => d !== "");
 
@@ -46,14 +57,41 @@ export default function EnterOTPPage() {
     inputRefs.current[Math.min(pasted.length, 3)]?.focus();
   };
 
-  const handleSubmit = (e) => {
+  const handleResend = async () => {
+    if (!phone) {
+      alert("Phone number is missing.");
+      return;
+    }
+    try {
+     const res = await requestOtp({ phone }).unwrap();
+     console.log(res)
+      alert(res?.message || "OTP resent successfully!");
+    } catch (err) {
+      console.error("Resend OTP Error:", err);
+      alert(err?.data?.error.message || "Failed to resend OTP.");
+    }
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!isComplete) return;
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      console.log("OTP verified:", otp.join(""));
-    }, 1000);
+    if (!phone) {
+      alert("Phone number is missing. Please start the signup flow again.");
+      return;
+    }
+    
+    try {
+      const otpNumber = Number(otp.join(""));
+      await verifyOtp({ phone, otp: otpNumber }).unwrap();
+      
+      alert("Phone verified successfully!");
+      sessionStorage.setItem("is_phone_verified", "true");
+      sessionStorage.setItem("verified_phone", phone);
+      router.push("/auth/signup");
+    } catch (err) {
+      // console.error("Verification Error:", err);
+      alert(err?.data?.error.message || "Verification failed. Please check the OTP and try again.");
+    }
   };
 
   const shellStyle = { backgroundColor: "#DA1A35" };
@@ -158,10 +196,11 @@ export default function EnterOTPPage() {
           Didn't get OTP?{" "}
           <button
             type="button"
-            className="text-[#E31C3D] font-semibold hover:underline"
-            onClick={() => console.log("Resend OTP")}
+            className="text-[#E31C3D] font-semibold hover:underline disabled:opacity-50"
+            onClick={handleResend}
+            disabled={isResending}
           >
-            Resend OTP
+            {isResending ? "Resending..." : "Resend OTP"}
           </button>
         </p>
 
