@@ -1,30 +1,69 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { BsEye, BsEyeSlash } from "react-icons/bs";
 import { useTheme } from "../../context/ThemeContext";
+import { useResetPasswordMutation } from "../../src/store/authApiSlice";
 
 export default function CreateNewPasswordPage() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
-  const [loading, setLoading] = useState(false);
   const { isDark } = useTheme();
   const router = useRouter();
 
-  const handleSubmit = (e) => {
+  const [resetPassword, { isLoading: loading }] = useResetPasswordMutation();
+
+  const [toast, setToast] = useState({ show: false, text: "", type: "" });
+  const toastTimeoutRef = useRef(null);
+
+  const showToast = (text, type = "success") => {
+    if (toastTimeoutRef.current) clearTimeout(toastTimeoutRef.current);
+    setToast({ show: true, text, type });
+    toastTimeoutRef.current = setTimeout(() => {
+      setToast({ show: false, text: "", type: "" });
+    }, 3000);
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (password !== confirmPassword) {
-      alert("Passwords do not match");
+      showToast("Passwords do not match.", "error");
       return;
     }
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      console.log("Password created:", password);
-    }, 1000);
+
+    const email = sessionStorage.getItem("reset_email");
+    if (!email) {
+      showToast("Session expired. Please request OTP again.", "error");
+      setTimeout(() => {
+        router.push("/auth/forgot-password");
+      }, 1500);
+      return;
+    }
+
+    try {
+      const res = await resetPassword({
+        email,
+        newPassword: password,
+        confirmNewPassword: confirmPassword,
+      }).unwrap();
+
+      if (res.status === 200 || res.success) {
+        showToast(res.message || "Password reset successfully!", "success");
+        sessionStorage.removeItem("reset_email");
+        sessionStorage.removeItem("reset_otp");
+        setTimeout(() => {
+          router.push("/auth/login");
+        }, 1500);
+      } else {
+        throw new Error(res.message || "Failed to reset password.");
+      }
+    } catch (err) {
+      console.error("Reset Password Error:", err);
+      showToast(err.data?.error?.message || err.data?.message || err.message || "Failed to reset password.", "error");
+    }
   };
 
   const shellStyle = { backgroundColor: "#DA1A35" };
@@ -146,7 +185,7 @@ export default function CreateNewPasswordPage() {
               active:scale-95 transition disabled:opacity-50
             "
           >
-            {loading ? "Saving..." : "Send Code"}
+            {loading ? "Saving..." : "Create Password"}
           </button>
         </form>
 
@@ -156,6 +195,42 @@ export default function CreateNewPasswordPage() {
           </Link>
         </p>
       </div>
+      {toast.show && (
+        <div
+          className="custom-toast-container"
+          style={{
+            position: "fixed",
+            top: 24,
+            left: "50%",
+            transform: "translateX(-50%)",
+            background: toast.type === "success" ? "rgba(76, 175, 80, 0.95)" : "rgba(231, 28, 13, 0.95)",
+            backdropFilter: "blur(8px)",
+            color: "#fff",
+            padding: "12px 24px",
+            borderRadius: 30,
+            boxShadow: "0 8px 32px rgba(0,0,0,0.25)",
+            zIndex: 9999,
+            fontSize: 13,
+            fontWeight: 500,
+            whiteSpace: "nowrap",
+            border: `1px solid ${toast.type === "success" ? "rgba(255, 255, 255, 0.2)" : "rgba(255, 255, 255, 0.15)"}`,
+            display: "flex",
+            alignItems: "center",
+            gap: 8,
+          }}
+        >
+          {toast.type === "success" ? (
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M20 6L9 17L4 12" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          ) : (
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M18 6L6 18M6 6l12 12" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          )}
+          {toast.text}
+        </div>
+      )}
     </div>
   );
 }

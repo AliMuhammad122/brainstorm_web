@@ -1,22 +1,51 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useTheme } from "../../context/ThemeContext";
+import { useForgotPasswordMutation } from "../../src/store/authApiSlice";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
-  const [loading, setLoading] = useState(false);
   const { isDark } = useTheme();
   const router = useRouter();
 
-  const handleSubmit = (e) => {
+  const [forgotPassword, { isLoading: loading }] = useForgotPasswordMutation();
+
+  const [toast, setToast] = useState({ show: false, text: "", type: "" });
+  const toastTimeoutRef = useRef(null);
+
+  const showToast = (text, type = "success") => {
+    if (toastTimeoutRef.current) clearTimeout(toastTimeoutRef.current);
+    setToast({ show: true, text, type });
+    toastTimeoutRef.current = setTimeout(() => {
+      setToast({ show: false, text: "", type: "" });
+    }, 3000);
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      console.log("Reset email sent to:", email);
-    }, 1000);
+    if (!email) {
+      showToast("Email address is required.", "error");
+      return;
+    }
+
+    try {
+      const response = await forgotPassword({ email }).unwrap();
+      if (response.status === 200 || response.success) {
+        showToast(response.message || "OTP sent successfully!", "success");
+        // Redirect on success to verify otp screen, passing email, phone, and reset password type
+        const phone = response.data?.phone || "";
+        setTimeout(() => {
+          router.push(`/auth/verify-otp?email=${email}&phone=${phone}&type=forgot`);
+        }, 1200);
+      } else {
+        throw new Error(response.message || "Failed to request reset OTP.");
+      }
+    } catch (err) {
+      console.error("Forgot Password Error:", err);
+      showToast(err.data?.error?.message || err.data?.message || err.message || "Failed to request reset OTP.", "error");
+    }
   };
 
   const shellStyle = { backgroundColor: "#DA1A35" };
@@ -122,6 +151,42 @@ export default function ForgotPasswordPage() {
           </Link>
         </p>
       </div>
+      {toast.show && (
+        <div
+          className="custom-toast-container"
+          style={{
+            position: "fixed",
+            top: 24,
+            left: "50%",
+            transform: "translateX(-50%)",
+            background: toast.type === "success" ? "rgba(76, 175, 80, 0.95)" : "rgba(231, 28, 13, 0.95)",
+            backdropFilter: "blur(8px)",
+            color: "#fff",
+            padding: "12px 24px",
+            borderRadius: 30,
+            boxShadow: "0 8px 32px rgba(0,0,0,0.25)",
+            zIndex: 9999,
+            fontSize: 13,
+            fontWeight: 500,
+            whiteSpace: "nowrap",
+            border: `1px solid ${toast.type === "success" ? "rgba(255, 255, 255, 0.2)" : "rgba(255, 255, 255, 0.15)"}`,
+            display: "flex",
+            alignItems: "center",
+            gap: 8,
+          }}
+        >
+          {toast.type === "success" ? (
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M20 6L9 17L4 12" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          ) : (
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M18 6L6 18M6 6l12 12" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          )}
+          {toast.text}
+        </div>
+      )}
     </div>
   );
 }

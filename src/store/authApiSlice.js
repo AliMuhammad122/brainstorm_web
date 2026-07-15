@@ -46,6 +46,42 @@ export const authApiSlice = apiSlice.injectEndpoints({
       }),
       providesTags: ["User"],
     }),
+    getPresignedUrl: builder.mutation({
+      query: (payload) => ({
+        url: "/api/v1/user/pre-signed-url",
+        method: "POST",
+        body: payload,
+      }),
+    }),
+    updateProfile: builder.mutation({
+      query: (body) => ({
+        url: "/api/v1/user",
+        method: "PATCH",
+        body,
+      }),
+      invalidatesTags: ["User"],
+    }),
+    changePassword: builder.mutation({
+      query: (body) => ({
+        url: "/api/v1/auth/change-password",
+        method: "POST",
+        body,
+      }),
+    }),
+    forgotPassword: builder.mutation({
+      query: (body) => ({
+        url: "/api/v1/auth/forgot-password",
+        method: "POST",
+        body,
+      }),
+    }),
+    resetPassword: builder.mutation({
+      query: (body) => ({
+        url: "/api/v1/auth/reset-password",
+        method: "POST",
+        body,
+      }),
+    }),
   }),
   overrideExisting: false,
 });
@@ -57,5 +93,10 @@ export const {
   useVerifyOtpMutation,
   useLogoutMutation,
   useGetProfileQuery,
+  useGetPresignedUrlMutation,
+  useUpdateProfileMutation,
+  useChangePasswordMutation,
+  useForgotPasswordMutation,
+  useResetPasswordMutation,
 } = authApiSlice;
 

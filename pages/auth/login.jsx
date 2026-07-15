@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -14,13 +14,24 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
+  const [toast, setToast] = useState({ show: false, text: "", type: "" });
+  const toastTimeoutRef = useRef(null);
+
+  const showToast = (text, type = "success") => {
+    if (toastTimeoutRef.current) clearTimeout(toastTimeoutRef.current);
+    setToast({ show: true, text, type });
+    toastTimeoutRef.current = setTimeout(() => {
+      setToast({ show: false, text: "", type: "" });
+    }, 3000);
+  };
+
   const [login, { isLoading }] = useLoginMutation();
 
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
       const response = await login({ email, password }).unwrap();
-      const {auth_token,...user } = response?.data;
+      const { auth_token, ...user } = response?.data;
       console.log(user, auth_token)
       console.log("Login Success:", response);
 
@@ -29,11 +40,11 @@ export default function LoginPage() {
         localStorage.setItem("token", token);
         localStorage.setItem("user", JSON.stringify(user));
       }
-      
+
       router.push("/");
     } catch (error) {
       console.error("Login Error:", error);
-      alert(error?.data?.error?.message || error?.data?.message || "Failed to login. Please check your credentials and try again.");
+      showToast(error?.data?.error?.message || error?.data?.message || "Failed to login. Please check your credentials and try again.", "error");
     }
   };
 
@@ -211,6 +222,42 @@ export default function LoginPage() {
           </Link>
         </p>
       </div>
+      {toast.show && (
+        <div
+          className="custom-toast-container"
+          style={{
+            position: "fixed",
+            top: 24,
+            left: "50%",
+            transform: "translateX(-50%)",
+            background: toast.type === "success" ? "rgba(76, 175, 80, 0.95)" : "rgba(231, 28, 13, 0.95)",
+            backdropFilter: "blur(8px)",
+            color: "#fff",
+            padding: "12px 24px",
+            borderRadius: 30,
+            boxShadow: "0 8px 32px rgba(0,0,0,0.25)",
+            zIndex: 9999,
+            fontSize: 13,
+            fontWeight: 500,
+            whiteSpace: "nowrap",
+            border: `1px solid ${toast.type === "success" ? "rgba(255, 255, 255, 0.2)" : "rgba(255, 255, 255, 0.15)"}`,
+            display: "flex",
+            alignItems: "center",
+            gap: 8,
+          }}
+        >
+          {toast.type === "success" ? (
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M20 6L9 17L4 12" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          ) : (
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M18 6L6 18M6 6l12 12" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          )}
+          {toast.text}
+        </div>
+      )}
     </div>
   );
 }

@@ -7,20 +7,34 @@ import {
   useVerifyOtpMutation,
   useSignupMutation,
   useRequestOtpMutation,
+  useForgotPasswordMutation,
 } from "../../src/store/authApiSlice";
 
 export default function EnterOTPPage() {
   const [otp, setOtp] = useState(["", "", "", ""]);
   const { isDark } = useTheme();
   const router = useRouter();
-  const { phone } = router.query;
+  const { phone, email, type } = router.query;
   const inputRefs = useRef([]);
+
+  const [toast, setToast] = useState({ show: false, text: "", type: "" });
+  const toastTimeoutRef = useRef(null);
+
+  const showToast = (text, type = "success") => {
+    if (toastTimeoutRef.current) clearTimeout(toastTimeoutRef.current);
+    setToast({ show: true, text, type });
+    toastTimeoutRef.current = setTimeout(() => {
+      setToast({ show: false, text: "", type: "" });
+    }, 3000);
+  };
 
   const [verifyOtp, { isLoading: isVerifying }] = useVerifyOtpMutation();
   const [signup, { isLoading: isSigningUp }] = useSignupMutation();
   const [requestOtp, { isLoading: isResending }] = useRequestOtpMutation();
+  const [forgotPassword, { isLoading: isForgotResending }] = useForgotPasswordMutation();
 
   const loading = isVerifying || isSigningUp;
+  const resending = isResending || isForgotResending;
 
   const isComplete = otp.every((d) => d !== "");
 
@@ -58,25 +72,63 @@ export default function EnterOTPPage() {
   };
 
   const handleResend = async () => {
+    if (type === "forgot") {
+      if (!email) {
+        showToast("Email address is missing.", "error");
+        return;
+      }
+      try {
+        const res = await forgotPassword({ email }).unwrap();
+        showToast(res?.message || "OTP resent successfully!", "success");
+      } catch (err) {
+        console.error("Resend Forgot OTP Error:", err);
+        showToast(err?.data?.error?.message || err?.data?.message || "Failed to resend OTP.", "error");
+      }
+      return;
+    }
+
     if (!phone) {
-      alert("Phone number is missing.");
+      showToast("Phone number is missing.", "error");
       return;
     }
     try {
      const res = await requestOtp({ phone }).unwrap();
      console.log(res)
-      alert(res?.message || "OTP resent successfully!");
+      showToast(res?.message || "OTP resent successfully!", "success");
     } catch (err) {
       console.error("Resend OTP Error:", err);
-      alert(err?.data?.error.message || "Failed to resend OTP.");
+      showToast(err?.data?.error?.message || err?.data?.message || "Failed to resend OTP.", "error");
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!isComplete) return;
+
+    if (type === "forgot") {
+      if (!email) {
+        showToast("Email is missing. Please start the forgot password flow again.", "error");
+        return;
+      }
+      try {
+        const otpNumber = Number(otp.join(""));
+        await verifyOtp({ email, otp: otpNumber }).unwrap();
+        
+        showToast("OTP verified successfully!", "success");
+        sessionStorage.setItem("reset_email", email);
+        sessionStorage.setItem("reset_otp", String(otpNumber));
+        setTimeout(() => {
+          router.push("/auth/set-password");
+        }, 1200);
+      } catch (err) {
+        console.error("Forgot OTP Verification Error:", err);
+        showToast(err?.data?.error?.message || err?.data?.message || "Verification failed. Please check the OTP and try again.", "error");
+      }
+      return;
+    }
+
     if (!phone) {
-      alert("Phone number is missing. Please start the signup flow again.");
+      showToast("Phone number is missing. Please start the signup flow again.", "error");
       return;
     }
     
@@ -84,13 +136,12 @@ export default function EnterOTPPage() {
       const otpNumber = Number(otp.join(""));
       await verifyOtp({ phone, otp: otpNumber }).unwrap();
       
-      alert("Phone verified successfully!");
+      showToast("Phone verified successfully!", "success");
       sessionStorage.setItem("is_phone_verified", "true");
       sessionStorage.setItem("verified_phone", phone);
       router.push("/auth/signup");
     } catch (err) {
-      // console.error("Verification Error:", err);
-      alert(err?.data?.error.message || "Verification failed. Please check the OTP and try again.");
+      showToast(err?.data?.error?.message || err?.data?.message || "Verification failed. Please check the OTP and try again.", "error");
     }
   };
 
@@ -198,9 +249,9 @@ export default function EnterOTPPage() {
             type="button"
             className="text-[#E31C3D] font-semibold hover:underline disabled:opacity-50"
             onClick={handleResend}
-            disabled={isResending}
+            disabled={resending}
           >
-            {isResending ? "Resending..." : "Resend OTP"}
+            {resending ? "Resending..." : "Resend OTP"}
           </button>
         </p>
 
@@ -211,6 +262,42 @@ export default function EnterOTPPage() {
           </Link>
         </p>
       </div>
+      {toast.show && (
+        <div
+          className="custom-toast-container"
+          style={{
+            position: "fixed",
+            top: 24,
+            left: "50%",
+            transform: "translateX(-50%)",
+            background: toast.type === "success" ? "rgba(76, 175, 80, 0.95)" : "rgba(231, 28, 13, 0.95)",
+            backdropFilter: "blur(8px)",
+            color: "#fff",
+            padding: "12px 24px",
+            borderRadius: 30,
+            boxShadow: "0 8px 32px rgba(0,0,0,0.25)",
+            zIndex: 9999,
+            fontSize: 13,
+            fontWeight: 500,
+            whiteSpace: "nowrap",
+            border: `1px solid ${toast.type === "success" ? "rgba(255, 255, 255, 0.2)" : "rgba(255, 255, 255, 0.15)"}`,
+            display: "flex",
+            alignItems: "center",
+            gap: 8,
+          }}
+        >
+          {toast.type === "success" ? (
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M20 6L9 17L4 12" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          ) : (
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M18 6L6 18M6 6l12 12" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          )}
+          {toast.text}
+        </div>
+      )}
     </div>
   );
 }

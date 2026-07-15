@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { BsEye, BsEyeSlash } from "react-icons/bs";
 import { MdKeyboardArrowDown } from "react-icons/md";
@@ -23,6 +23,17 @@ export default function SignupPage() {
   const [form, setForm] = useState({ phoneCode: "+357", phone: "" });
   const [phoneError, setPhoneError] = useState("");
   const [isVerified, setIsVerified] = useState(false);
+
+  const [toast, setToast] = useState({ show: false, text: "", type: "" });
+  const toastTimeoutRef = useRef(null);
+
+  const showToast = (text, type = "success") => {
+    if (toastTimeoutRef.current) clearTimeout(toastTimeoutRef.current);
+    setToast({ show: true, text, type });
+    toastTimeoutRef.current = setTimeout(() => {
+      setToast({ show: false, text: "", type: "" });
+    }, 3000);
+  };
 
   const [requestOtp, { isLoading: isSendingOtp }] = useRequestOtpMutation();
   const [signup, { isLoading: isSigningUp }] = useSignupMutation();
@@ -107,14 +118,14 @@ export default function SignupPage() {
       router.push(`/auth/verify-otp?phone=${formattedPhone}`);
     } catch (error) {
       console.error("OTP Request Error:", error);
-      alert(error?.data?.error?.message || error?.data?.message || "Failed to send OTP. Please check your phone number and try again.");
+      showToast(error?.data?.error?.message || error?.data?.message || "Failed to send OTP. Please check your phone number and try again.", "error");
     }
   };
 
   const handleSignup = async (e) => {
     e.preventDefault();
     if (password !== confirmPassword) {
-      alert("Passwords do not match");
+      showToast("Passwords do not match", "error");
       return;
     }
     const formattedPhone = `${form.phoneCode.replace("+", "")}${form.phone}`;
@@ -137,14 +148,14 @@ export default function SignupPage() {
         };
         const response = await signup(payload).unwrap();
         console.log("Signup Success:", response);
-        alert("Signup successful!");
+        showToast("Signup successful!", "success");
         sessionStorage.removeItem("signup_data");
         sessionStorage.removeItem("is_phone_verified");
         sessionStorage.removeItem("verified_phone");
         router.push("/login");
       } catch (error) {
         console.error("Signup Error:", error);
-        alert(error?.data?.error?.message || error?.data?.message || "Failed to sign up. Please try again.");
+        showToast(error?.data?.error?.message || error?.data?.message || "Failed to sign up. Please try again.", "error");
       }
     } else {
       await handleSendOtp();
@@ -519,6 +530,42 @@ export default function SignupPage() {
           </Link>
         </p>
       </div>
+      {toast.show && (
+        <div
+          className="custom-toast-container"
+          style={{
+            position: "fixed",
+            top: 24,
+            left: "50%",
+            transform: "translateX(-50%)",
+            background: toast.type === "success" ? "rgba(76, 175, 80, 0.95)" : "rgba(231, 28, 13, 0.95)",
+            backdropFilter: "blur(8px)",
+            color: "#fff",
+            padding: "12px 24px",
+            borderRadius: 30,
+            boxShadow: "0 8px 32px rgba(0,0,0,0.25)",
+            zIndex: 9999,
+            fontSize: 13,
+            fontWeight: 500,
+            whiteSpace: "nowrap",
+            border: `1px solid ${toast.type === "success" ? "rgba(255, 255, 255, 0.2)" : "rgba(255, 255, 255, 0.15)"}`,
+            display: "flex",
+            alignItems: "center",
+            gap: 8,
+          }}
+        >
+          {toast.type === "success" ? (
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M20 6L9 17L4 12" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          ) : (
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M18 6L6 18M6 6l12 12" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          )}
+          {toast.text}
+        </div>
+      )}
     </div>
   );
 }

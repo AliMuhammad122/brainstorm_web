@@ -304,3 +304,15 @@ textarea {
 .theme-icon-no-invert {
   filter: none;
 }
+
+/* Custom Toast Animations */
+@keyframes toastSlideDownUp {
+  0% { transform: translate(-50%, -40px); opacity: 0; }
+  12% { transform: translate(-50%, 0); opacity: 1; }
+  88% { transform: translate(-50%, 0); opacity: 1; }
+  100% { transform: translate(-50%, -40px); opacity: 0; }
+}
+
+.custom-toast-container {
+  animation: toastSlideDownUp 3.2s ease-in-out forwards;
+}
