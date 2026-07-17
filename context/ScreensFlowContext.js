@@ -7,6 +7,8 @@ const ScreensFlowContext = createContext(null);
 const defaultState = {
   // restaurant
   activeRestaurantName: "TGI FRIDAY'S",
+  activeRestaurantId: 555,
+  activeRestaurantImage: "",
 
   // item detail selection
   activeItem: null, // { restaurantName, item }
@@ -17,6 +19,10 @@ const defaultState = {
   // filters (home)
   activeCats: [],
   activePrice: "",
+
+  // location
+  selectedLocation: { latitude: 34.6786, longitude: 33.0413, address: "Limassol, Cyprus" },
+  savedAddresses: [{ latitude: 34.6786, longitude: 33.0413, address: "Limassol, Cyprus" }],
 };
 
 function safeParse(json, fallback) {
@@ -55,6 +61,8 @@ export function ScreensFlowProvider({ children }) {
       // restaurant
       setActiveRestaurantName: (name) =>
         setState((p) => ({ ...p, activeRestaurantName: name })),
+      setActiveRestaurant: (name, id, image) =>
+        setState((p) => ({ ...p, activeRestaurantName: name, activeRestaurantId: id, activeRestaurantImage: image })),
 
       // item detail
       setActiveItem: (payload) => setState((p) => ({ ...p, activeItem: payload })),
@@ -64,6 +72,26 @@ export function ScreensFlowProvider({ children }) {
       applyFilter: (cats, price) =>
         setState((p) => ({ ...p, activeCats: cats, activePrice: price })),
       clearFilter: () => setState((p) => ({ ...p, activeCats: [], activePrice: "" })),
+
+      // location
+      setSelectedLocation: (loc) =>
+        setState((p) => ({ ...p, selectedLocation: loc })),
+      saveAddress: (loc) =>
+        setState((p) => {
+          const exists = p.savedAddresses.some(
+            (a) =>
+              a.address.toLowerCase() === loc.address.toLowerCase() ||
+              (Math.abs(a.latitude - loc.latitude) < 0.0001 &&
+                Math.abs(a.longitude - loc.longitude) < 0.0001)
+          );
+          if (exists) return p;
+          return { ...p, savedAddresses: [...p.savedAddresses, loc] };
+        }),
+      removeSavedAddress: (idx) =>
+        setState((p) => ({
+          ...p,
+          savedAddresses: p.savedAddresses.filter((_, i) => i !== idx),
+        })),
 
       // cart
       addToCart: (cartItem) =>

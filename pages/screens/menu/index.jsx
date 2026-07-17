@@ -13,7 +13,7 @@ export default function ScreensMenuPage() {
     () => getRestaurantByName(state.activeRestaurantName),
     [state.activeRestaurantName],
   );
-
+  console.log("restaurant", restaurant)
   const cartTotal = useMemo(
     () => state.cartItems.reduce((s, i) => s + i.priceNum * i.qty, 0),
     [state.cartItems],

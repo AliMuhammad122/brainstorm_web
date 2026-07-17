@@ -197,7 +197,7 @@ export default function LoginPage() {
                 boxShadow: isDark ? "none" : "0 10px 22px rgba(0,0,0,0.08)",
               }}
             >
-              <img src={icon} alt={key} className="w-5 h-5 object-contain" />
+              <img src={icon} alt={key} className="w-7 h-7" />
             </button>
           ))}
         </div>

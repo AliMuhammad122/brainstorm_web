@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import { createPortal } from "react-dom";
+import { useScreensFlow } from "../../context/ScreensFlowContext";
+import LocationModal from "./LocationModal";
 import Image from "next/image";
 import { useTheme } from "../../context/ThemeContext";
 import { useLogoutMutation } from "../store/authApiSlice";
@@ -9,14 +11,11 @@ import {
   MdMenu,
   MdOutlineLocationOn,
 } from "react-icons/md";
-import { BANNERS, CATEGORY_DATA, DRAWER_LINKS, PRICES } from "./data";
+import { BANNERS, CATEGORY_DATA, PRICES } from "./data";
 import {
   IcoBack,
-  IcoHamburger,
   IcoChevron,
   IcoClose,
-  IcoGrid,
-  IcoSearchW,
 } from "./icons";
 import FoodCart from "../../public/assets/icons/food-cart.png";
 import PromotionalBanner from "../../public/assets/images/banner-image.png";
@@ -103,36 +102,36 @@ export function RadioDot({ active, activeColor = "#E53935" }) {
   );
 }
 
-const Sunburst = () => (
-  <div
-    style={{
-      position: "absolute",
-      right: 55,
-      top: "50%",
-      transform: "translateY(-50%)",
-      width: 280,
-      height: 280,
-      pointerEvents: "none",
-      zIndex: 1,
-    }}
-  >
-    {Array.from({ length: 18 }).map((_, i) => (
-      <div
-        key={i}
-        style={{
-          position: "absolute",
-          width: 280,
-          height: 1.8,
-          background: "rgba(255,255,255,0.12)",
-          top: "50%",
-          left: "50%",
-          transformOrigin: "0 50%",
-          transform: `translateY(-50%) rotate(${i * 20}deg)`,
-        }}
-      />
-    ))}
-  </div>
-);
+// const Sunburst = () => (
+//   <div
+//     style={{
+//       position: "absolute",
+//       right: 55,
+//       top: "50%",
+//       transform: "translateY(-50%)",
+//       width: 280,
+//       height: 280,
+//       pointerEvents: "none",
+//       zIndex: 1,
+//     }}
+//   >
+//     {Array.from({ length: 18 }).map((_, i) => (
+//       <div
+//         key={i}
+//         style={{
+//           position: "absolute",
+//           width: 280,
+//           height: 1.8,
+//           background: "rgba(255,255,255,0.12)",
+//           top: "50%",
+//           left: "50%",
+//           transformOrigin: "0 50%",
+//           transform: `translateY(-50%) rotate(${i * 20}deg)`,
+//         }}
+//       />
+//     ))}
+//   </div>
+// );
 
 export function Carousel() {
   const [active, setActive] = useState(0);
@@ -173,7 +172,7 @@ export function Carousel() {
     touchStartX.current = null;
   };
 
-  const banner = BANNERS[active];
+  // const banner = BANNERS[active];
 
   return (
     <div className="px-5">
@@ -527,7 +526,7 @@ export function FilterModal({ onClose, onApply, initCats, initPrice }) {
 const BRAND_RED = "var(--primary)";
 
 export function ViewOrderFAB({ cartCount, total, onTap }) {
-  const hasItems = cartCount > 0;
+  // const hasItems = cartCount > 0;
   return (
     <div
       style={{
@@ -602,6 +601,9 @@ export function ViewOrderFAB({ cartCount, total, onTap }) {
 }
 
 export function AppChrome({ cart, onMenu, onCartTap }) {
+  const { state } = useScreensFlow();
+  const [locationModalOpen, setLocationModalOpen] = useState(false);
+
   return (
     <>
       <div
@@ -643,19 +645,33 @@ export function AppChrome({ cart, onMenu, onCartTap }) {
           >
             Your Location
           </p>
-          <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
-            <MdOutlineLocationOn size={16} color="var(--primary)" />
+          <div
+            onClick={() => setLocationModalOpen(true)}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 5,
+              cursor: "pointer",
+              maxWidth: "100%",
+            }}
+          >
+            <MdOutlineLocationOn size={16} color="var(--primary)" style={{ flexShrink: 0 }} />
             <span
               style={{
                 fontSize: 16,
                 fontWeight: 800,
                 color: "var(--text)",
                 letterSpacing: -0.4,
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                maxWidth: 180,
+                display: "inline-block",
               }}
             >
-              Limassol, Cyprus
+              {state.selectedLocation?.address || "Limassol, Cyprus"}
             </span>
-            <MdKeyboardArrowDown size={18} color="var(--primary)" />
+            <MdKeyboardArrowDown size={18} color="var(--primary)" style={{ flexShrink: 0 }} />
           </div>
         </div>
         <button
@@ -698,15 +714,15 @@ export function AppChrome({ cart, onMenu, onCartTap }) {
           )}
         </button>
       </div>
+      {locationModalOpen && (
+        <LocationModal onClose={() => setLocationModalOpen(false)} />
+      )}
     </>
   );
 }
 
 export function Drawer({
   onClose,
-  onMenuScreen,
-  onHome,
-  onCatScreen,
   onOrdersHistory,
   onLoyaltyRewards,
 }) {

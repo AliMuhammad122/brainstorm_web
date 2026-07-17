@@ -14,7 +14,7 @@ export default function HomePage() {
     router.prefetch("/categories");
     router.prefetch("/cart");
   }, [router]);
-  const { state, cartCount, applyFilter, clearFilter, setActiveRestaurantName } =
+  const { state, cartCount, applyFilter, clearFilter, setActiveRestaurant } =
     useScreensFlow();
 
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -50,7 +50,7 @@ export default function HomePage() {
             }}
             onMenuScreen={() => {
               setDrawerOpen(false);
-              setActiveRestaurantName(defaultResto.name);
+              setActiveRestaurant(defaultResto.name, defaultResto.id, defaultResto.image);
               router.push("/menu");
             }}
           onCatScreen={() => {
@@ -82,7 +82,7 @@ export default function HomePage() {
           onClear={clearFilter}
           onCatScreen={() => router.push("/categories")}
           onRestoTap={(r) => {
-            setActiveRestaurantName(r.name);
+            setActiveRestaurant(r.name, r.id, r.image);
             router.push("/menu");
           }}
         />

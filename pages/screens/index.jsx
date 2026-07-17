@@ -8,7 +8,7 @@ import { useScreensFlow } from "../../context/ScreensFlowContext";
 
 export default function ScreensIndexPage() {
   const router = useRouter();
-  const { state, cartCount, applyFilter, clearFilter, setActiveRestaurantName } =
+  const { state, cartCount, applyFilter, clearFilter, setActiveRestaurant } =
     useScreensFlow();
 
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -44,7 +44,7 @@ export default function ScreensIndexPage() {
             }}
             onMenuScreen={() => {
               setDrawerOpen(false);
-              setActiveRestaurantName(defaultResto.name);
+              setActiveRestaurant(defaultResto.name, defaultResto.id, defaultResto.image);
               router.push("/menu");
             }}
           onCatScreen={() => {
@@ -76,7 +76,7 @@ export default function ScreensIndexPage() {
           onClear={clearFilter}
           onCatScreen={() => router.push("/categories")}
           onRestoTap={(r) => {
-            setActiveRestaurantName(r.name);
+            setActiveRestaurant(r.name, r.id, r.image);
             router.push("/menu");
           }}
         />
