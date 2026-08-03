@@ -22,6 +22,10 @@
   /* Fonts */
   --font-heading: var(--font-nunito), sans-serif;
   --font-body: var(--font-dm-sans), sans-serif;
+  --font-anton: "Anton", sans-serif;
+  --font-montserrat: "Montserrat", sans-serif;
+  --font-inter: "Inter", sans-serif;
+  --font-open-sans: "Open Sans", sans-serif;
 
   /* Shadows */
   --shadow-form: 0px 16px 40px -8px rgba(88, 92, 95, 0.16);
@@ -315,4 +319,18 @@ textarea {
 
 .custom-toast-container {
   animation: toastSlideDownUp 3.2s ease-in-out forwards;
+}
+
+/* Font utility classes */
+.font-anton {
+  font-family: "Anton", sans-serif;
+}
+.font-montserrat {
+  font-family: "Montserrat", sans-serif;
+}
+.font-inter {
+  font-family: "Inter", sans-serif;
+}
+.font-open-sans {
+  font-family: "Open Sans", sans-serif;
 }

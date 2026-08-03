@@ -1,10 +1,11 @@
 import { useState, useRef } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { BsEye, BsEyeSlash } from "react-icons/bs";
 import { useTheme } from "../../context/ThemeContext";
 import { useLoginMutation } from "../../src/store/authApiSlice";
+import LeftDecorationIcon from "../../public/assets/icons/Left_decoration.svg";
+import RightDecorationIcon from "../../public/assets/icons/Right_decoration.svg";
 
 export default function LoginPage() {
   const { isDark } = useTheme();
@@ -31,7 +32,7 @@ export default function LoginPage() {
     e.preventDefault();
     try {
       const response = await login({ email, password }).unwrap();
-      const { auth_token, ...user } = response?.data;
+      const { auth_token, ...user } = response?.data || {};
       console.log(user, auth_token)
       console.log("Login Success:", response);
 
@@ -55,31 +56,30 @@ export default function LoginPage() {
   const shellStyle = { backgroundColor: "#DA1A35" };
 
   const inputClass = `
-    w-full px-4 py-3.5 rounded-xl text-sm outline-none
-    focus:ring-2 focus:ring-[#DA1A35] transition
+    w-full px-4 py-4  rounded-[8px] font-normal font-montserrat text-sm outline-none
+    focus:ring-0 focus:outline-0  transition
     ${isDark
-      ? "bg-[#2B2B2B] text-white placeholder-gray-500"
-      : "bg-[#F2F2F2] text-[#1a1a1a] placeholder-gray-400"}
+      ? "bg-[#2B2B2B] text-white placeholder-[#777777]"
+      : "bg-[#F2F2F2] text-[#1a1a1a] placeholder-[#777777]"}
   `;
 
   return (
-    <div className="min-h-screen flex flex-col" style={shellStyle}>
+    <div className="min-h-screen flex justify-center" style={{ backgroundColor: isDark ? "#0B0B0B" : "#F8F9FA" }}>
+      <div className="w-full max-w-[430px] min-h-screen flex flex-col relative shadow-2xl" style={shellStyle}>
       {/* Header section */}
-      <div className="relative h-[38vh] min-h-[200px] shrink-0 overflow-hidden">
-        <div className="absolute -left-6 top-0">
-          <Image
-            src="/assets/images/login_left_decoration.png"
-            width={190}
-            height={190}
+      <div className="relative h-[33vh] min-h-[200px] shrink-0 overflow-hidden">
+        <div className="absolute">
+          <LeftDecorationIcon
+            width={170}
+            height={170}
             alt=""
             className="pointer-events-none"
           />
         </div>
-        <div className="absolute -top-2 -right-2">
-          <Image
-            src="/assets/images/login_right.png"
-            width={130}
-            height={130}
+        <div className="absolute -right-20">
+          <RightDecorationIcon
+            width={170}
+            height={300}
             alt=""
             className="pointer-events-none"
           />
@@ -90,9 +90,9 @@ export default function LoginPage() {
       <div
         className={`
           flex-1
-          rounded-t-[28px]
+          rounded-t-[12px]
           px-6
-          pt-9
+          pt-7
           pb-10
           flex
           flex-col
@@ -103,21 +103,23 @@ export default function LoginPage() {
             : "bg-white text-[#1a1a1a] border border-[#F0F0F0] shadow-[0_-12px_30px_rgba(218,26,53,0.12)]"}
         `}
       >
-        <div className="space-y-2">
+        <div className="flex flex-col items-center " style={{gap:"6px"}}>
           <h1
-            className="text-center text-[22px] font-black tracking-wider uppercase"
+            className="text-center text-[24px] font-normal text-[#333333`] uppercase"
             style={{ fontFamily: "Anton, sans-serif" }}
           >
             Login to Account
           </h1>
-          <p className={`text-center text-sm leading-snug ${isDark ? "text-gray-400" : "text-gray-500"}`}>
+          <p className={`text-center text-sm font-montserrat font-normal leading-snug ${isDark ? "text-gray-400" : "text-gray-500"}`}
+            style={{  width:"270px"}}
+          >
             Please enter your email and password to continue
           </p>
         </div>
 
         <form onSubmit={handleLogin} className="flex flex-col gap-4">
           <div className="flex flex-col gap-1.5">
-            <label className={`text-sm font-semibold ${isDark ? "text-gray-200" : "text-[#1a1a1a]"}`}>
+            <label className={`text-sm font-montserrat font-normal ${isDark ? "text-gray-200" : "text-[#333333]"}`}>
               Email
             </label>
             <input
@@ -131,7 +133,7 @@ export default function LoginPage() {
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <label className={`text-sm font-semibold ${isDark ? "text-gray-200" : "text-[#1a1a1a]"}`}>
+            <label className={`text-sm font-montserrat font-normal ${isDark ? "text-gray-200" : "text-[#1a1a1a]"}`}>
               Password
             </label>
             <div className="relative">
@@ -156,7 +158,7 @@ export default function LoginPage() {
           <div className="text-right -mt-2">
             <Link
               href="/auth/forgot-password"
-              className={`text-xs transition ${isDark ? "text-gray-400 hover:text-white" : "text-gray-500 hover:text-[#DA1A35]"}`}
+              className={`text-xs transition font-normal font-montserrat ${isDark ? "text-gray-400 hover:text-white" : "text-[#A4A4A4]"}`}
             >
               Forgot Password?
             </Link>
@@ -166,8 +168,8 @@ export default function LoginPage() {
             type="submit"
             disabled={isLoading}
             className="
-              w-full bg-[#DA1A35] text-white py-3.5 rounded-full
-              text-base font-semibold tracking-wide
+              w-full bg-[#DA1A35] text-white py-4 rounded-full
+              text-sm font-open-sans font-normal cursor-pointer
               active:scale-95 transition disabled:opacity-50
             "
           >
@@ -176,36 +178,35 @@ export default function LoginPage() {
         </form>
 
         <div className="flex items-center gap-3">
-          <div className={`flex-1 h-px ${isDark ? "bg-[#222]" : "bg-gray-200"}`} />
-          <span className={`text-xs whitespace-nowrap ${isDark ? "text-gray-400" : "text-gray-500"}`}>Or Login with</span>
-          <div className={`flex-1 h-px ${isDark ? "bg-[#222]" : "bg-gray-200"}`} />
+          <div className={`flex-1 h-px ${isDark ? "bg-[#222]" : "bg-[#F4F6F8]"}`} />
+          <span className={`text-sm font-normal font-montserrat whitespace-nowrap ${isDark ? "text-gray-400" : "text-[#A4A4A4]"}`}>Or Login with</span>
+          <div className={`flex-1 h-px ${isDark ? "bg-[#222]" : "bg-[#F4F6F8]"}`} />
         </div>
 
-        <div className="flex justify-center gap-5">
+        <div className="flex justify-center  gap-5">
           {[
-            { key: "facebook", icon: "/assets/images/facebook_icon.png" },
-            { key: "google", icon: "/assets/images/google_icon.png" },
-            { key: "apple", icon: "/assets/images/apple_icon.png" },
+            { key: "facebook", icon: "/assets/icons/Facebook.svg" },
+            { key: "google", icon: "/assets/icons/Google.svg" },
+            { key: "apple", icon: "/assets/icons/Apple.svg" },
           ].map(({ key, icon }) => (
             <button
               key={key}
               onClick={() => handleSocialLogin(key)}
-              className="w-12 h-12 rounded-full flex items-center justify-center active:scale-95 transition"
+              className="w-9 h-9 rounded-full cursor-pointer flex items-center justify-center active:scale-105 transition"
               style={{
                 background: isDark ? "#141414" : "#FFFFFF",
-                border: isDark ? "1px solid #2A2A2A" : "1px solid #F0F0F0",
-                boxShadow: isDark ? "none" : "0 10px 22px rgba(0,0,0,0.08)",
+                border: isDark ? "1px solid #2A2A2A" : "1px solid #F4F6F8",
               }}
             >
-              <img src={icon} alt={key} className="w-7 h-7" />
+              <img src={icon} className="" alt={key}  />
             </button>
           ))}
         </div>
 
         <button
           className="
-            w-full border border-[#DA1A35] py-3 rounded-full
-            text-sm font-medium active:scale-95 transition
+            w-fit flex self-center mx-auto border border-[#DA1A35] py-2 px-4 cursor-pointer rounded-full
+            text-sm font-normal font-open-sans active:scale-95 transition
           "
           style={{
             color: isDark ? "#FFFFFF" : "#1a1a1a",
@@ -215,9 +216,9 @@ export default function LoginPage() {
           Continue as Guest
         </button>
 
-        <p className={`text-center text-sm pb-1 ${isDark ? "text-gray-400" : "text-gray-500"}`}>
-          Don't have an account?{" "}
-          <Link href="/auth/signup" className="text-[#DA1A35] font-semibold hover:underline">
+        <p className={`text-center font-normal font-montserrat text-sm pb-1 ${isDark ? "text-gray-400" : "text-[#A4A4A4]"}`}>
+          Don&apos;t have an account?{" "}
+          <Link href="/auth/signup" className="text-[#DA1A35] font-normal font-montserrat hover:underline">
             Sign Up
           </Link>
         </p>
@@ -258,6 +259,7 @@ export default function LoginPage() {
           {toast.text}
         </div>
       )}
+      </div>
     </div>
   );
 }

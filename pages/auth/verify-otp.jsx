@@ -5,7 +5,6 @@ import { useRouter } from "next/router";
 import { useTheme } from "../../context/ThemeContext";
 import {
   useVerifyOtpMutation,
-  useSignupMutation,
   useRequestOtpMutation,
   useForgotPasswordMutation,
 } from "../../src/store/authApiSlice";
@@ -29,11 +28,10 @@ export default function EnterOTPPage() {
   };
 
   const [verifyOtp, { isLoading: isVerifying }] = useVerifyOtpMutation();
-  const [signup, { isLoading: isSigningUp }] = useSignupMutation();
   const [requestOtp, { isLoading: isResending }] = useRequestOtpMutation();
   const [forgotPassword, { isLoading: isForgotResending }] = useForgotPasswordMutation();
 
-  const loading = isVerifying || isSigningUp;
+  const loading = isVerifying;
   const resending = isResending || isForgotResending;
 
   const isComplete = otp.every((d) => d !== "");
@@ -148,7 +146,8 @@ export default function EnterOTPPage() {
   const shellStyle = { backgroundColor: "#DA1A35" };
 
   return (
-    <div className="min-h-screen flex flex-col" style={shellStyle}>
+    <div className="min-h-screen flex justify-center" style={{ backgroundColor: isDark ? "#0B0B0B" : "#F8F9FA" }}>
+      <div className="w-full max-w-[430px] min-h-screen flex flex-col relative shadow-2xl" style={shellStyle}>
       <div className="relative h-[52vh] min-h-[260px] shrink-0 overflow-hidden">
         <div className="absolute -left-6">
           <Image
@@ -244,7 +243,7 @@ export default function EnterOTPPage() {
         </form>
 
         <p className={`text-center text-sm ${isDark ? "text-gray-400" : "text-gray-500"}`}>
-          Didn't get OTP?{" "}
+          Didn&apos;t get OTP?{" "}
           <button
             type="button"
             className="text-[#E31C3D] font-semibold hover:underline disabled:opacity-50"
@@ -298,6 +297,7 @@ export default function EnterOTPPage() {
           {toast.text}
         </div>
       )}
+      </div>
     </div>
   );
 }

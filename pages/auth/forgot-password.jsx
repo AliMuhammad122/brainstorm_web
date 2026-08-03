@@ -55,7 +55,8 @@ export default function ForgotPasswordPage() {
     : "bg-[#F2F2F2] text-[#1a1a1a] placeholder-gray-400";
 
   return (
-    <div className="min-h-screen flex flex-col" style={shellStyle}>
+    <div className="min-h-screen flex justify-center" style={{ backgroundColor: isDark ? "#0B0B0B" : "#F8F9FA" }}>
+      <div className="w-full max-w-[430px] min-h-screen flex flex-col relative shadow-2xl" style={shellStyle}>
       <div className="relative h-[52vh] min-h-[260px] shrink-0 overflow-hidden">
         <div className="absolute -left-6">
           <Image
@@ -187,6 +188,7 @@ export default function ForgotPasswordPage() {
           {toast.text}
         </div>
       )}
+      </div>
     </div>
   );
 }

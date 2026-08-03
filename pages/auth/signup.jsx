@@ -193,7 +193,8 @@ export default function SignupPage() {
   const currentCountry = countryCodes.find((c) => c.dial_code === form.phoneCode);
 
   return (
-    <div className="min-h-screen flex flex-col" style={shellStyle}>
+    <div className="min-h-screen flex justify-center" style={{ backgroundColor: isDark ? "#0B0B0B" : "#F8F9FA" }}>
+      <div className="w-full max-w-[430px] min-h-screen flex flex-col relative shadow-2xl" style={shellStyle}>
       <div className="relative h-[26vh] min-h-[150px] shrink-0 overflow-hidden">
         <div className="absolute -left-6">
           <Image
@@ -566,6 +567,7 @@ export default function SignupPage() {
           {toast.text}
         </div>
       )}
+      </div>
     </div>
   );
 }

@@ -76,7 +76,8 @@ export default function CreateNewPasswordPage() {
   const fieldCls = `w-full px-4 py-3.5 pr-12 rounded-xl text-sm outline-none transition focus:ring-2 focus:ring-[#E31C3D] ${inputBg}`;
 
   return (
-    <div className="min-h-screen flex flex-col" style={shellStyle}>
+    <div className="min-h-screen flex justify-center" style={{ backgroundColor: isDark ? "#0B0B0B" : "#F8F9FA" }}>
+      <div className="w-full max-w-[430px] min-h-screen flex flex-col relative shadow-2xl" style={shellStyle}>
       <div className="relative h-[52vh] min-h-[260px] shrink-0 overflow-hidden">
         <div className="absolute -left-6">
           <Image
@@ -231,6 +232,7 @@ export default function CreateNewPasswordPage() {
           {toast.text}
         </div>
       )}
+      </div>
     </div>
   );
 }
