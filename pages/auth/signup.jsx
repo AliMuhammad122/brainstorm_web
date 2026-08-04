@@ -1,13 +1,17 @@
 import { useState, useEffect, useRef } from "react";
-import Image from "next/image";
-import { BsEye, BsEyeSlash } from "react-icons/bs";
-import { MdKeyboardArrowDown } from "react-icons/md";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useTheme } from "../../context/ThemeContext";
-import ReactCountryFlag from "react-country-flag";
-import { countryCodes } from "../../data/countryCodes";
 import { useRequestOtpMutation, useSignupMutation } from "../../src/store/authApiSlice";
+import LeftDecorationIcon from "../../public/assets/icons/Left_decoration.svg";
+import RightDecorationIcon from "../../public/assets/icons/Right_decoration.svg";
+import EyeIcon from "../../public/assets/icons/Eye.svg";
+import EyeSlashIcon from "../../public/assets/icons/EyeSlash.svg";
+import CheckIcon from "../../public/assets/icons/check_circle.svg"
+import UncheckIcon from "../../public/assets/icons/uncheck.svg"
+import parsePhoneNumberFromString from "libphonenumber-js";
+import CountrySelect, { COUNTRY_OPTIONS } from "../../components/CountrySelect";
+
 
 export default function SignupPage() {
   const { isDark } = useTheme();
@@ -43,7 +47,7 @@ export default function SignupPage() {
       const verified = sessionStorage.getItem("is_phone_verified") === "true";
       const verifiedPhone = sessionStorage.getItem("verified_phone");
       const savedDataStr = sessionStorage.getItem("signup_data");
-      
+
       if (savedDataStr) {
         try {
           const savedData = JSON.parse(savedDataStr);
@@ -55,12 +59,12 @@ export default function SignupPage() {
             setConfirmPassword(savedData.password);
           }
           if (savedData.phone) {
-            const matchingCountry = countryCodes.find(c => savedData.phone.startsWith(c.dial_code.replace("+", "")));
+            const matchingCountry = COUNTRY_OPTIONS.find(c => savedData.phone.startsWith(c.dialCode.replace("+", "")));
             if (matchingCountry) {
-              const code = matchingCountry.dial_code;
+              const code = matchingCountry.dialCode;
               const num = savedData.phone.substring(code.replace("+", "").length);
               setForm({ phoneCode: code, phone: num });
-              
+
               if (verified && verifiedPhone === savedData.phone) {
                 setIsVerified(true);
               }
@@ -79,7 +83,23 @@ export default function SignupPage() {
   const hasNumber = /[0-9]/.test(password);
   const hasSymbol = /[^A-Za-z0-9]/.test(password);
   const hasMinLength = password.length >= 8;
-  const score = password ? [hasUppercase, hasNumber, hasSymbol, hasMinLength].filter(Boolean).length : 0;
+  
+  let score = 0;
+  if (password) {
+    if (hasUppercase && hasNumber) {
+      if (hasSymbol) {
+        if (hasMinLength) {
+          score = 4;
+        } else {
+          score = 3;
+        }
+      } else {
+        score = 2;
+      }
+    } else {
+      score = 0;
+    }
+  }
 
   const validatePhone = (code, phone) => {
     if (!code) {
@@ -90,9 +110,24 @@ export default function SignupPage() {
       setPhoneError("Phone number is required");
       return false;
     }
-    if (phone.length < 7 || phone.length > 15) {
-      setPhoneError("Enter a valid phone number");
-      return false;
+    const country = COUNTRY_OPTIONS.find(c => c.dialCode === code);
+    if (country) {
+      try {
+        const fullNumber = code + phone;
+        const parsed = parsePhoneNumberFromString(fullNumber, country.value);
+        if (parsed && !parsed.isValid()) {
+          setPhoneError("Please enter a valid phone number for the selected country.");
+          return false;
+        }
+      } catch {
+        setPhoneError("Please enter a valid phone number.");
+        return false;
+      }
+    } else {
+      if (phone.length < 7 || phone.length > 15) {
+        setPhoneError("Enter a valid phone number");
+        return false;
+      }
     }
     setPhoneError("");
     return true;
@@ -112,7 +147,7 @@ export default function SignupPage() {
         password,
         confirmPassword,
       };
-      
+
       await requestOtp({ phone: formattedPhone }).unwrap();
       sessionStorage.setItem("signup_data", JSON.stringify(payload));
       router.push(`/auth/verify-otp?phone=${formattedPhone}`);
@@ -162,411 +197,365 @@ export default function SignupPage() {
     }
   };
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    if (name === "phone") {
-      const digitsOnly = value.replace(/\D/g, "");
-      setForm((prev) => ({ ...prev, phone: digitsOnly }));
-      validatePhone(form.phoneCode, digitsOnly);
-      setIsVerified(false);
-      sessionStorage.removeItem("is_phone_verified");
-      sessionStorage.removeItem("verified_phone");
-    } else if (name === "phoneCode") {
-      setForm((prev) => ({ ...prev, phoneCode: value }));
-      validatePhone(value, form.phone);
-      setIsVerified(false);
-      sessionStorage.removeItem("is_phone_verified");
-      sessionStorage.removeItem("verified_phone");
-    } else {
-      setForm((prev) => ({ ...prev, [name]: value }));
-      validatePhone(value, form.phone);
-    }
+  const handleCountryChange = (option) => {
+    const nextCode = option ? option.dialCode : "+357";
+    setForm(prev => ({ ...prev, phoneCode: nextCode }));
+    validatePhone(nextCode, form.phone);
+    setIsVerified(false);
+    sessionStorage.removeItem("is_phone_verified");
+    sessionStorage.removeItem("verified_phone");
+  };
+
+  const handlePhoneChange = (val) => {
+    const digitsOnly = val.replace(/\D/g, "");
+    setForm(prev => ({ ...prev, phone: digitsOnly }));
+    validatePhone(form.phoneCode, digitsOnly);
+    setIsVerified(false);
+    sessionStorage.removeItem("is_phone_verified");
+    sessionStorage.removeItem("verified_phone");
   };
 
   const shellStyle = { backgroundColor: "#DA1A35" };
 
-  const inputBg = isDark ? "bg-[#2B2B2B]" : "bg-[#F2F2F2]";
-  const inputTx = isDark ? "text-white placeholder-gray-500" : "text-[#1a1a1a] placeholder-gray-400";
-  const fieldCls = `w-full px-4 py-3.5 rounded-xl text-sm outline-none transition focus:ring-2 focus:ring-[#E31C3D] ${inputBg} ${inputTx}`;
-  const labelCls = `text-sm font-semibold ${isDark ? "text-gray-200" : "text-[#1a1a1a]"}`;
-
-  const currentCountry = countryCodes.find((c) => c.dial_code === form.phoneCode);
+  const inputClass = `
+    w-full px-3 py-4 rounded-[8px] font-normal text-sm font-montserrat placeholder:text-sm outline-none
+    focus:ring-0 focus:outline-0 transition
+    ${isDark
+      ? "bg-[#2B2B2B] text-white placeholder-[#777777]"
+      : "bg-[#F2F2F2] placeholder-[#777777]"}
+  `;
+  const labelCls = `text-sm font-montserrat font-normal ${isDark ? "text-gray-200" : "text-[#333333]"}`;
 
   return (
     <div className="min-h-screen flex justify-center" style={{ backgroundColor: isDark ? "#0B0B0B" : "#F8F9FA" }}>
-      <div className="w-full max-w-[430px] min-h-screen flex flex-col relative shadow-2xl" style={shellStyle}>
-      <div className="relative h-[26vh] min-h-[150px] shrink-0 overflow-hidden">
-        <div className="absolute -left-6">
-          <Image
-            src="/assets/images/login_left_decoration.png"
-            width="190"
-            height="190"
-            alt=""
-            className="pointer-events-none"
-          />
+      <div className="w-full max-w-[385px] min-h-screen flex flex-col relative shadow-2xl" style={shellStyle}>
+        {/* Header section */}
+        <div className="relative h-[33vh] min-h-[200px] shrink-0 overflow-hidden">
+          <div className="absolute">
+            <LeftDecorationIcon
+              width={170}
+              height={170}
+              alt=""
+              className="pointer-events-none"
+            />
+          </div>
+          <div className="absolute -right-20">
+            <RightDecorationIcon
+              width={170}
+              height={300}
+              alt=""
+              className="pointer-events-none"
+            />
+          </div>
         </div>
-        <div className="absolute -top-2 -right-2">
-          <Image
-            src="/assets/images/login_right.png"
-            width="130"
-            height="130"
-            alt=""
-            className="pointer-events-none"
-          />
-        </div>
-      </div>
 
-      <div
-        className={`
-          flex-1 rounded-t-[28px] px-6 pt-9 pb-10
-          flex flex-col gap-5 overflow-y-auto
+        {/* Card */}
+        <div
+          className={`
+          flex-1
+          rounded-t-[12px]
+          px-6
+          pt-7
+          pb-10
+          flex
+          flex-col
+          gap-5
+          overflow-y-auto
           ${isDark
-            ? "bg-[#0B0B0B] text-white shadow-[0_-10px_30px_rgba(0,0,0,0.35)]"
-            : "bg-white text-[#1a1a1a] border border-[#F0F0F0] shadow-[0_-12px_30px_rgba(227,28,61,0.12)]"}
+              ? "bg-[#0B0B0B] text-white shadow-[0_-10px_30px_rgba(0,0,0,0.35)]"
+              : "bg-white  shadow-[0_-12px_30px_rgba(218,26,53,0.12)]"}
         `}
-      >
-        <div className="space-y-2">
-          <h1
-            className="text-center text-[22px] font-black tracking-wider uppercase"
-            style={{ fontFamily: "Anton, sans-serif" }}
-          >
-            Sign Up Account
-          </h1>
-          <p className={`text-center text-sm leading-snug ${isDark ? "text-gray-400" : "text-gray-500"}`}>
-            Please enter your details to sign up account
-          </p>
-        </div>
-
-        <form onSubmit={handleSignup} className="flex flex-col gap-4">
-          <div className="flex flex-col gap-1.5">
-            <label className={labelCls}>First Name</label>
-            <input
-              type="text"
-              required
-              value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
-              placeholder="Enter first name"
-              className={fieldCls}
-            />
+        >
+          <div className="flex flex-col items-center " style={{ gap: "6px" }}>
+            <h1
+              className="text-center text-[24px] text-[#333333] font-normal uppercase"
+              style={{ fontFamily: "Anton, sans-serif" }}
+            >
+              Sign Up Account
+            </h1>
+            <p className={`text-center text-sm font-montserrat font-normal leading-snug ${isDark ? "text-gray-400" : "text-[#606060]"}`}
+              style={{ width: "270px" }}
+            >
+              Please enter your details to sign up account
+            </p>
           </div>
 
-          <div className="flex flex-col gap-1.5">
-            <label className={labelCls}>Last Name</label>
-            <input
-              type="text"
-              required
-              value={lastName}
-              onChange={(e) => setLastName(e.target.value)}
-              placeholder="Enter last name"
-              className={fieldCls}
-            />
-          </div>
+          <form onSubmit={handleSignup} className="flex flex-col gap-3">
+            <div className="flex flex-col gap-1.5">
+              <label className={labelCls}>First Name</label>
+              <input
+                type="text"
+                required
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+                placeholder="Enter first name"
+                className={inputClass}
+              />
+            </div>
 
-          <div className="flex flex-col gap-1.5">
-            <label className={labelCls}>Email</label>
-            <input
-              type="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Enter your email"
-              className={fieldCls}
-            />
-          </div>
+            <div className="flex flex-col gap-1.5">
+              <label className={labelCls}>Last Name</label>
+              <input
+                type="text"
+                required
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+                placeholder="Enter last name"
+                className={inputClass}
+              />
+            </div>
 
-          <div className="flex flex-col gap-1.5">
-            <label className={labelCls}>Phone Number</label>
+            <div className="flex flex-col gap-1.5">
+              <label className={labelCls}>Email</label>
+              <input
+                type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Enter your email"
+                className={inputClass}
+              />
+            </div>
 
-            <div className={`flex items-center rounded-xl ${inputBg}`}>
-              <div className="relative flex items-center gap-0.5 pl-3 shrink-0">
-                {currentCountry && (
-                  <ReactCountryFlag
-                    countryCode={currentCountry.code}
-                    svg
-                    style={{ width: 22, height: 22, objectFit: "cover", borderRadius: 3 }}
+            <div className="flex flex-col gap-1.5">
+              <label className={labelCls}>Phone Number</label>
+
+              <div className={`flex items-center rounded-[8px] transition pl-2.5 ${isDark ? "bg-[#2B2B2B]" : "bg-[#F2F2F2]"}`}>
+                <div className="shrink-0">
+                  <CountrySelect
+                    value={form.phoneCode}
+                    onChange={handleCountryChange}
                   />
-                )}
-                <MdKeyboardArrowDown className="text-gray-400 w-4 h-4" />
-                <select
-                  name="phoneCode"
-                  value={form.phoneCode}
-                  onChange={handleChange}
-                  className="absolute inset-0 opacity-0 cursor-pointer w-full"
+                </div>
+
+                {/* Divider line */}
+                <div className={`h-11 w-px  shrink-0 ${isDark ? "bg-[#3A3A3A]" : "bg-[#E9EAEB]"}`} />
+
+                <input
+                  type="tel"
+                  name="phone"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  value={form.phone}
+                  onChange={(e) => handlePhoneChange(e.target.value)}
+                  placeholder="(444) 1234-5678"
+                  className={`flex-1 min-w-0 py-4 px-2 placeholder:text-sm bg-transparent outline-none font-normal font-montserrat ${isDark ? "text-white placeholder-[#777777]" : "text-[#1a1a1a] placeholder-[#777777]"}`}
+                />
+
+                <button
+                  type="button"
+                  className="shrink-0 pr-2 font-normal font-montserrat cursor-pointer active:scale-95 transition disabled:opacity-50"
+                  style={{ color: isVerified ? "#2ECC71" : "#DA1A35", fontSize: "14px" }}
+                  onClick={handleSendOtp}
+                  disabled={isSendingOtp || isVerified}
                 >
-                  {countryCodes.map((country, idx) => (
-                    <option key={idx} value={country.dial_code}>
-                      {country.code} {country.dial_code}
-                    </option>
-                  ))}
-                </select>
+                  {isSendingOtp ? "Sending..." : isVerified ? "Verified ✓" : "Send Otp"}
+                </button>
               </div>
 
-              <div className={`w-px h-5 mx-2 shrink-0 ${isDark ? "bg-[#3A3A3A]" : "bg-gray-300"}`} />
-
-              <span className={`text-sm font-medium shrink-0 ${isDark ? "text-white" : "text-[#1a1a1a]"}`}>
-                {form.phoneCode}
-              </span>
-
-              <input
-                type="tel"
-                name="phone"
-                value={form.phone}
-                onChange={handleChange}
-                placeholder="(444) 1234-5678"
-                className={`flex-1 mx-2 py-3.5 text-sm bg-transparent outline-none ${inputTx}`}
-              />
-
-              <button
-                type="button"
-                className={`shrink-0 pr-4 text-sm font-semibold ${isVerified ? "text-green-500" : "text-[#E31C3D]"} disabled:opacity-50`}
-                onClick={handleSendOtp}
-                disabled={isSendingOtp || isVerified}
-              >
-                {isSendingOtp ? "Sending..." : isVerified ? "Verified ✓" : "Send Otp"}
-              </button>
+              {phoneError && <p className="text-xs text-red-500">{phoneError}</p>}
             </div>
 
-            {phoneError && <p className="text-xs text-red-500">{phoneError}</p>}
-          </div>
-
-          <div className="flex flex-col gap-1.5">
-            <label className={labelCls}>Password</label>
-            <div className="relative">
-              <input
-                type={showPassword ? "text" : "password"}
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Enter password"
-                className={`${fieldCls} pr-12`}
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400"
-              >
-                {showPassword ? <BsEyeSlash size={20} /> : <BsEye size={20} />}
-              </button>
-            </div>
-            {password.length > 0 && (
-              <div className="mt-2 space-y-1.5">
-                <div className="flex justify-between items-center text-xs">
-                  <span></span>
-                  <span className={`font-semibold ${score <= 2 ? "text-[#E31C3D]" : score === 3 ? "text-[#F1C40F]" : "text-[#2ECC71]"}`}>
-                    {score <= 2 ? "Weak" : score === 3 ? "Good" : "Strong"}
-                  </span>
-                </div>
-                <div className="flex gap-2">
-                  <div className={`h-1.5 flex-1 rounded-full ${score > 0 ? (score <= 2 ? "bg-[#E31C3D]" : score === 3 ? "bg-[#F1C40F]" : "bg-[#2ECC71]") : (isDark ? "bg-[#2B2B2B]" : "bg-gray-200")}`}></div>
-                  <div className={`h-1.5 flex-1 rounded-full ${score > 2 ? (score === 3 ? "bg-[#F1C40F]" : "bg-[#2ECC71]") : (isDark ? "bg-[#2B2B2B]" : "bg-gray-200")}`}></div>
-                  <div className={`h-1.5 flex-1 rounded-full ${score > 3 ? "bg-[#2ECC71]" : (isDark ? "bg-[#2B2B2B]" : "bg-gray-200")}`}></div>
-                </div>
-                {
-                  password !== confirmPassword && (
-<div className="text-[11px] text-gray-400 mt-2 space-y-1">
-                  <p className="font-semibold text-gray-400">Must contain at least:</p>
-                  <div className="flex flex-wrap gap-x-3 gap-y-1 font-medium text-gray-500">
-                    <span className="flex items-center">
-                      {hasUppercase ? (
-                        <svg className="w-3.5 h-3.5 text-[#2ECC71] mr-0.5 shrink-0 inline-block align-middle" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                      ) : (
-                        <svg className="w-3.5 h-3.5 text-gray-400 mr-0.5 shrink-0 inline-block align-middle" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                      )}
-                      <span className={hasUppercase ? "text-[#2ECC71]" : "text-gray-400"}>At least 1 uppercase</span>
-                    </span>
-                    <span className="flex items-center">
-                      {hasNumber ? (
-                        <svg className="w-3.5 h-3.5 text-[#2ECC71] mr-0.5 shrink-0 inline-block align-middle" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                      ) : (
-                        <svg className="w-3.5 h-3.5 text-gray-400 mr-0.5 shrink-0 inline-block align-middle" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                      )}
-                      <span className={hasNumber ? "text-[#2ECC71]" : "text-gray-400"}>At least 1 number</span>
-                    </span>
-                    <span className="flex items-center">
-                      {hasSymbol ? (
-                        <svg className="w-3.5 h-3.5 text-[#2ECC71] mr-0.5 shrink-0 inline-block align-middle" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                      ) : (
-                        <svg className="w-3.5 h-3.5 text-gray-400 mr-0.5 shrink-0 inline-block align-middle" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                      )}
-                      <span className={hasSymbol ? "text-[#2ECC71]" : "text-gray-400"}>At least 1 symbol</span>
-                    </span>
-                    <span className="flex items-center">
-                      {hasMinLength ? (
-                        <svg className="w-3.5 h-3.5 text-[#2ECC71] mr-0.5 shrink-0 inline-block align-middle" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                      ) : (
-                        <svg className="w-3.5 h-3.5 text-gray-400 mr-0.5 shrink-0 inline-block align-middle" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                      )}
-                      <span className={hasMinLength ? "text-[#2ECC71]" : "text-gray-400"}>At least 8 character</span>
+            <div className="flex flex-col gap-1.5">
+              <label className={labelCls}>Password</label>
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Enter password"
+                  className={`${inputClass} pr-12`}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className={`absolute right-2.5 top-1/2 -translate-y-1/2 ${isDark ? "text-gray-400" : "text-[#777777]"}`}
+                >
+                  {showPassword ? <EyeSlashIcon width={20} height={20} /> : <EyeIcon width={20} height={20} />}
+                </button>
+              </div>
+              {password.length > 0 && (
+                <div className=" space-y-1.5">
+                  <div className="flex justify-between items-center text-xs">
+                    <span></span>
+                    <span className={`font-normal text-[8px] font-instrument text-[#A4A4A4]`}>
+                      {score === 0 ? "" : score <= 2 ? "Weak" : score === 3 ? "Good" : "Strong"}
                     </span>
                   </div>
+                   <div className="flex gap-2">
+                    <div className={`h-1 flex-1 rounded-full ${score > 0 ? "bg-[#D00416]" : (isDark ? "bg-[#2B2B2B]" : "bg-gray-200")}`}></div>
+                    <div className={`h-1 flex-1 rounded-full ${score > 2 ? "bg-[#DFB400]" : (isDark ? "bg-[#2B2B2B]" : "bg-gray-200")}`}></div>
+                    <div className={`h-1 flex-1 rounded-full ${score > 3 ? "bg-[#1FC16B]" : (isDark ? "bg-[#2B2B2B]" : "bg-gray-200")}`}></div>
+                  </div>
+                  {
+                    password !== confirmPassword && (
+                      <div className=" text-[#777777] mt-1 space-y-1 font-instrument">
+                        <p className="text-[10px] font-normal text-[#777777]">Must contain at least:</p>
+                        <div className="flex gap-x-1 gap-y-1 font-normal text-[#777777] text-[8px] mt-1">
+                          <span className="flex items-center justify-center">
+                            {hasUppercase ? (
+                              <CheckIcon
+                                width={12}
+                                height={12}
+                                className="mr-0.5 shrink-0 inline-block align-middle"
+                              />
+                            ) : (
+                              <UncheckIcon
+                                width={12}
+                                height={12}
+                                className="mr-0.5 shrink-0 inline-block align-middle"
+                              />
+                            )}
+                            <span className="text-[#777777]">At least 1 uppercase</span>
+                          </span>
+                          <span className="flex items-center">
+                            {hasNumber ? (
+                              <CheckIcon
+                                width={12}
+                                height={12}
+                                className="mr-0.5 shrink-0 inline-block align-middle"
+                              />
+                            ) : (
+                              <UncheckIcon
+                                width={12}
+                                height={12}
+                                className="mr-0.5 shrink-0 inline-block align-middle"
+                              />
+                            )}
+                            <span className="text-[#777777]">At least 1 number</span>
+                          </span>
+                          <span className="flex items-center">
+                            {hasSymbol ? (
+                              <CheckIcon
+                                width={12}
+                                height={12}
+                                className="mr-0.5 shrink-0 inline-block align-middle"
+                              />
+                            ) : (
+                              <UncheckIcon
+                                width={12}
+                                height={12}
+                                className="mr-0.5 shrink-0 inline-block align-middle"
+                              />
+                            )}
+                            <span className="text-[#777777]">At least 1 symbol</span>
+                          </span>
+                          <span className="flex items-center">
+                            {hasMinLength ? (
+                              <CheckIcon
+                                width={12}
+                                height={12}
+                                className="mr-0.5 shrink-0 inline-block align-middle"
+                              />
+                            ) : (
+                              <UncheckIcon
+                                width={12}
+                                height={12}
+                                className="mr-0.5 shrink-0 inline-block align-middle"
+                              />
+                            )}
+                            <span className="text-[#777777]">At least 8 character</span>
+                          </span>
+                        </div>
+                      </div>)
+                  }
                 </div>
-                  )
-                }
-                {/* <div className="text-[11px] text-gray-400 mt-2 space-y-1">
-                  <p className="font-semibold text-gray-400">Must contain at least:</p>
-                  <div className="flex flex-wrap gap-x-3 gap-y-1 font-medium text-gray-500">
-                    <span className="flex items-center">
-                      {hasUppercase ? (
-                        <svg className="w-3.5 h-3.5 text-[#2ECC71] mr-0.5 shrink-0 inline-block align-middle" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                      ) : (
-                        <svg className="w-3.5 h-3.5 text-gray-400 mr-0.5 shrink-0 inline-block align-middle" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                      )}
-                      <span className={hasUppercase ? "text-[#2ECC71]" : "text-gray-400"}>At least 1 uppercase</span>
-                    </span>
-                    <span className="flex items-center">
-                      {hasNumber ? (
-                        <svg className="w-3.5 h-3.5 text-[#2ECC71] mr-0.5 shrink-0 inline-block align-middle" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                      ) : (
-                        <svg className="w-3.5 h-3.5 text-gray-400 mr-0.5 shrink-0 inline-block align-middle" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                      )}
-                      <span className={hasNumber ? "text-[#2ECC71]" : "text-gray-400"}>At least 1 number</span>
-                    </span>
-                    <span className="flex items-center">
-                      {hasSymbol ? (
-                        <svg className="w-3.5 h-3.5 text-[#2ECC71] mr-0.5 shrink-0 inline-block align-middle" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                      ) : (
-                        <svg className="w-3.5 h-3.5 text-gray-400 mr-0.5 shrink-0 inline-block align-middle" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                      )}
-                      <span className={hasSymbol ? "text-[#2ECC71]" : "text-gray-400"}>At least 1 symbol</span>
-                    </span>
-                    <span className="flex items-center">
-                      {hasMinLength ? (
-                        <svg className="w-3.5 h-3.5 text-[#2ECC71] mr-0.5 shrink-0 inline-block align-middle" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                      ) : (
-                        <svg className="w-3.5 h-3.5 text-gray-400 mr-0.5 shrink-0 inline-block align-middle" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                      )}
-                      <span className={hasMinLength ? "text-[#2ECC71]" : "text-gray-400"}>At least 8 character</span>
+              )}
+            </div>
+
+            <div className="flex flex-col gap-1.5 pb-3">
+              <label className={labelCls}>Confirm Password</label>
+              <div className="relative">
+                <input
+                  type={showConfirmPassword ? "text" : "password"}
+                  required
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  placeholder="Confirm password"
+                  className={`${inputClass} pr-12`}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className={`absolute right-2.5 top-1/2 -translate-y-1/2 ${isDark ? "text-gray-400" : "text-[#777777]"}`}
+                >
+                  {showConfirmPassword ? <EyeSlashIcon width={20} height={20} /> : <EyeIcon width={20} height={20} />}
+                </button>
+              </div>
+              {password && confirmPassword && password === confirmPassword && (
+                <div className="space-y-1.5">
+                  <div className="flex justify-between items-center text-xs">
+                    <span></span>
+                    <span className={`font-normal text-[8px] font-instrument text-[#A4A4A4]`}>
+                      {score === 0 ? "" : score <= 2 ? "Weak" : score === 3 ? "Good" : "Strong"}
                     </span>
                   </div>
-                </div> */}
-              </div>
-            )}
-          </div>
-
-          <div className="flex flex-col gap-1.5">
-            <label className={labelCls}>Confirm Password</label>
-            <div className="relative">
-              <input
-                type={showConfirmPassword ? "text" : "password"}
-                required
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder="Confirm password"
-                className={`${fieldCls} pr-12`}
-              />
-              <button
-                type="button"
-                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400"
-              >
-                {showConfirmPassword ? <BsEyeSlash size={20} /> : <BsEye size={20} />}
-              </button>
+                  <div className="flex gap-2">
+                    <div className={`h-1 flex-1 rounded-full ${score > 0 ? "bg-[#D00416]" : (isDark ? "bg-[#2B2B2B]" : "bg-gray-200")}`}></div>
+                    <div className={`h-1 flex-1 rounded-full ${score > 2 ? "bg-[#DFB400]" : (isDark ? "bg-[#2B2B2B]" : "bg-gray-200")}`}></div>
+                    <div className={`h-1 flex-1 rounded-full ${score > 3 ? "bg-[#1FC16B]" : (isDark ? "bg-[#2B2B2B]" : "bg-gray-200")}`}></div>
+                  </div>
+                </div>
+              )}
             </div>
-            {password && confirmPassword && password === confirmPassword && (
-              <div className="mt-2 space-y-1.5">
-                <div className="flex justify-between items-center text-xs">
-                  <span></span>
-                  <span className={`font-semibold ${score <= 2 ? "text-[#E31C3D]" : score === 3 ? "text-[#F1C40F]" : "text-[#2ECC71]"}`}>
-                    {score <= 2 ? "Weak" : score === 3 ? "Good" : "Strong"}
-                  </span>
-                </div>
-                <div className="flex gap-2">
-                  <div className={`h-1.5 flex-1 rounded-full ${score > 0 ? (score <= 2 ? "bg-[#E31C3D]" : score === 3 ? "bg-[#F1C40F]" : "bg-[#2ECC71]") : (isDark ? "bg-[#2B2B2B]" : "bg-gray-200")}`}></div>
-                  <div className={`h-1.5 flex-1 rounded-full ${score > 2 ? (score === 3 ? "bg-[#F1C40F]" : "bg-[#2ECC71]") : (isDark ? "bg-[#2B2B2B]" : "bg-gray-200")}`}></div>
-                  <div className={`h-1.5 flex-1 rounded-full ${score > 3 ? "bg-[#2ECC71]" : (isDark ? "bg-[#2B2B2B]" : "bg-gray-200")}`}></div>
-                </div>
-              </div>
-            )}
-          </div>
 
-          <button
-            type="submit"
-            disabled={isSendingOtp || isSigningUp}
-            className="
-              w-full bg-[#E31C3D] text-white py-3.5 rounded-full
-              text-base font-semibold tracking-wide mt-2
+            <button
+              type="submit"
+              disabled={isSendingOtp || isSigningUp}
+              className="
+              w-full bg-[#DA1A35] text-white py-4 rounded-full
+              text-sm font-open-sans font-normal cursor-pointer
               active:scale-95 transition disabled:opacity-50
             "
-          >
-            {isSigningUp ? "Signing up..." : isSendingOtp ? "Sending OTP..." : "Sign Up"}
-          </button>
-        </form>
+            >
+              {isSigningUp ? "Signing up..." : isSendingOtp ? "Sending OTP..." : "Sign Up"}
+            </button>
+          </form>
 
-        <p className={`text-center text-sm pb-1 ${isDark ? "text-gray-400" : "text-gray-500"}`}>
-          Already have an account?{" "}
-          <Link href="/auth/login" className="text-[#E31C3D] font-semibold hover:underline">
-            Login
-          </Link>
-        </p>
-      </div>
-      {toast.show && (
-        <div
-          className="custom-toast-container"
-          style={{
-            position: "fixed",
-            top: 24,
-            left: "50%",
-            transform: "translateX(-50%)",
-            background: toast.type === "success" ? "rgba(76, 175, 80, 0.95)" : "rgba(231, 28, 13, 0.95)",
-            backdropFilter: "blur(8px)",
-            color: "#fff",
-            padding: "12px 24px",
-            borderRadius: 30,
-            boxShadow: "0 8px 32px rgba(0,0,0,0.25)",
-            zIndex: 9999,
-            fontSize: 13,
-            fontWeight: 500,
-            whiteSpace: "nowrap",
-            border: `1px solid ${toast.type === "success" ? "rgba(255, 255, 255, 0.2)" : "rgba(255, 255, 255, 0.15)"}`,
-            display: "flex",
-            alignItems: "center",
-            gap: 8,
-          }}
-        >
-          {toast.type === "success" ? (
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M20 6L9 17L4 12" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          ) : (
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M18 6L6 18M6 6l12 12" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          )}
-          {toast.text}
+          <p className={`text-center font-normal font-montserrat text-sm ${isDark ? "text-gray-400" : "text-[#A4A4A4]"}`}>
+            Already have an account?{" "}
+            <Link href="/auth/login" className="text-[#DA1A35] font-normal font-montserrat hover:underline">
+              Login
+            </Link>
+          </p>
         </div>
-      )}
+        {toast.show && (
+          <div
+            className="custom-toast-container"
+            style={{
+              position: "fixed",
+              top: 24,
+              left: "50%",
+              transform: "translateX(-50%)",
+              background: toast.type === "success" ? "rgba(76, 175, 80, 0.95)" : "rgba(231, 28, 13, 0.95)",
+              backdropFilter: "blur(8px)",
+              color: "#fff",
+              padding: "12px 24px",
+              borderRadius: 30,
+              boxShadow: "0 8px 32px rgba(0,0,0,0.25)",
+              zIndex: 9999,
+              fontSize: 13,
+              fontWeight: 500,
+              whiteSpace: "nowrap",
+              border: `1px solid ${toast.type === "success" ? "rgba(255, 255, 255, 0.2)" : "rgba(255, 255, 255, 0.15)"}`,
+              display: "flex",
+              alignItems: "center",
+              gap: 8,
+            }}
+          >
+            {toast.type === "success" ? (
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M20 6L9 17L4 12" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            ) : (
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M18 6L6 18M6 6l12 12" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            )}
+            {toast.text}
+          </div>
+        )}
       </div>
     </div>
   );
