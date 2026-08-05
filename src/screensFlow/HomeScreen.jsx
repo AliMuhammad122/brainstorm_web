@@ -7,8 +7,10 @@ import Skeleton from "../../components/Skeleton";
 import { FaStopwatch } from "react-icons/fa";
 import { GiPathDistance } from "react-icons/gi";
 import { Carousel } from "./ui";
-import { MdSearch } from "react-icons/md";
-import FilterIcon from "../../public/assets/icons/filter.png";
+import FilterIcon from "../../public/assets/icons/filter.svg"
+import SearchIcon from "../../public/assets/icons/search.svg"     
+import TimerIcon from "../../public/assets/icons/time.svg"
+import DistanceIcon from "../../public/assets/icons/distance.svg"
 
 export function HomeScreen({
   onFilter,
@@ -82,7 +84,7 @@ export function HomeScreen({
         style={{
           display: "flex",
           gap: 10,
-          padding: "4px 20px 14px",
+          padding: "14px 20px 10px",
           background: "var(--bg)",
           flexShrink: 0,
           fontFamily: "'Montserrat',sans-serif",
@@ -91,54 +93,49 @@ export function HomeScreen({
         <div
           style={{
             flex: 1,
-            height: 46,
-            background: "var(--surface-alt)",
-            borderRadius: 14,
+            height: 48,
+            background: "#F4F6F8",
+            borderRadius: 1000,
             display: "flex",
             alignItems: "center",
-            gap: 10,
-            padding: "0 16px",
+            gap: 7,
+            padding: "0 14px",
           }}
         >
-          <MdSearch size={20} color="var(--subtle)" />
+          <SearchIcon width={20} height={20} alt="Search" className="theme-icon"/>
           <input
             type="text"
             placeholder="Search restaurant etc"
             value={searchVal}
             onChange={(e) => setSearchVal(e.target.value)}
+            className="placeholder:text-gray-400"
             style={{
               flex: 1,
               background: "none",
               border: "none",
               outline: "none",
               fontSize: 14,
-              color: "var(--text)",
-              fontFamily: "inherit",
+              // color: "var(--color-primaryText)",
+              fontFamily: "'Montserrat'",
             }}
           />
-        </div>
         <button
           style={{
             width: 44,
             height: 44,
             borderRadius: 14,
-            background: "var(--surface-alt)",
+            // background: "var(--surface-alt)",
             border: "none",
             cursor: "pointer",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             position: "relative",
+            right:"-15px"
           }}
           onClick={onFilter}
         >
-          <Image
-            src={FilterIcon}
-            width={18}
-            height={18}
-            alt="Filter"
-            className="theme-icon"
-          />
+          <FilterIcon width={20} height={20} alt="Filter" className="theme-icon"/>
           {has && (
             <div
               style={{
@@ -151,9 +148,10 @@ export function HomeScreen({
                 borderRadius: "50%",
                 border: "1.5px solid var(--bg)",
               }}
-            />
+              />
           )}
         </button>
+              </div>
       </div>
       <div
         style={{
@@ -169,10 +167,11 @@ export function HomeScreen({
           <div style={{ marginBottom: 14 }}>
             <p
               style={{
-                fontSize: 19,
-                fontWeight: 800,
-                color: "var(--text)",
+                fontSize: 16,
+                fontWeight: 400,
+                color: "#333333",
                 margin: "0 0 6px",
+                fontFamily:"'Montserrat',sans-serif"
               }}
             >
               Nearby Restaurants
@@ -263,12 +262,11 @@ export function HomeScreen({
                 gap: 12,
               }}
             >
-              <span style={{ fontSize: 42 }}>🍽️</span>
               <p
                 style={{
                   fontSize: 14,
-                  color: "var(--subtle)",
-                  fontWeight: 500,
+                  color: "#BBBBBB",
+                  fontWeight: 400,
                   margin: 0,
                 }}
               >
@@ -277,15 +275,15 @@ export function HomeScreen({
               <button
                 onClick={onClear}
                 style={{
-                  background: "var(--text)",
-                  color: "var(--on-primary)",
+                  background: "#DA1A35",
+                  color: "#ffffff",
                   border: "none",
                   borderRadius: 20,
-                  padding: "9px 22px",
-                  fontSize: 13,
-                  fontWeight: 700,
+                  padding: "8px 18px",
+                  fontSize: 14,
+                  fontWeight: 400,
                   cursor: "pointer",
-                  fontFamily: "inherit",
+                  fontFamily: "'Montserrat'",
                 }}
               >
                 Clear Filters
@@ -298,11 +296,12 @@ export function HomeScreen({
                 onClick={() => onRestoTap(r)}
                 style={{
                   background: "var(--surface)",
-                  borderRadius: 18,
+                  borderRadius: 8,
                   overflow: "hidden",
                   marginBottom: 16,
-                  boxShadow: "0 2px 14px rgba(0,0,0,0.2)",
+                  // boxShadow: "0 2px 14px rgba(0,0,0,0.2)",
                   cursor: "pointer",
+                  border: "1px solid #F4F6F8",
                 }}
               >
                 <div
@@ -325,7 +324,7 @@ export function HomeScreen({
                     }}
                     onError={(e) => (e.target.style.display = "none")}
                   />
-                  <div
+                  {/* <div
                     style={{
                       position: "absolute",
                       bottom: 10,
@@ -339,53 +338,56 @@ export function HomeScreen({
                       borderRadius: 20,
                     }}
                   >
-                  </div>
+                  </div> */}
                 </div>
                 <div
                   style={{
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "space-between",
-                    padding: "13px 15px 15px",
+                    padding: "13px 8px 8px",
+                    backgroundColor: "#ffffff"
                   }}
                 >
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <p
                       style={{
-                        fontSize: 14.5,
-                        fontWeight: 800,
-                        color: "var(--text)",
+                        fontSize: 14,
+                        fontWeight: 400,
+                        color: "#333333",
                         margin: "0 0 7px",
-                        letterSpacing: -0.25,
-                        lineHeight: 1.25,
+                        fontFamily:"'Montserrat',sans-serif",
+                        lineHeight:"100%"
+
                       }}
                     >
                       {r.name}
                     </p>
                     <div
-                      style={{ display: "flex", alignItems: "center", gap: 0 }}
+                      style={{ display: "flex", alignItems: "center", gap: 0, marginTop:8 }}
                     >
-                      <div
+                      {/* <div
                         style={{
                           width: 3.5,
                           height: 3.5,
                           borderRadius: "50%",
                           background: "var(--border)",
                         }}
-                      />
+                      /> */}
                       <div
                         style={{
                           display: "flex",
                           alignItems: "center",
-                          gap: 4,
+                          gap: 3,
                         }}
                       >
-                        <FaStopwatch size={20} color="var(--subtle)" />
+                        <TimerIcon width={16} height={16} alt="Timer" color="#BBBBBB" />
                         <span
                           style={{
-                            fontSize: 11.5,
-                            color: "var(--muted)",
-                            fontWeight: 500,
+                            fontSize: 12,
+                            color: "#BBBBBB",
+                            fontWeight: 400,
+                            fontFamily:"'Montserrat',sans-serif"
                           }}
                         >
                           {r.hours}
@@ -402,9 +404,9 @@ export function HomeScreen({
                       marginLeft: 8,
                     }}
                   >
-                    <GiPathDistance size={15} color="var(--subtle)" />
+                    <DistanceIcon width={16} height={16} alt="Distance" color="#BBBBBB" />
                     <span
-                      style={{ fontSize: 12, fontWeight: 700, color: "var(--muted)" }}
+                      style={{ fontSize: 12, fontWeight: 400, color: "#BBBBBB",fontFamily:"'Montserrat',sans-serif" }}
                     >
                       {r.distance + " Km"}
                     </span>

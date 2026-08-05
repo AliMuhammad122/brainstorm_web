@@ -19,6 +19,11 @@ import {
 } from "./icons";
 import FoodCart from "../../public/assets/icons/food-cart.png";
 import PromotionalBanner from "../../public/assets/images/banner-image.png";
+import CartIcon from "../../public/assets/icons/cart.svg"
+import MenuIcon from "../../public/assets/icons/menu.svg"
+import LocationIcon from "../../public/assets/icons/location.svg"
+import DropDown from "../../public/assets/icons/Drop_down.svg"
+import CloseIcon from "../../public/assets/icons/close.svg"
 
 
 export function PageHeader({ title, onBack, transparent }) {
@@ -223,10 +228,10 @@ export function Carousel() {
             onClick={() => goTo(i)}
             className="transition-all duration-300"
             style={{
-              width: i === active ? 20 : 6,
-              height: 6,
-              borderRadius: 3,
-              background: i === active ? "#E31C3D" : "#D1D5DB",
+              width: i === active ? 17 : 11,
+              height: 5,
+              borderRadius: 8,
+              background: i === active ? "#E31C3D" : "#F4F6F8",
             }}
           />
         ))}
@@ -352,7 +357,9 @@ export function FilterModal({ onClose, onApply, initCats, initPrice }) {
       style={{
         position: "fixed",
         inset: 0,
-        background: "var(--overlay)",
+        background: "#00000080",
+        backdropFilter: "blur(2px)",
+        WebkitBackdropFilter: "blur(2px)",
         zIndex: 400,
         display: "flex",
         alignItems: "center",
@@ -364,7 +371,7 @@ export function FilterModal({ onClose, onApply, initCats, initPrice }) {
       <div
         style={{
           background: "var(--bg)",
-          borderRadius: 24,
+          borderRadius: "8px",
           width: "100%",
           maxWidth: 350,
           boxShadow: "0 24px 80px rgba(0,0,0,0.28)",
@@ -378,44 +385,52 @@ export function FilterModal({ onClose, onApply, initCats, initPrice }) {
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
-            padding: "20px 22px 0",
+            padding: "20px 18px 10px",
           }}
         >
-          <span
+          <div className="border-b border-[#E8E8E8] flex justify-center items-center w-full pb-4.5 relative">
+            <span
             style={{
-              fontSize: 18,
-              fontWeight: 800,
-              color: "var(--text)",
-              letterSpacing: -0.4,
+              fontSize: 14,
+              fontWeight: 500,
+              color: "#333333",
+              fontFamily: "'Montserrat'",
+              lineHeight: "normal",
+              textAlign:"center",
             }}
           >
             Filter
           </span>
           <button
             style={{
-              width: 32,
-              height: 32,
+              width: 20,
+              height: 20,
               borderRadius: 10,
-              background: "var(--surface-alt)",
+              background: "#F4F6F8",
               border: "none",
               cursor: "pointer",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
+              position: "absolute",
+              right: 0,
             }}
             onClick={onClose}
           >
-            <IcoClose />
+            <CloseIcon />
           </button>
+          </div>
         </div>
-        <div style={{ height: 1, background: "var(--border-subtle)", margin: "16px 0 0" }} />
-        <div style={{ padding: "16px 22px 0" }}>
+        {/* <div style={{ height: 1, background: "#E8E8E8", margin: "16px 0 0" }} /> */}
+        <div style={{ padding: "2px 18px 0" }}>
           <p
             style={{
-              fontSize: 13,
-              fontWeight: 700,
-              color: "var(--text)",
-              margin: "0 0 10px",
+              fontSize: 10,
+              fontWeight: 400,
+              color: "#333333",
+              margin: "0 0 7px",
+              fontFamily:"Montserrat",
+              lineHeight:"100%"
             }}
           >
             Category
@@ -428,15 +443,18 @@ export function FilterModal({ onClose, onApply, initCats, initPrice }) {
                   key={c}
                   onClick={() => toggle(c)}
                   style={{
-                    padding: "6px 13px",
-                    borderRadius: 20,
-                    fontSize: 12,
-                    fontWeight: 600,
+                    padding: "4px 10px",
+                    display:"flex",
+                    justifyContent:"center",
+                    alignItems:"center",
+                    borderRadius: 8,
+                    fontSize: 8,
+                    fontWeight: 400,
                     cursor: "pointer",
-                    fontFamily: "inherit",
-                    background: on ? "var(--surface-alt)" : "var(--bg)",
-                    color: on ? "var(--text)" : "var(--muted)",
-                    border: `1.5px solid ${on ? "var(--border)" : "var(--border-subtle)"}`,
+                    fontFamily: "'Montserrat'",
+                    background: on ? "var(--surface-alt)" : "#FFFFFF",
+                    color: on ? "#777777" : "#777777",
+                    border: `1.5px solid ${on ? "var(--border)" : "#F4F6F8"}`,
                   }}
                 >
                   {c}
@@ -445,13 +463,15 @@ export function FilterModal({ onClose, onApply, initCats, initPrice }) {
             })}
           </div>
         </div>
-        <div style={{ padding: "16px 22px 0" }}>
+        <div style={{ padding: "10px 18px 0" }}>
           <p
             style={{
-              fontSize: 13,
-              fontWeight: 700,
-              color: "var(--text)",
-              margin: "0 0 10px",
+               fontSize: 10,
+              fontWeight: 400,
+              color: "#333333",
+              margin: "0 0 7px",
+              fontFamily:"Montserrat",
+              lineHeight:"100%"
             }}
           >
             Price Range
@@ -466,19 +486,18 @@ export function FilterModal({ onClose, onApply, initCats, initPrice }) {
                   style={{
                     display: "flex",
                     alignItems: "center",
-                    gap: 6,
-                    padding: "6px 13px",
-                    borderRadius: 20,
-                    fontSize: 12,
-                    fontWeight: 600,
+                    padding: "4px 10px",
+                    borderRadius: 8,
+                    fontSize: 8,
+                    fontWeight: 400,
                     cursor: "pointer",
-                    fontFamily: "inherit",
-                    background: on ? "var(--surface-alt)" : "var(--bg)",
-                    color: on ? "var(--text)" : "var(--muted)",
-                    border: `1.5px solid ${on ? "var(--border)" : "var(--border-subtle)"}`,
+                    fontFamily: "'Montserrat'",
+                    background: on ? "var(--surface-alt)" : "#FFFFFF",
+                    color: on ? "#777777" : "#777777",
+                    border: `1.5px solid ${on ? "var(--border)" : "#F4F6F8"}`,
                   }}
                 >
-                  <span
+                  {/* <span
                     style={{
                       width: 8,
                       height: 8,
@@ -487,30 +506,31 @@ export function FilterModal({ onClose, onApply, initCats, initPrice }) {
                       background: on ? "var(--text)" : "transparent",
                       display: "inline-block",
                     }}
-                  />
+                  /> */}
                   {p}
                 </button>
               );
             })}
           </div>
         </div>
-        <div style={{ padding: "20px 22px 22px" }}>
+        <div style={{ padding: "14px 18px 18px" }}>
           <button
             onClick={() => onApply(sc, sp)}
             style={{
               width: "100%",
-              height: 50,
+              height: 40,
               borderRadius: 25,
               border: "none",
-              fontSize: 15,
-              fontWeight: 700,
-              color: "var(--text)",
+              fontSize: 12,
+              fontWeight: 400,
+              color: "#FFFFFF",
               cursor: "pointer",
-              fontFamily: "inherit",
-              background: sc.length || sp ? "var(--surface-alt)" : "var(--border)",
+              fontFamily: "'Montserrat'",
+              background: sc.length || sp ? "#DA1A35" : "#D2D2D2",
             }}
           >
-            Apply Filter {sc.length || sp ? "✓" : ""}
+            Apply Filter 
+            {/* {sc.length || sp ? "✓" : ""} */}
           </button>
         </div>
       </div>
@@ -611,17 +631,18 @@ export function AppChrome({ cart, onMenu, onCartTap }) {
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
-          padding: "10px 20px 12px",
-          background: "var(--surface)",
+          padding: "10px 20px 9px",
+          background: "#FFFFFF",
           flexShrink: 0,
+          borderBottom:"1px solid #F4F6F8"
         }}
       >
         <button
           style={{
-            width: 44,
-            height: 44,
+            width: 32,
+            height: 32,
             borderRadius: 14,
-            background: "var(--surface-alt)",
+            background: "#F4F6F8",
             border: "none",
             cursor: "pointer",
             display: "flex",
@@ -630,7 +651,7 @@ export function AppChrome({ cart, onMenu, onCartTap }) {
           }}
           onClick={onMenu}
         >
-          <MdMenu size={22} color="var(--text)" />
+          <MenuIcon color="#232323" width={20} height={20}/>
         </button>
         <div
           style={{
@@ -641,7 +662,7 @@ export function AppChrome({ cart, onMenu, onCartTap }) {
           }}
         >
           <p
-            style={{ fontSize: 11, color: "var(--subtle)", fontWeight: 500, margin: 0 }}
+            style={{ fontSize: 10, color: "#333333", fontWeight: 400, marginBottom: 5 }}
           >
             Your Location
           </p>
@@ -655,31 +676,31 @@ export function AppChrome({ cart, onMenu, onCartTap }) {
               maxWidth: "100%",
             }}
           >
-            <MdOutlineLocationOn size={16} color="var(--primary)" style={{ flexShrink: 0 }} />
+            <LocationIcon color="#DA1A35" width={20} height={20}/>
             <span
               style={{
-                fontSize: 16,
-                fontWeight: 800,
-                color: "var(--text)",
+                fontSize: 14,
+                fontWeight: 400,
+                color: "#333333",
                 letterSpacing: -0.4,
                 whiteSpace: "nowrap",
                 overflow: "hidden",
                 textOverflow: "ellipsis",
-                maxWidth: 180,
+                maxWidth: 150,
                 display: "inline-block",
               }}
             >
               {state.selectedLocation?.address || "Limassol, Cyprus"}
             </span>
-            <MdKeyboardArrowDown size={18} color="var(--primary)" style={{ flexShrink: 0 }} />
+            <DropDown width={10} height={6} color={"#DA1A35"} style={{flexShrink:0}}/>
           </div>
         </div>
         <button
           style={{
-            width: 44,
-            height: 44,
+            width: 32,
+            height: 32,
             borderRadius: 14,
-            background: "var(--surface-alt)",
+            background: "#F4F6F8",
             border: "none",
             cursor: "pointer",
             display: "flex",
@@ -689,7 +710,9 @@ export function AppChrome({ cart, onMenu, onCartTap }) {
           }}
           onClick={onCartTap}
         >
-          <Image src={FoodCart} width={22} height={22} alt="Cart" className="theme-icon" />
+          {/* <Image src={FoodCart} width={22} height={22} alt="Cart" className="theme-icon" /> */}
+          {/* <Image src={CartIcon} width={22} height={22} alt="Cart" className="theme-icon" /> */}
+          <CartIcon color="var(--text)" width={20} height={20}/>
           {cart > 0 && (
             <div
               style={{

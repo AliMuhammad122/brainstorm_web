@@ -2,7 +2,7 @@ import React from "react";
 import { useTheme } from "../../context/ThemeContext";
 
 export default function ScreensFrame({ children }) {
-  const { tokens } = useTheme();
+  const { tokens, isDark } = useTheme();
   return (
     <div
       style={{
@@ -33,7 +33,7 @@ export default function ScreensFrame({ children }) {
           display: "flex",
           flexDirection: "column",
           fontFamily: "'Montserrat',-apple-system,BlinkMacSystemFont,sans-serif",
-          boxShadow: "none",
+          boxShadow: isDark ? "0 0 30px rgba(0,0,0,0.6)" : "0 0 30px rgba(0,0,0,0.12), 0 0 2px rgba(0,0,0,0.08)",
           position: "relative",
         }}
       >
