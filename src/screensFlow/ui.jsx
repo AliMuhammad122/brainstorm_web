@@ -24,6 +24,7 @@ import MenuIcon from "../../public/assets/icons/menu.svg"
 import LocationIcon from "../../public/assets/icons/location.svg"
 import DropDown from "../../public/assets/icons/Drop_down.svg"
 import CloseIcon from "../../public/assets/icons/close.svg"
+import BackIcon from "../../public/assets/icons/back.svg"
 
 
 export function PageHeader({ title, onBack, transparent }) {
@@ -39,7 +40,7 @@ export function PageHeader({ title, onBack, transparent }) {
       style={{
         display: "flex",
         alignItems: "center",
-        padding: "12px 20px 14px",
+        padding: "12px 20px 10px",
         background: headerBg,
         flexShrink: 0,
       }}
@@ -47,9 +48,9 @@ export function PageHeader({ title, onBack, transparent }) {
       <button
         onClick={onBack}
         style={{
-          width: 38,
-          height: 38,
-          borderRadius: 13,
+          width: 32,
+          height: 32,
+          borderRadius: 10000,
           background: backBg,
           border: "none",
           cursor: "pointer",
@@ -59,16 +60,17 @@ export function PageHeader({ title, onBack, transparent }) {
           flexShrink: 0,
         }}
       >
-        <IcoBack c={backIconColor} />
+        <BackIcon />
       </button>
       <span
         style={{
           flex: 1,
           textAlign: "center",
-          fontSize: 17,
-          fontWeight: 800,
+          fontSize: 16,
+          fontWeight: 400,
           color: textColor,
-          letterSpacing: -0.4,
+          letterSpacing: "0px",
+          fontFamily: "'Montserrat',sans-serif",
         }}
       >
         {title}
@@ -554,8 +556,8 @@ export function ViewOrderFAB({ cartCount, total, onTap }) {
         bottom: 0,
         left: 0,
         right: 0,
-        padding: "10px 18px 26px",
-        background: "linear-gradient(to top,var(--bg) 75%,rgba(0,0,0,0))",
+        padding: "10px 18px 12px",
+        // background: "linear-gradient(to top,var(--bg) 75%,rgba(0,0,0,0))",
         zIndex: 50,
         display: "flex",
         alignItems: "center",
@@ -566,56 +568,62 @@ export function ViewOrderFAB({ cartCount, total, onTap }) {
         type="button"
         onClick={onTap}
         style={{
-          width: 385,
-          height: 56,
+          width: 335,
+          height: 48,
           borderRadius: 28,
           background: BRAND_RED,
           border: "none",
           cursor: "pointer",
           display: "flex",
           alignItems: "center",
-          justifyContent:"center",
+          justifyContent:"space-between",
           // alignSelf:"center",
-          padding: "0 8px",
-          boxShadow: "0 10px 32px rgba(218,26,53,0.38)",
+          padding: "0 16px",
           fontFamily: "'Montserrat',sans-serif",
         }}
       >
-        <div
-          style={{
-            width: 40,
-            height: 40,
-            borderRadius: 20,
-            background: "rgba(255,255,255,0.22)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            flexShrink: 0,
-            marginRight: 12,
-          }}
-        >
-          <span style={{ fontSize: 15, fontWeight: 800, color: "var(--on-primary)" }}>
-            {cartCount}
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <div
+            style={{
+              width: 20,
+              height: 20,
+              borderRadius: "50%",
+              background: "#FFFFFF",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              flexShrink: 0,
+            }}
+          >
+            <span
+              style={{
+                fontSize: 14,
+                fontWeight: 400,
+                color: "#DA1A35",
+                fontFamily: "'Montserrat',sans-serif",
+                lineHeight: 1,
+              }}
+            >
+              {cartCount}
+            </span>
+          </div>
+          <span
+            style={{
+              fontSize: 14,
+              fontWeight: 400,
+              color: "#FFFFFF",
+              fontFamily: "'Montserrat',sans-serif",
+            }}
+          >
+            View Order
           </span>
         </div>
         <span
           style={{
-            flex: 1,
-            textAlign: "center",
-            fontSize: 15,
-            fontWeight: 700,
-            color: "var(--on-primary)",
-            letterSpacing: 0.2,
-          }}
-        >
-          View Order
-        </span>
-        <span
-          style={{
-            fontSize: 15,
-            fontWeight: 700,
-            color: "var(--on-primary)",
-            paddingRight: 8,
+            fontSize: 14,
+            fontWeight: 400,
+            color: "#FFFFFF",
+            fontFamily: "'Montserrat',sans-serif",
           }}
         >
           €{typeof total === "number" ? total.toFixed(2) : total}

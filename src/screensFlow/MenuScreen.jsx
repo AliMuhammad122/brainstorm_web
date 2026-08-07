@@ -391,24 +391,26 @@ export function MenuScreen({
                   >
                     {formatCategoryName(sec.category)}
                   </p>
-                  {sec.items.map((it) => (
-                    <div key={it.id} style={{ padding: "0 20px" }}>
-                      <div
-                        onClick={() => onItemTap(it)}
-                        role="button"
-                        tabIndex={0}
-                        onKeyDown={(e) => e.key === "Enter" && onItemTap(it)}
-                        style={{
-                          display: "flex",
-                          height: 97,
-                          background: "#FFFFFF",
-                          border: "1.5px solid #F4F6F8",
-                          borderRadius: 8,
-                          marginBottom: 10,
-                          cursor: "pointer",
-                          overflow: "hidden",
-                        }}
-                      >
+                  {sec.items.map((it) => {
+                    const isInCart = state?.cartItems?.some((item) => item.id === it.id);
+                    return (
+                      <div key={it.id} style={{ padding: "0 20px" }}>
+                        <div
+                          onClick={() => onItemTap(it)}
+                          role="button"
+                          tabIndex={0}
+                          onKeyDown={(e) => e.key === "Enter" && onItemTap(it)}
+                          style={{
+                            display: "flex",
+                            height: 97,
+                            background: isInCart ? "#DA1A351A" : "#FFFFFF",
+                            border: isInCart ? "1.5px solid #DA1A351A" : "1.5px solid #F4F6F8",
+                            borderRadius: 8,
+                            marginBottom: 10,
+                            cursor: "pointer",
+                            overflow: "hidden",
+                          }}
+                        >
                         <div
                           style={{
                             width: 120,
@@ -488,7 +490,7 @@ export function MenuScreen({
                         </div>
                       </div>
                     </div>
-                  ))}
+                  )})}
                 </div>
               ))}
             </>

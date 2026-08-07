@@ -8,6 +8,12 @@ import {
   IcoMinus,
   IcoPlus,
 } from "./icons";
+import BackIcon from "../../public/assets/icons/back.svg";
+import InfoIcon from "../../public/assets/icons/Prod_Info.svg"
+import TickIcon from "../../public/assets/icons/tick-circle.svg"
+import CircleTickIcon from "../../public/assets/icons/choose.svg"
+import PlusIcon from "../../public/assets/icons/plus.svg"
+import MinusIcon from "../../public/assets/icons/minus.svg"
 
 export function ItemDetailScreen({
   item,
@@ -64,8 +70,8 @@ export function ItemDetailScreen({
 
   const displayImage = detailedItem?.image_url || item.img || IMG.mc1;
   const displayName = detailedItem?.name || item.name;
-  const displayPriceText = detailedItem?.price 
-    ? `€${parseFloat(detailedItem.price).toFixed(2)}` 
+  const displayPriceText = detailedItem?.price
+    ? `€${parseFloat(detailedItem.price).toFixed(2)}`
     : item.price;
   const displayDesc = detailedItem?.description || item.desc;
 
@@ -74,8 +80,8 @@ export function ItemDetailScreen({
       style={{
         display: "flex",
         flexDirection: "column",
-        height: "100%",
-        background: "var(--bg)",
+        height: "95%",
+        background: "white",
         fontFamily: "'Montserrat',sans-serif",
       }}
     >
@@ -93,6 +99,7 @@ export function ItemDetailScreen({
             height: 260,
             overflow: "hidden",
             flexShrink: 0,
+            borderRadius: "0px 0px 8px 8px",
           }}
         >
           <img
@@ -100,21 +107,14 @@ export function ItemDetailScreen({
             alt={displayName}
             style={{
               width: "100%",
-              height: "100%",
+              height: "95%",
               objectFit: "cover",
               display: "block",
+              borderRadius: "0px 0px 8px 8px",
             }}
             onError={(e) => {
               e.target.parentNode.style.background = "var(--surface-alt)";
               e.target.style.display = "none";
-            }}
-          />
-          <div
-            style={{
-              position: "absolute",
-              inset: 0,
-              background:
-                "linear-gradient(to bottom,rgba(0,0,0,0.35) 0%,rgba(0,0,0,0) 45%,rgba(0,0,0,0.05) 100%)",
             }}
           />
           <button
@@ -123,11 +123,11 @@ export function ItemDetailScreen({
               position: "absolute",
               top: 16,
               left: 18,
-              width: 38,
-              height: 38,
-              borderRadius: 12,
-              background: "rgba(0,0,0,0.35)",
-              backdropFilter: "blur(8px)",
+              width: 32,
+              height: 32,
+              borderRadius: 100000,
+              background: "#FFFFFF33",
+              backdropFilter: "blur(4px)",
               border: "none",
               cursor: "pointer",
               display: "flex",
@@ -136,18 +136,17 @@ export function ItemDetailScreen({
               zIndex: 6,
             }}
           >
-            <IcoBack c="#fff" />
+            <BackIcon width={20} height={20} alt="" className="text-white" />
           </button>
         </div>
 
         <div
           style={{
             background: "var(--bg)",
-            borderRadius: "22px 22px 0 0",
-            marginTop: -20,
+            // borderRadius: "22px 22px 0 0",
             position: "relative",
             zIndex: 5,
-            padding: "22px 20px 120px",
+            padding: "0px 20px 35px",
           }}
         >
           {isLoading ? (
@@ -174,70 +173,73 @@ export function ItemDetailScreen({
               <div
                 style={{
                   display: "flex",
-                  alignItems: "flex-start",
+                  alignItems: "center",
                   justifyContent: "space-between",
                   marginBottom: 6,
                 }}
               >
-                <p
-                  style={{
-                    fontSize: 20,
-                    fontWeight: 900,
-                    color: "var(--text)",
-                    margin: 0,
-                    letterSpacing: 0.2,
-                    lineHeight: 1.2,
-                    flex: 1,
-                    paddingRight: 10,
-                  }}
-                >
-                  {displayName}
-                </p>
+                <div className="w-full flex flex-col gap-2" >
+
+                  <p
+                    style={{
+                      fontSize: 18,
+                      fontWeight: 500,
+                      color: "#333333",
+                      margin: 0,
+                      letterSpacing: "0px",
+                      lineHeight: "100%",
+                      flex: 1,
+                    }}
+                  >
+                    {displayName}
+                  </p>
+                  <p
+                    style={{
+                      fontSize: 18,
+                      fontWeight: 500,
+                      color: "#DA1A35",
+                      margin: "0 0 2px",
+                      letterSpacing: "0px",
+                    }}
+                  >
+                    {displayPriceText}
+                  </p>
+                </div>
                 <button
                   onClick={() => setShowInfoModal(true)}
                   style={{
                     background: "none",
                     border: "none",
                     cursor: "pointer",
-                    padding: 2,
-                    marginTop: 2,
+                    padding: 0,
+                    marginTop: 0,
                     flexShrink: 0,
                   }}
                 >
-                  <IcoInfo />
+                  <InfoIcon width={24} height={24} alt="" className="text-white" />
                 </button>
               </div>
               <p
                 style={{
-                  fontSize: 20,
-                  fontWeight: 900,
-                  color: "var(--primary)",
-                  margin: "0 0 12px",
-                  letterSpacing: -0.3,
-                }}
-              >
-                {displayPriceText}
-              </p>
-              <p
-                style={{
-                  fontSize: 13,
-                  color: "var(--muted)",
+                  fontSize: 12,
+                  color: "#A4A4A4",
                   lineHeight: 1.6,
-                  margin: "0 0 24px",
+                  margin: "0 0 14px",
                   fontWeight: 400,
+                  fontFamily: "'Montserrat',sans-serif"
                 }}
               >
                 {displayDesc}
               </p>
 
-              {detailedItem?.options?.map((opt) => (
+              {detailedItem?.options?.map((opt, index) => (
                 <Section key={opt.id} title={opt.name}>
                   <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
                     {opt.option_choices?.map((choice) => {
                       const on = !!selectedChoices[choice.id];
                       const choicePriceVal = parseFloat(choice.price || 0);
-                      const displayPrice = choicePriceVal > 0 
-                        ? ` +€${choicePriceVal.toFixed(2)}` 
+                      const displayPrice = choicePriceVal > 0
+                        ? ` +€${choicePriceVal.toFixed(2)}`
                         : "";
                       return (
                         <button
@@ -247,49 +249,43 @@ export function ItemDetailScreen({
                             display: "flex",
                             alignItems: "center",
                             gap: 8,
-                            padding: "7px 12px 7px 14px",
+                            padding: "8px 10px 8px 10px",
                             borderRadius: 20,
-                            border: `1.5px solid ${on ? "var(--primary)" : "var(--border)"}`,
-                            background: on ? "var(--primary-soft)" : "var(--surface)",
+                            border: `1.5px solid ${on ? "#DA1A351A" : "#F4F6F8"}`,
+                            background: on ? "#DA1A351A" : "#FFFFFF",
                             cursor: "pointer",
-                            fontFamily: "inherit",
+                            fontFamily: "'Montserrat',sans-serif",
                             transition: "all 0.15s",
                           }}
                         >
                           <span
                             style={{
-                              fontSize: 12,
-                              fontWeight: 500,
-                              color: on ? "var(--primary)" : "var(--muted)",
+                              fontSize: 10,
+                              fontWeight: 400,
+                              color: on ? "var(--primary)" : "#A4A4A4"
                             }}
                           >
                             {choice.name}{displayPrice}
                           </span>
-                          <span
-                            style={{
-                              width: 16,
-                              height: 16,
-                              borderRadius: opt.type === "SingleChoice" ? "50%" : "4px",
-                              border: `1.5px solid ${on ? "var(--primary)" : "var(--border)"}`,
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                              flexShrink: 0,
-                              background: on ? "var(--primary)" : "transparent",
-                            }}
-                          >
-                            {on && (
-                              <span
-                                style={{
-                                  width: 6,
-                                  height: 6,
-                                  borderRadius: opt.type === "SingleChoice" ? "50%" : "1px",
-                                  background: "var(--on-primary)",
-                                  display: "block",
-                                }}
-                              />
-                            )}
-                          </span>
+                          {!on ? (
+                            <span
+                              style={{
+                                width: 16,
+                                height: 16,
+                                borderRadius: "50%",
+                                border: "1.5px solid #E8E8E8",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                flexShrink: 0,
+                                background: "transparent",
+                              }}
+                            />
+                          ) : index < 3 ? (
+                            <TickIcon width={16} height={16} style={{ flexShrink: 0 }} />
+                          ) : (
+                            <CircleTickIcon width={16} height={16} style={{ flexShrink: 0 }} />
+                          )}
                         </button>
                       );
                     })}
@@ -302,18 +298,19 @@ export function ItemDetailScreen({
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
                   placeholder="Additional notes on your request"
+                  className="placeholder:text-[#8E8E8E]"
                   style={{
                     width: "100%",
-                    minHeight: 80,
-                    border: "1.5px solid var(--border)",
-                    borderRadius: 14,
+                    minHeight: 50,
+                    border: "1.5px solid #F4F6F8",
+                    borderRadius: 8,
                     padding: "12px 14px",
-                    fontSize: 12.5,
+                    fontSize: 10,
                     color: "var(--muted)",
-                    fontFamily: "inherit",
+                    fontFamily: "'Montserrat',sans-serif",
                     resize: "none",
                     outline: "none",
-                    background: "var(--surface)",
+                    background: "#FFFFFF",
                     lineHeight: 1.5,
                     boxSizing: "border-box",
                   }}
@@ -322,136 +319,145 @@ export function ItemDetailScreen({
             </>
           )}
         </div>
-      </div>
-
-      <div
-        style={{
-          position: "absolute",
-          bottom: 0,
-          left: 0,
-          right: 0,
-          background: "var(--bg)",
-          borderTop: "1px solid var(--border-subtle)",
-          padding: "12px 18px 18px",
-          display: "flex",
-          alignItems: "center",
-          gap: 12,
-          zIndex: 30,
-          boxShadow: "0 -4px 24px rgba(0,0,0,0.08)",
-        }}
-      >
-        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          <button
-            onClick={() => setQty((q) => Math.max(1, q - 1))}
-            style={{
-              width: 30,
-              height: 30,
-              borderRadius: "50%",
-              background: "var(--surface-alt)",
-              border: "none",
-              cursor: "pointer",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <IcoMinus />
-          </button>
-          <span
-            style={{
-              fontSize: 15,
-              fontWeight: 800,
-              color: "var(--text)",
-              minWidth: 22,
-              textAlign: "center",
-            }}
-          >
-            {String(qty).padStart(2, "0")}
-          </span>
-          <button
-            onClick={() => setQty((q) => q + 1)}
-            style={{
-              width: 30,
-              height: 30,
-              borderRadius: "50%",
-              background: "var(--primary)",
-              border: "none",
-              cursor: "pointer",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              boxShadow: "0 3px 10px rgba(218,26,53,0.4)",
-            }}
-          >
-            <IcoPlus c="var(--on-primary)" size={12} />
-          </button>
-        </div>
-        <button
-          onClick={() => {
-            const selIngrList = [];
-            let selDrinkVal = "";
-            Object.values(selectedChoices).forEach((choice) => {
-              const option = detailedItem?.options?.find((o) => o.id === choice.option_id);
-              if (option) {
-                if (option.type === "SingleChoice") {
-                  if (!selDrinkVal) {
-                    selDrinkVal = choice.name;
-                  } else {
-                    selIngrList.push(choice.name);
-                  }
-                } else {
-                  selIngrList.push(choice.name);
-                }
-              }
-            });
-
-            onAddToCart({
-              ...item,
-              qty,
-              selIngr: selIngrList,
-              selRemove: [],
-              selDrink: selDrinkVal,
-              notes,
-              priceNum: basePriceNum + extraCost,
-            });
-          }}
+        <div
           style={{
-            flex: 1,
-            height: 50,
-            borderRadius: 25,
-            background: "var(--primary)",
-            border: "none",
-            cursor: "pointer",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            padding: "0 18px",
-            boxShadow: "0 6px 20px rgba(218,26,53,0.4)",
-            transition: "transform 0.1s",
+            position: "absolute",
+            bottom: 0,
+            left: 0,
+            right: 0,
+            background: "#FFFFFF",
+            padding: "1px 20px 24px",
+            zIndex: 30,
           }}
         >
-          <span
+          <div
             style={{
-              fontSize: 14,
-              fontWeight: 800,
-              color: "var(--on-primary)",
-              letterSpacing: 0.1,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              border: "1.5px solid #F4F6F8",
+              borderRadius: 1000,
+              padding: "8px 10px 8px 16px",
+              background: "#FFFFFF",
+              boxSizing: "border-box",
+              width: "100%",
             }}
           >
-            Add to Cart
-          </span>
-          <span
-            style={{
-              fontSize: 14,
-              fontWeight: 800,
-              color: "var(--on-primary)",
-              letterSpacing: 0.1,
-            }}
-          >
-            €{total}
-          </span>
-        </button>
+            <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+              <button
+                onClick={() => setQty((q) => Math.max(1, q - 1))}
+                style={{
+                  width: 24,
+                  height: 24,
+                  borderRadius: "100%",
+                  background: "#DA1A351A",
+                  border: "none",
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <MinusIcon />
+              </button>
+              <span
+                style={{
+                  fontSize: 14,
+                  fontWeight: 400,
+                  color: "#333333",
+                  minWidth: 24,
+                  textAlign: "center",
+                  fontFamily: "'Montserrat',sans-serif",
+                }}
+              >
+                {String(qty).padStart(2, "0")}
+              </span>
+              <button
+                onClick={() => setQty((q) => q + 1)}
+                style={{
+                  width: 24,
+                  height: 24,
+                  borderRadius: "50%",
+                  background: "#DA1A35",
+                  border: "none",
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <PlusIcon />
+              </button>
+            </div>
+            <button
+              onClick={() => {
+                const selIngrList = [];
+                let selDrinkVal = "";
+                Object.values(selectedChoices).forEach((choice) => {
+                  const option = detailedItem?.options?.find((o) => o.id === choice.option_id);
+                  if (option) {
+                    if (option.type === "SingleChoice") {
+                      if (!selDrinkVal) {
+                        selDrinkVal = choice.name;
+                      } else {
+                        selIngrList.push(choice.name);
+                      }
+                    } else {
+                      selIngrList.push(choice.name);
+                    }
+                  }
+                });
+
+                onAddToCart({
+                  ...item,
+                  qty,
+                  selIngr: selIngrList,
+                  selRemove: [],
+                  selDrink: selDrinkVal,
+                  notes,
+                  priceNum: basePriceNum + extraCost,
+                });
+              }}
+              style={{
+                flex: 1,
+                height: 50,
+                borderRadius: 1000,
+                background: "#DA1A35",
+                border: "none",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                padding: "0 14px",
+                marginLeft: 16,
+                transition: "transform 0.1s",
+              }}
+            >
+              <span
+                style={{
+                  fontSize: 14,
+                  fontWeight: 400,
+                  color: "#FFFFFF",
+                  fontFamily: "'Montserrat',sans-serif",
+                }}
+              >
+                Add to Cart
+              </span>
+              <span
+                style={{
+                  fontSize: 14,
+                  fontWeight: 400,
+                  color: "#FFFFFF",
+                  fontFamily: "'Montserrat',sans-serif",
+                }}
+              >
+                €{total}
+              </span>
+            </button>
+          </div>
+        </div>
       </div>
+
 
       {showInfoModal && (
         <div
@@ -529,7 +535,7 @@ export function ItemDetailScreen({
             </div>
 
             {/* Content */}
-            <div style={{ display: "flex", flexDirection: "column", gap:14 }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
               {/* Name & Desc */}
               <div>
                 <p
@@ -574,7 +580,7 @@ export function ItemDetailScreen({
                     margin: 0,
                   }}
                 >
-                  {detailedItem?.ingredients 
+                  {detailedItem?.ingredients
                     ? (Array.isArray(detailedItem.ingredients) ? detailedItem.ingredients.join(", ") : detailedItem.ingredients)
                     : "N/A"}
                 </p>
@@ -614,14 +620,14 @@ export function ItemDetailScreen({
 }
 
 const Section = ({ title, children }) => (
-  <div style={{ marginBottom: 22 }}>
+  <div style={{ marginBottom: 14 }}>
     <p
       style={{
-        fontSize: 15,
-        fontWeight: 800,
-        color: "var(--text)",
-        margin: "0 0 12px",
-        letterSpacing: -0.2,
+        fontSize: 14,
+        fontWeight: 400,
+        color: "#333333",
+        margin: "0 0 10px",
+        fontFamily: "'Montserrat',sans-serif",
       }}
     >
       {title}
