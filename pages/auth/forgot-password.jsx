@@ -101,7 +101,7 @@ export default function ForgotPasswordPage() {
             ${isDark ? "bg-[#1A1A1A]" : "bg-[#F4F6F8]"}
           `}
           >
-           <BackIcon width={20} height={20} alt="" />
+           <BackIcon width={20} height={20} alt="" className={isDark ? "text-white" : "text-[#333333]"}/>
           </button>
 
           <div className="flex flex-col items-center " style={{gap:"6px"}}>

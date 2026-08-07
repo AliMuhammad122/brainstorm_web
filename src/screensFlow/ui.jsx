@@ -557,13 +557,16 @@ export function ViewOrderFAB({ cartCount, total, onTap }) {
         padding: "10px 18px 26px",
         background: "linear-gradient(to top,var(--bg) 75%,rgba(0,0,0,0))",
         zIndex: 50,
+        display: "flex",
+        alignItems: "center",
+        justifyContent:"center",
       }}
     >
       <button
         type="button"
         onClick={onTap}
         style={{
-          width: "100%",
+          width: 385,
           height: 56,
           borderRadius: 28,
           background: BRAND_RED,
@@ -571,6 +574,8 @@ export function ViewOrderFAB({ cartCount, total, onTap }) {
           cursor: "pointer",
           display: "flex",
           alignItems: "center",
+          justifyContent:"center",
+          // alignSelf:"center",
           padding: "0 8px",
           boxShadow: "0 10px 32px rgba(218,26,53,0.38)",
           fontFamily: "'Montserrat',sans-serif",

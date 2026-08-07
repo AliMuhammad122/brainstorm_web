@@ -102,7 +102,7 @@ export function HomeScreen({
             padding: "0 14px",
           }}
         >
-          <SearchIcon width={20} height={20} alt="Search" className="theme-icon"/>
+          <SearchIcon width={20} height={20} alt="Search" className="text-black"/>
           <input
             type="text"
             placeholder="Search restaurant etc"

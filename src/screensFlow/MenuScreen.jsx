@@ -3,9 +3,21 @@ import { IMG } from "./data";
 import { useScreensFlow } from "../../context/ScreensFlowContext";
 import { useGetMenuCategoriesQuery } from "../store/storeApiSlice";
 import Skeleton from "../../components/Skeleton";
-import { IcoBack, IcoSearchW } from "./icons";
+import { IcoSearchW } from "./icons";
 import { ViewOrderFAB } from "./ui";
 import { MdSearch } from "react-icons/md";
+import BackIcon from "../../public/assets/icons/back.svg"
+import SearchIcon from "../../public/assets/icons/search.svg"
+import SearchIcon2 from "../../public/assets/icons/search2.svg"
+
+const formatCategoryName = (str) => {
+  if (!str) return "";
+  return str
+    .toLowerCase()
+    .split(" ")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+};
 
 export function MenuScreen({
   restaurant,
@@ -57,8 +69,10 @@ export function MenuScreen({
     })),
   }));
 
+ 
+
   const catNames = sections.map((s) => s.category);
-  const activeTab = selectedCategory || (allTabs.length > 0 ? allTabs[0] : "");
+  const activeTab = selectedCategory;
 
   const scrollRef = useRef(null);
   const sectionRefs = useRef({});
@@ -68,11 +82,16 @@ export function MenuScreen({
   const handleScroll = () => {
     if (!scrollRef.current) return;
     const st = scrollRef.current.scrollTop;
-    setHeroVisible(st < HERO_H - 80);
+    if (heroVisible && st >= HERO_H - 80) {
+      setHeroVisible(false);
+    }
   };
-
+  const HeroVisibleOn = () => {
+    setHeroVisible(true);
+    scrollRef.current?.scrollTo({ top: 0, behavior: "smooth" });
+  };
   const handleTabClick = (cat) => {
-    setSelectedCategory(cat);
+    setSelectedCategory((prev) => (prev === cat ? "" : cat));
     setSearchQuery(""); // Clear text search when selecting category tab
     if (scrollRef.current) {
       scrollRef.current.scrollTo({
@@ -107,17 +126,18 @@ export function MenuScreen({
             display: "flex",
             alignItems: "center",
             gap: 12,
-            padding: "12px 18px 14px",
-            boxShadow: "0 2px 16px rgba(0,0,0,0.35)",
+            padding: "12px 18px 10px",
+            // boxShadow: "0 2px 16px rgba(0,0,0,0.35)",
+            borderBottom:"1px solid #F4F6F8"
           }}
         >
           <button
-            onClick={onBack}
+            onClick={HeroVisibleOn}
             style={{
-              width: 38,
-              height: 38,
-              borderRadius: 12,
-              background: "var(--surface-alt)",
+              width: 32,
+              height: 32,
+              borderRadius: 1000000,
+              background: "#F4F6F8",
               border: "none",
               cursor: "pointer",
               display: "flex",
@@ -126,34 +146,35 @@ export function MenuScreen({
               flexShrink: 0,
             }}
           >
-            <IcoBack />
+            <BackIcon width={20} height={20} alt="" className="text-black" />
           </button>
           <div
             style={{
               flex: 1,
-              height: 42,
-              background: "var(--surface-alt)",
-              borderRadius: 14,
+              height: 32,
+              background: "#F4F6F8",
+              borderRadius: 1000000,
               display: "flex",
               alignItems: "center",
               gap: 10,
               padding: "0 14px",
             }}
           >
-            <MdSearch size={20} color="var(--subtle)" />
+            <SearchIcon2  alt="" className="text-[#A4A4A4]" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search item"
+              className="placeholder:text-gray-400"
               style={{
                 flex: 1,
                 border: "none",
                 background: "transparent",
-                fontSize: 14,
-                color: "var(--text)",
+                fontSize: 10,
+                // color: "red",
                 outline: "none",
-                fontFamily: "inherit",
+                fontFamily: "'Montserrat',sans-serif",
               }}
             />
           </div>
@@ -169,91 +190,94 @@ export function MenuScreen({
           overflowX: "hidden",
           scrollbarWidth: "none",
           position: "relative",
+
         }}
       >
-        <div
-          style={{ position: "relative", height: HERO_H, overflow: "hidden" }}
-        >
-          <img
-            src={heroImage}
-            alt={restaurant?.name || "Restaurant Menu"}
-            style={{
-              width: "100%",
-              height: "100%",
-              objectFit: "cover",
-              display: "block",
-            }}
-            onError={(e) => {
-              e.target.parentNode.style.background = "var(--surface-alt)";
-              e.target.style.display = "none";
-            }}
-          />
+        {heroVisible && (
           <div
-            style={{
-              position: "absolute",
-              inset: 0,
+            style={{ position: "relative", height: HERO_H, overflow: "hidden",borderBottomLeftRadius: "10px",borderBottomRightRadius: "10px", }}
+          >
+            <img
+              src={heroImage}
+              alt={restaurant?.name || "Restaurant Menu"}
+              style={{
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+                display: "block",
+                // borderRadius: "24px 24px 10px 10px",
+              }}
+              onError={(e) => {
+                e.target.parentNode.style.background = "var(--surface-alt)";
+                e.target.style.display = "none";
+              }}
+            />
+            <div
+              style={{
+                position: "absolute",
+                inset: 0,
               background:
                 "linear-gradient(to bottom,rgba(0,0,0,0.3) 0%,rgba(0,0,0,0) 45%,rgba(0,0,0,0.08) 100%)",
-            }}
-          />
-          <div
-            style={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              right: 0,
-              padding: "16px 18px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              zIndex: 4,
-            }}
-          >
-            <button
-              onClick={onBack}
+              }}
+            />
+            <div
               style={{
-                width: 38,
-                height: 38,
-                borderRadius: 12,
-                background: "rgba(0,0,0,0.35)",
-                backdropFilter: "blur(8px)",
-                border: "none",
-                cursor: "pointer",
+                position: "absolute",
+                top: 0,
+                left: 0,
+                right: 0,
+                padding: "16px 18px",
                 display: "flex",
                 alignItems: "center",
-                justifyContent: "center",
+                justifyContent: "space-between",
+                zIndex: 4,
               }}
             >
-              <IcoBack c="#fff" />
-            </button>
-            <button
-              onClick={() => {
-                setHeroVisible(false);
-                scrollRef.current?.scrollTo({ top: HERO_H, behavior: "smooth" });
-              }}
-              style={{
-                width: 38,
-                height: 38,
-                borderRadius: 12,
-                background: "rgba(0,0,0,0.35)",
-                backdropFilter: "blur(8px)",
-                border: "none",
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <IcoSearchW />
-            </button>
+              <button
+                onClick={onBack}
+                style={{
+                  width: 32,
+                  height: 32,
+                  borderRadius: 10000,
+                  background: "#FFFFFF33",
+                  backdropFilter: "blur(4px)",
+                  border: "none",
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <BackIcon width={20} height={20} alt="" className="text-white" />
+              </button>
+              <button
+                onClick={() => {
+                  setHeroVisible(false);
+                }}
+                style={{
+                  width: 32,
+                  height: 32,
+                  borderRadius: 10000,
+                  background: "#FFFFFF33",
+                  backdropFilter: "blur(4px)",
+                  border: "none",
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <SearchIcon width={20} height={20} alt="" className="text-white" />
+              </button>
+            </div>
           </div>
-        </div>
+        )}
 
         <div
           style={{
             background: "var(--bg)",
             borderRadius: "24px 24px 0 0",
-            marginTop: -22,
+            // marginTop: 12,
             position: "relative",
             zIndex: 5,
             paddingBottom: 100,
@@ -283,8 +307,7 @@ export function MenuScreen({
             </div>
           ) : sections.length === 0 ? (
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center", padding: "48px 20px", gap: 12 }}>
-              <span style={{ fontSize: 42 }}>🍽️</span>
-              <p style={{ fontSize: 14, color: "var(--subtle)", fontWeight: 500, margin: 0 }}>
+              <p style={{ fontSize: 14, color: "var(--subtle)", fontWeight: 400, margin: 0, fontFamily: "'Montserrat',sans-serif" }}>
                 No items found
               </p>
             </div>
@@ -297,17 +320,18 @@ export function MenuScreen({
                   background: "var(--bg)",
                   zIndex: 10,
                   paddingTop: 20,
-                  boxShadow: heroVisible ? "none" : "0 2px 16px rgba(0,0,0,0.35)",
+                  // boxShadow: heroVisible ? "none" : "0 2px 16px rgba(0,0,0,0.35)",
                 }}
               >
                 <p
                   style={{
-                    fontSize: 17,
-                    fontWeight: 800,
-                    color: "var(--text)",
+                    fontSize: 16,
+                    fontWeight: 400,
+                    color: "#333333",
                     margin: "0 0 14px",
                     padding: "0 20px",
-                    letterSpacing: -0.3,
+                    fontFamily: "'Montserrat',sans-serif",
+                    letterSpacing:"0px"
                   }}
                 >
                   Categories
@@ -328,45 +352,44 @@ export function MenuScreen({
                         key={cat}
                         onClick={() => handleTabClick(cat)}
                         style={{
-                          padding: "8px 18px",
-                          borderRadius: 22,
-                          border: `1.5px solid ${on ? "var(--primary)" : "var(--border)"}`,
+                          padding: "11px 14px",
+                          borderRadius: 32,
+                          border: `1.5px solid ${on ? "#DA1A351A" : "#F4F6F8"}`,
                           cursor: "pointer",
-                          fontFamily: "inherit",
-                          fontSize: 13.5,
-                          fontWeight: 700,
+                          fontFamily: "'Montserrat',sans-serif",
+                          fontSize: 14,
+                          fontWeight: on? 500 : 400,
                           flexShrink: 0,
-                          letterSpacing: -0.1,
                           transition: "all 0.2s",
-                          background: on ? "var(--primary)" : "var(--surface-alt)",
-                          color: on ? "var(--on-primary)" : "var(--muted)",
+                          background: on ? "#fbe8eb" : "#FFFFFF",
+                          color: on ? "#DA1A35" : "#A4A4A4",
                         }}
                       >
-                        {cat}
+                        {formatCategoryName(cat)}
                       </button>
                     );
                   })}
                 </div>
-                <div style={{ height: 1, background: "var(--border-subtle)" }} />
+                {/* <div style={{ height: 1, background: "var(--border-subtle)" }} /> */}
               </div>
 
               {sections.map((sec) => (
                 <div
                   key={sec.category}
                   ref={(el) => (sectionRefs.current[sec.category] = el)}
-                  style={{ padding: "22px 0 0" }}
                 >
                   <p
                     style={{
-                      fontSize: 17,
-                      fontWeight: 800,
-                      color: "var(--text)",
+                      fontSize: 16,
+                      fontWeight: 400,
+                      color: "#333333",
                       margin: "0 0 14px",
                       padding: "0 20px",
-                      letterSpacing: -0.3,
+                      letterSpacing: 0,
+                      fontFamily:"'Montserrat',sans-serif",
                     }}
                   >
-                    {sec.category}
+                    {formatCategoryName(sec.category)}
                   </p>
                   {sec.items.map((it) => (
                     <div key={it.id} style={{ padding: "0 20px" }}>
@@ -377,22 +400,22 @@ export function MenuScreen({
                         onKeyDown={(e) => e.key === "Enter" && onItemTap(it)}
                         style={{
                           display: "flex",
-                          gap: 14,
-                          padding: 12,
-                          borderRadius: 16,
-                          background: "var(--surface)",
-                          marginBottom: 12,
+                          height: 97,
+                          background: "#FFFFFF",
+                          border: "1.5px solid #F4F6F8",
+                          borderRadius: 8,
+                          marginBottom: 10,
                           cursor: "pointer",
+                          overflow: "hidden",
                         }}
                       >
                         <div
                           style={{
-                            width: 100,
-                            height: 100,
-                            borderRadius: 14,
-                            overflow: "hidden",
+                            width: 120,
+                            height: 97,
                             flexShrink: 0,
-                            background: "var(--surface-alt)",
+                            borderRadius:8,
+                            background: "#F4F6F8",
                           }}
                         >
                           <img
@@ -401,6 +424,7 @@ export function MenuScreen({
                             style={{
                               width: "100%",
                               height: "100%",
+                              borderRadius:8,
                               objectFit: "cover",
                               display: "block",
                             }}
@@ -414,17 +438,20 @@ export function MenuScreen({
                             flexDirection: "column",
                             justifyContent: "space-between",
                             minWidth: 0,
+                            padding: "8px 10px",
+                            
                           }}
                         >
                           <div>
                             <p
                               style={{
-                                fontSize: 12.5,
-                                fontWeight: 800,
-                                color: "var(--text)",
-                                margin: "0 0 5px",
-                                letterSpacing: 0.3,
-                                lineHeight: 1.3,
+                                fontSize: 14,
+                                fontWeight: 400,
+                                color: "#333333",
+                                margin: "0 0 2px",
+                                fontFamily: "'Montserrat',sans-serif",
+                                lineHeight: 1.2,
+                                letterSpacing: "0px",
                                 textTransform: "uppercase",
                               }}
                             >
@@ -432,10 +459,17 @@ export function MenuScreen({
                             </p>
                             <p
                               style={{
-                                fontSize: 11,
-                                color: "var(--subtle)",
-                                margin: "0 0 10px",
-                                lineHeight: 1.5,
+                                fontSize: 10,
+                                color: "#A4A4A4",
+                                margin: "4px 0px 4px",
+                                lineHeight: 1.2,
+                                fontFamily: "'Montserrat',sans-serif",
+                                fontWeight: 400,
+                                display: "-webkit-box",
+                                WebkitLineClamp: 2,
+                                WebkitBoxOrient: "vertical",
+                                overflow: "hidden",
+                                textOverflow: "ellipsis",
                               }}
                             >
                               {it.desc}
@@ -444,9 +478,9 @@ export function MenuScreen({
                           <span
                             style={{
                               fontSize: 14,
-                              fontWeight: 800,
-                              color: "var(--primary)",
-                              letterSpacing: -0.3,
+                              fontWeight: 500,
+                              color: "#DA1A35",
+                              fontFamily: "'Montserrat',sans-serif",
                             }}
                           >
                             {it.price}
@@ -462,7 +496,7 @@ export function MenuScreen({
         </div>
       </div>
 
-      {onViewOrder && (
+      {onViewOrder && cartCount > 0 && (
         <ViewOrderFAB
           cartCount={cartCount}
           total={cartTotal}
