@@ -1,73 +1,156 @@
 import React, { useState } from "react";
-import { MdLocationOn } from "react-icons/md";
-import { IcoClose } from "../../src/screensFlow/icons";
-import { RadioDot } from "../../src/screensFlow/ui";
-
-const BRAND_RED = "var(--primary)";
+import parsePhoneNumberFromString from "libphonenumber-js";
+import CountrySelect, { COUNTRY_OPTIONS } from "../CountrySelect";
+import CloseIcon from "../../public/assets/icons/close.svg";
+import CircleTickIcon from "../../public/assets/icons/selected-circle.svg";
+import CircleTickEmpty from "../../public/assets/icons/unselected-circle.svg";
+import LocationIcon from "../../public/assets/icons/address.svg";
+import ScheduleModal from "./ScheduleModal";
 
 /**
  * Add New Address modal: Order Type (Delivery/Pickup), Full Name, Phone, Address, Postal Code,
- * Delivery type (Standard/Schedule), Add Address button.
+ * Delivery/Pickup type (Standard/Schedule), Add button.
+ * Matches the Figma design layout exactly.
  */
-export default function AddAddressModal({ open, onClose, onAdd }) {
-  const [orderType, setOrderType] = useState("delivery");
+export default function AddAddressModal({
+  open,
+  onClose,
+  onAdd,
+  orderType = "delivery",
+  onChangeOrderType,
+}) {
   const [deliveryType, setDeliveryType] = useState("standard");
+  const [scheduleData, setScheduleData] = useState(null);
+  const [scheduleOpen, setScheduleOpen] = useState(false);
+
   const [fullName, setFullName] = useState("");
+  const [phoneCode, setPhoneCode] = useState("+357");
   const [phone, setPhone] = useState("");
+  const [phoneError, setPhoneError] = useState("");
   const [address, setAddress] = useState("");
   const [postalCode, setPostalCode] = useState("");
 
+  const validatePhone = (code, number) => {
+    if (!code) {
+      setPhoneError("Country code is required");
+      return false;
+    }
+    if (!number) {
+      setPhoneError("Phone number is required");
+      return false;
+    }
+    const country = COUNTRY_OPTIONS.find((c) => c.dialCode === code);
+    if (country) {
+      try {
+        const fullNumber = code + number;
+        const parsed = parsePhoneNumberFromString(fullNumber, country.value);
+        if (parsed && !parsed.isValid()) {
+          setPhoneError("Please enter a valid phone number for the selected country.");
+          return false;
+        }
+      } catch {
+        setPhoneError("Please enter a valid phone number.");
+        return false;
+      }
+    } else {
+      if (number.length < 7 || number.length > 15) {
+        setPhoneError("Enter a valid phone number");
+        return false;
+      }
+    }
+    setPhoneError("");
+    return true;
+  };
+
+  const handleCountryChange = (option) => {
+    const nextCode = option ? option.dialCode : "+357";
+    setPhoneCode(nextCode);
+    validatePhone(nextCode, phone);
+  };
+
+  const handlePhoneChange = (val) => {
+    const digitsOnly = val.replace(/\D/g, "");
+    setPhone(digitsOnly);
+    validatePhone(phoneCode, digitsOnly);
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    const isPhoneValid = validatePhone(phoneCode, phone);
+    if (!isPhoneValid) return;
+
     onAdd({
       orderType,
       deliveryType,
+      scheduleData,
       fullName: fullName.trim(),
-      phone: phone.trim(),
-      address: address.trim(),
-      postalCode: postalCode.trim(),
+      phone: `${phoneCode} ${phone.trim()}`,
+      address: orderType === "delivery" ? address.trim() : "",
+      postalCode: orderType === "delivery" ? postalCode.trim() : "",
     });
     setFullName("");
     setPhone("");
+    setPhoneError("");
     setAddress("");
     setPostalCode("");
+    setScheduleData(null);
+    setDeliveryType("standard");
     onClose();
+  };
+
+  const handleScheduleConfirm = (data) => {
+    setScheduleData(data);
+    setScheduleOpen(false);
+  };
+
+  const handleScheduleCancel = () => {
+    if (!scheduleData) {
+      setDeliveryType("standard");
+    }
+    setScheduleOpen(false);
   };
 
   if (!open) return null;
 
   const inputStyle = {
     width: "100%",
-    padding: "14px 16px",
-    border: "1.5px solid var(--border)",
-    borderRadius: 14,
-    fontSize: 14,
-    color: "var(--text)",
-    background: "var(--surface)",
-    fontFamily: "inherit",
+    height: "40px",
+    padding: "12px 10px",
+    border: "1px solid #F4F6F8",
+    borderRadius: 8,
+    fontSize: 10,
+    color: "#333333",
+    background: "#F4F6F8",
+    fontFamily: "'Montserrat', sans-serif",
     boxSizing: "border-box",
+    outline: "none",
   };
 
   const labelStyle = {
     display: "block",
-    fontSize: 13,
-    fontWeight: 600,
-    color: "var(--text)",
-    marginBottom: 8,
-    letterSpacing: -0.1,
+    fontSize: 12,
+    fontWeight: 400,
+    color: "#333333",
+    marginBottom: 4,
+    fontFamily: "'Montserrat', sans-serif",
   };
 
   return (
     <>
+      {/* Overlay */}
       <div
         onClick={onClose}
         style={{
           position: "fixed",
           inset: 0,
-          background: "var(--overlay)",
+          background: "rgba(0, 0, 0, 0.4)",
+          backdropFilter: "blur(2px)",
           zIndex: 9998,
         }}
       />
+
+      {/* Modal Container */}
       <div
         style={{
           position: "fixed",
@@ -75,59 +158,73 @@ export default function AddAddressModal({ open, onClose, onAdd }) {
           top: "50%",
           transform: "translate(-50%, -50%)",
           width: "calc(100% - 32px)",
-          maxWidth: 400,
+          maxWidth: 335,
           maxHeight: "90vh",
-          overflow: "auto",
-          background: "var(--surface)",
-          borderRadius: 20,
-          boxShadow: "0 20px 60px rgba(0,0,0,0.2)",
+          overflowY: "auto",
+          background: "#FFFFFF",
+          borderRadius: 8,
+          boxShadow: "0 10px 40px rgba(0, 0, 0, 0.15)",
           zIndex: 9999,
-          padding: "20px 20px 24px",
+          padding: "20px 14px 18px",
+          fontFamily: "'Montserrat', sans-serif",
+          boxSizing: "border-box",
         }}
       >
+        {/* Header */}
         <div
           style={{
             display: "flex",
             alignItems: "center",
-            justifyContent: "space-between",
-            marginBottom: 20,
+            justifyContent: "center",
+            position: "relative",
+            marginBottom: 16,
           }}
         >
-          <h2
+          <span
             style={{
-              fontSize: 18,
-              fontWeight: 800,
-              color: "var(--text)",
-              margin: 0,
-              letterSpacing: -0.3,
+              fontSize: 14,
+              fontWeight: 500,
+              color: "#333333",
             }}
           >
             Add New Address
-          </h2>
+          </span>
           <button
             type="button"
             onClick={onClose}
             style={{
-              background: "none",
+              position: "absolute",
+              width: "20px",
+              height: "20px",
+              borderRadius: "50%",
+              right: 0,
+              top: "50%",
+              transform: "translateY(-50%)",
+              background: "#F4F6F8",
               border: "none",
               cursor: "pointer",
-              padding: 4,
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
+              color: "#8E8E8E",
             }}
           >
-            <IcoClose />
+            <CloseIcon />
           </button>
         </div>
 
+        {/* Divider */}
+        <div style={{ height: 1, background: "#E8E8E8", marginBottom: 12 }} />
+
+        {/* Form */}
         <form onSubmit={handleSubmit}>
-          <div style={{ marginBottom: 18 }}>
+          {/* Order Type Toggle (Top) */}
+          <div style={{ marginBottom: 10 }}>
             <span style={labelStyle}>Order Type</span>
-            <div style={{ display: "flex", gap: 16 }}>
+            <div style={{ display: "flex", gap: 16, paddingTop: 5 }}>
               <button
                 type="button"
-                onClick={() => setOrderType("delivery")}
+                onClick={() => onChangeOrderType?.("delivery")}
                 style={{
                   display: "flex",
                   alignItems: "center",
@@ -135,18 +232,18 @@ export default function AddAddressModal({ open, onClose, onAdd }) {
                   background: "none",
                   border: "none",
                   cursor: "pointer",
-                  fontFamily: "inherit",
-                  fontSize: 14,
-                  fontWeight: 500,
-                  color: orderType === "delivery" ? BRAND_RED : "var(--muted)",
+                  fontFamily: "'Montserrat', sans-serif",
+                  fontSize: 10,
+                  fontWeight: 400,
+                  color: orderType === "delivery" ? "#DA1A35" : "#A4A4A4",
                 }}
               >
-                <RadioDot active={orderType === "delivery"} activeColor={BRAND_RED} />
+                {orderType === "delivery" ? <CircleTickIcon /> : <CircleTickEmpty />}
                 Delivery
               </button>
               <button
                 type="button"
-                onClick={() => setOrderType("pickup")}
+                onClick={() => onChangeOrderType?.("pickup")}
                 style={{
                   display: "flex",
                   alignItems: "center",
@@ -154,110 +251,175 @@ export default function AddAddressModal({ open, onClose, onAdd }) {
                   background: "none",
                   border: "none",
                   cursor: "pointer",
-                  fontFamily: "inherit",
-                  fontSize: 14,
-                  fontWeight: 500,
-                  color: orderType === "pickup" ? BRAND_RED : "var(--muted)",
+                  fontFamily: "'Montserrat', sans-serif",
+                  fontSize: 10,
+                  fontWeight: 400,
+                  color: orderType === "pickup" ? "#DA1A35" : "#A4A4A4",
                 }}
               >
-                <RadioDot active={orderType === "pickup"} activeColor={BRAND_RED} />
+                {orderType === "pickup" ? <CircleTickIcon /> : <CircleTickEmpty />}
                 Pickup
               </button>
             </div>
           </div>
 
-          <div style={{ marginBottom: 18 }}>
-            <span style={{ ...labelStyle, fontSize: 14, fontWeight: 700 }}>
-              Shipping address
+          {/* Divider below Order Type */}
+          <div style={{ height: 1, background: "#E8E8E8", margin: "-1px 0 14px" }} />
+
+          {/* Address Details Section */}
+          <div style={{ marginBottom: 14 }}>
+            <span
+              style={{
+                display: "block",
+                fontSize: 12,
+                fontWeight: 400,
+                color: "#333333",
+                marginBottom: 8,
+                fontFamily: "'Montserrat', sans-serif",
+              }}
+            >
+              {orderType === "delivery" ? "Shipping address" : "Pickup From"}
             </span>
-            <div style={{ marginBottom: 14 }}>
+
+            {/* Full Name */}
+            <div style={{ marginBottom: 8 }}>
               <label style={labelStyle}>Full Name</label>
               <input
                 type="text"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
                 placeholder="Enter full name"
+                className="placeholder:text-[#777777]"
                 style={inputStyle}
               />
             </div>
-            <div style={{ marginBottom: 14 }}>
+
+            {/* Phone Number */}
+            <div style={{ marginBottom: orderType === "delivery" ? 8 : 0 }}>
               <label style={labelStyle}>Phone Number</label>
               <div
                 style={{
                   display: "flex",
-                  border: "1.5px solid var(--border)",
-                  borderRadius: 14,
-                  overflow: "hidden",
-                  background: "var(--surface)",
+                  alignItems: "center",
+                  height: "40px",
+                  border: "1px solid #F4F6F8",
+                  borderRadius: 8,
+                  paddingLeft: 10,
+                  background: "#F4F6F8",
+                  boxSizing: "border-box",
                 }}
               >
+                <div style={{ display: "flex", alignItems: "center", shrink: 0 }}>
+                  <CountrySelect value={phoneCode} onChange={handleCountryChange} isModal={true} />
+                </div>
+
+                {/* Divider line */}
                 <div
                   style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 6,
-                    padding: "0 12px",
-                    borderRight: "1px solid var(--border)",
-                    background: "var(--surface-alt)",
+                    height: 28,
+                    width: 1,
+                    backgroundColor: "#E9EAEB",
+                    flexShrink: 0,
+                    margin: "0 4px",
                   }}
-                >
-                  <span style={{ fontSize: 12, color: "var(--muted)" }}>{"\u2713"}</span>
-                  <span style={{ fontSize: 12, color: "var(--muted)" }}>{"\u25BC"}</span>
-                  <span style={{ fontSize: 13, fontWeight: 600, color: "var(--text)" }}>
-                    +357
-                  </span>
-                </div>
+                />
+
                 <input
                   type="tel"
+                  name="phone"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
                   value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
+                  onChange={(e) => handlePhoneChange(e.target.value)}
                   placeholder="(444) 1234-5678"
-                  style={{ ...inputStyle, border: "none", background: "transparent" }}
+                  className="placeholder:text-[#777777]"
+                  style={{
+                    flex: 1,
+                    minWidth: 0,
+                    height: "100%",
+                    padding: "0 4px",
+                    background: "transparent",
+                    border: "none",
+                    outline: "none",
+                    fontFamily: "'Montserrat', sans-serif",
+                    fontSize: 10,
+                    color: "#333333",
+                  }}
                 />
               </div>
-            </div>
-            <div style={{ marginBottom: 14 }}>
-              <label style={labelStyle}>Address</label>
-              <div style={{ position: "relative" }}>
-                <input
-                  type="text"
-                  value={address}
-                  onChange={(e) => setAddress(e.target.value)}
-                  placeholder="Enter address"
-                  style={inputStyle}
-                />
-                <div
+              {phoneError && (
+                <p
                   style={{
-                    position: "absolute",
-                    right: 14,
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                    color: BRAND_RED,
-                    pointerEvents: "none",
+                    color: "#DA1A35",
+                    fontSize: 10,
+                    marginTop: 4,
+                    fontFamily: "'Montserrat', sans-serif",
                   }}
                 >
-                  <MdLocationOn size={20} />
+                  {phoneError}
+                </p>
+              )}
+            </div>
+
+            {/* Address & Postal Code (Only for Delivery) */}
+            {orderType === "delivery" && (
+              <>
+                <div style={{ marginBottom: 8 }}>
+                  <label style={labelStyle}>Address</label>
+                  <div style={{ position: "relative" }}>
+                    <input
+                      type="text"
+                      value={address}
+                      onChange={(e) => setAddress(e.target.value)}
+                      placeholder="Enter address"
+                      className="placeholder:text-[#777777]"
+                      style={inputStyle}
+                    />
+                    <div
+                      style={{
+                        position: "absolute",
+                        right: 12,
+                        top: "50%",
+                        transform: "translateY(-50%)",
+                        color: "#DA1A35",
+                        pointerEvents: "none",
+                        display: "flex",
+                        alignItems: "center",
+                      }}
+                    >
+                      <LocationIcon alt="Location" />
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
-            <div>
-              <label style={labelStyle}>Postal Code</label>
-              <input
-                type="text"
-                value={postalCode}
-                onChange={(e) => setPostalCode(e.target.value)}
-                placeholder="Enter postal code"
-                style={inputStyle}
-              />
-            </div>
+
+                <div>
+                  <label style={labelStyle}>Postal Code</label>
+                  <input
+                    type="text"
+                    value={postalCode}
+                    onChange={(e) => setPostalCode(e.target.value)}
+                    placeholder="Enter postal code"
+                    className="placeholder:text-[#777777]"
+                    style={inputStyle}
+                  />
+                </div>
+              </>
+            )}
           </div>
 
+          {/* Divider prior to bottom Order Type */}
+          <div style={{ height: 1, background: "#E8E8E8", margin: "10px 0" }} />
+
+          {/* Bottom Delivery / Pickup Toggles */}
           <div style={{ marginBottom: 22 }}>
             <span style={labelStyle}>Order Type</span>
-            <div style={{ display: "flex", gap: 16 }}>
+            <div style={{ display: "flex", gap: 16, paddingTop: 5 }}>
               <button
                 type="button"
-                onClick={() => setDeliveryType("standard")}
+                onClick={() => {
+                  setDeliveryType("standard");
+                  setScheduleData(null);
+                }}
                 style={{
                   display: "flex",
                   alignItems: "center",
@@ -265,18 +427,21 @@ export default function AddAddressModal({ open, onClose, onAdd }) {
                   background: "none",
                   border: "none",
                   cursor: "pointer",
-                  fontFamily: "inherit",
-                  fontSize: 14,
-                  fontWeight: 500,
-                  color: deliveryType === "standard" ? BRAND_RED : "var(--muted)",
+                  fontFamily: "'Montserrat', sans-serif",
+                  fontSize: 10,
+                  fontWeight: 400,
+                  color: deliveryType === "standard" ? "#DA1A35" : "#A4A4A4",
                 }}
               >
-                <RadioDot active={deliveryType === "standard"} activeColor={BRAND_RED} />
-                Standard Delivery
+                {deliveryType === "standard" ? <CircleTickIcon /> : <CircleTickEmpty />}
+                {orderType === "delivery" ? "Standard Delivery" : "Standard Pickup"}
               </button>
               <button
                 type="button"
-                onClick={() => setDeliveryType("schedule")}
+                onClick={() => {
+                  setDeliveryType("schedule");
+                  setScheduleOpen(true);
+                }}
                 style={{
                   display: "flex",
                   alignItems: "center",
@@ -284,38 +449,58 @@ export default function AddAddressModal({ open, onClose, onAdd }) {
                   background: "none",
                   border: "none",
                   cursor: "pointer",
-                  fontFamily: "inherit",
-                  fontSize: 14,
-                  fontWeight: 500,
-                  color: deliveryType === "schedule" ? BRAND_RED : "var(--muted)",
+                  fontFamily: "'Montserrat', sans-serif",
+                  fontSize: 10,
+                  fontWeight: 400,
+                  color: deliveryType === "schedule" ? "#DA1A35" : "#A4A4A4",
                 }}
               >
-                <RadioDot active={deliveryType === "schedule"} activeColor={BRAND_RED} />
-                Schedule Delivery
+                {deliveryType === "schedule" ? <CircleTickIcon /> : <CircleTickEmpty />}
+                {orderType === "delivery" ? "Schedule Delivery" : "Schedule Pickup"}
               </button>
             </div>
+            {scheduleData && (
+              <p
+                style={{
+                  fontSize: 10,
+                  color: "#DA1A35",
+                  marginTop: 6,
+                  fontFamily: "'Montserrat', sans-serif",
+                }}
+              >
+                Scheduled for: {scheduleData.day} ({scheduleData.time})
+              </p>
+            )}
           </div>
 
+          {/* Submit button */}
           <button
             type="submit"
             style={{
               width: "100%",
-              padding: "16px",
-              borderRadius: 14,
+              height: 40,
+              borderRadius: 22,
               border: "none",
-              background: BRAND_RED,
-              color: "#fff",
-              fontSize: 15,
-              fontWeight: 700,
+              background: "#DA1A35",
+              color: "#FFFFFF",
+              fontSize: 12,
+              fontWeight: 400,
               cursor: "pointer",
-              fontFamily: "inherit",
-              letterSpacing: 0.2,
+              fontFamily: "'Montserrat', sans-serif",
             }}
           >
-            Add Address
+            Add
           </button>
         </form>
       </div>
+
+      <ScheduleModal
+        open={scheduleOpen}
+        orderType={orderType}
+        initialSchedule={scheduleData}
+        onCancel={handleScheduleCancel}
+        onConfirm={handleScheduleConfirm}
+      />
     </>
   );
 }

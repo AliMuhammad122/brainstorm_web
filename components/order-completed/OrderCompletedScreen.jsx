@@ -1,8 +1,9 @@
 import React from "react";
+import SuccessIcon from "../../public/assets/icons/payment_success.svg";
 
 /**
- * Order Completed screen: green success icon with rings, message, Back to Home.
- * Shown when order is delivered / completed.
+ * Order Completed screen: green success icon, message, Back to Home.
+ * Matches the Figma design layout exactly.
  */
 export default function OrderCompletedScreen({ onBackToHome }) {
   return (
@@ -14,74 +15,31 @@ export default function OrderCompletedScreen({ onBackToHome }) {
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
-        padding: 40,
-        background: "var(--bg)",
+        padding: "40px 24px",
+        background: "#F9FAFC",
+        fontFamily: "'Montserrat', sans-serif",
       }}
     >
-      {/* Success icon: outer rings + green circle + checkmark */}
-      <div
-        style={{
-          position: "relative",
-          width: 120,
-          height: 120,
-          marginBottom: 32,
-        }}
-      >
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            borderRadius: "50%",
-            background: "var(--success-soft)",
-          }}
-        />
-        <div
-          style={{
-            position: "absolute",
-            inset: 12,
-            borderRadius: "50%",
-            background: "var(--success-soft-strong)",
-          }}
-        />
-        <div
-          style={{
-            position: "absolute",
-            inset: 24,
-            borderRadius: "50%",
-            background: "var(--success)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            boxShadow: "0 4px 20px var(--success-shadow)",
-          }}
-        >
-          <span
-            style={{
-              color: "var(--on-primary)",
-              fontSize: 44,
-              fontWeight: 300,
-              lineHeight: 1,
-            }}
-          >
-            {"\u2713"}
-          </span>
-        </div>
+      {/* Success Icon */}
+      <div style={{ marginBottom: 16 }}>
+        <SuccessIcon  />
       </div>
 
+      {/* Message */}
       <p
         style={{
-          fontSize: 18,
-          fontWeight: 600,
-          color: "var(--text)",
-          margin: "0 0 32px",
+          fontSize: 14,
+          fontWeight: 500,
+          color: "#333333",
+          margin: "0 48px 16px",
           textAlign: "center",
-          lineHeight: 1.4,
-          maxWidth: 280,
+          lineHeight: "20px",
         }}
       >
-        Your order has been completed successfully
+        Your order has been complete sucessfully
       </p>
 
+      {/* Back to Home Button */}
       <button
         type="button"
         onClick={onBackToHome}
@@ -90,11 +48,11 @@ export default function OrderCompletedScreen({ onBackToHome }) {
           border: "none",
           cursor: "pointer",
           padding: 0,
-          fontFamily: "inherit",
-          fontSize: 15,
-          fontWeight: 600,
-          color: "var(--primary)",
-          textDecoration: "underline",
+          fontSize: 14,
+          fontWeight: 500,
+          color: "#DA1A35",
+          textDecoration: "none",
+          fontFamily: "'Montserrat', sans-serif",
         }}
       >
         Back to Home
@@ -102,4 +60,3 @@ export default function OrderCompletedScreen({ onBackToHome }) {
     </div>
   );
 }
-

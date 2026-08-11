@@ -4,8 +4,12 @@ import React from "react";
  * Shipping To: either "Add New Shipping Address" CTA (dotted border, pink bg, red text)
  * or address card + "Change Address". Both open AddAddressModal.
  */
-export default function ShippingSection({ address, onAddOrChange }) {
+export default function ShippingSection({ address, onAddOrChange, orderType }) {
   const hasAddress = address && (address.fullName || address.address);
+  const isPickup = orderType === "pickup";
+
+  const titleText = isPickup ? "Pickup Restaurants" : "Shipping To";
+  const buttonText = isPickup ? "Add New Pickup Address" : "Add New Shipping Address";
 
   return (
     <div style={{ marginBottom: 16 }}>
@@ -26,7 +30,7 @@ export default function ShippingSection({ address, onAddOrChange }) {
             fontFamily: "'Montserrat', sans-serif",
           }}
         >
-          Shipping To
+          {titleText}
         </span>
         {hasAddress && (
           <button
@@ -37,12 +41,12 @@ export default function ShippingSection({ address, onAddOrChange }) {
               background: "none",
               border: "none",
               cursor: "pointer",
-              fontSize: 13,
-              fontWeight: 600,
-              color: "var(--primary)",
+              fontSize: 10,
+              fontWeight: 400,
+              color: "#DA1A35",
               fontFamily: "inherit",
               letterSpacing: 0.05,
-              textDecoration: "underline",
+              textDecoration: "none",
             }}
           >
             Change Address
@@ -76,42 +80,56 @@ export default function ShippingSection({ address, onAddOrChange }) {
               fontFamily: "'Montserrat', sans-serif",
             }}
           >
-            Add New Shipping Address
+            {buttonText}
           </span>
         </button>
       ) : (
         <div
           style={{
-            border: "1.5px solid var(--border)",
-            borderRadius: 16,
-            padding: "14px 16px",
+            border: "1.5px solid #E8E8E8",
+            borderRadius: 8,
+            padding: "10px 14px",
+            height  : "fit-content"
           }}
         >
           <p
             style={{
-              fontSize: 14,
-              fontWeight: 600,
-              color: "var(--text)",
-              margin: "0 0 6px",
-              letterSpacing: -0.2,
+              fontSize: 12,
+              fontWeight: 400,
+              color: "#A4A4A4",
+              margin: "0 0 5px",
+              letterSpacing: 0,
             }}
           >
             {address.fullName}
           </p>
+          {address.phone && (
+            <p style={{ fontSize: 12, color: "#A4A4A4", margin: "0 0 4px" }}>
+              {address.phone}
+            </p>
+          )}
           <p
             style={{
-              fontSize: 12.5,
-              color: "var(--muted)",
+              fontSize: 12,
+              color: "#A4A4A4",
               margin: "0 0 4px",
-              lineHeight: 1.4,
+              lineHeight: 1.24,
             }}
           >
             {address.address}
             {address.postalCode ? `, ${address.postalCode}` : ""}
           </p>
-          {address.phone && (
-            <p style={{ fontSize: 12, color: "var(--subtle)", margin: 0 }}>
-              {address.phone}
+          {address.scheduleData && (
+            <p
+              style={{
+                fontSize: 12,
+                fontWeight: 500,
+                color: "#DA1A35",
+                margin: "4px 0 0",
+                fontFamily: "'Montserrat', sans-serif",
+              }}
+            >
+              Scheduled: {address.scheduleData.day} ({address.scheduleData.time})
             </p>
           )}
         </div>

@@ -37,23 +37,32 @@ export default function ScreensCheckoutPage() {
   const [rewardsLoginOpen, setRewardsLoginOpen] = useState(false);
   const [isRewardsLoggedIn, setIsRewardsLoggedIn] = useState(false);
   const [rewardsUserEmail, setRewardsUserEmail] = useState("");
+  const [orderType, setOrderType] = useState("delivery");
 
   const subtotal = state.cartItems.reduce((s, i) => s + i.priceNum * i.qty, 0);
   const discount = selectedVoucherId === "birthday" ? 5 : selectedVoucherId === "voucher20" ? 20 : 0;
   const total = Math.max(0, subtotal - discount);
   const totalItems = state.cartItems.reduce((s, i) => s + i.qty, 0);
 
+  const hasAddress =
+    address &&
+    address.fullName &&
+    (address.orderType === "pickup" || address.address);
+
   const canProceed =
+    !!hasAddress &&
     !!payMethod &&
     (payMethod !== "card" || (savedCard && savedCard.last4));
 
   const handleAddAddress = (data) => {
     setAddress({
       fullName: data.fullName,
-      phone: data.phone ? `+357 ${data.phone}` : "",
+      phone: data.phone || "",
       address: data.address,
       postalCode: data.postalCode,
+      orderType: data.orderType,
     });
+    setOrderType(data.orderType);
     setAddAddressOpen(false);
   };
 
@@ -120,7 +129,7 @@ export default function ScreensCheckoutPage() {
           position: "relative",
         }}
       >
-        <PageHeader title="Shipping & Billings" onBack={() => router.back()} />
+        <PageHeader title={orderType === "pickup" ? "Pickup Restaurants & Billings" : "Shipping & Billings"} onBack={() => router.back()} />
         <div style={{ height: 1, background: "var(--border-subtle)" }} />
 
         <div
@@ -136,6 +145,7 @@ export default function ScreensCheckoutPage() {
           <ShippingSection
             address={address}
             onAddOrChange={() => setAddAddressOpen(true)}
+            orderType={orderType}
           />
           <PaymentMethodsSection
             selectedId={payMethod}
@@ -174,6 +184,8 @@ export default function ScreensCheckoutPage() {
         open={addAddressOpen}
         onClose={() => setAddAddressOpen(false)}
         onAdd={handleAddAddress}
+        orderType={orderType}
+        onChangeOrderType={setOrderType}
       />
       <AddCardModal
         open={addCardOpen}

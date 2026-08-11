@@ -1,7 +1,9 @@
 import React from "react";
+import SuccessIcon from "../../public/assets/icons/payment_success.svg"
 
 /**
- * Payment success screen: green checkmark, message, Back to Home link.
+ * Payment success screen: green checkmark icon, success message, Back to Home link.
+ * Matches the Figma design layout exactly.
  */
 export default function PaymentSuccessScreen({ onBackToHome, onTrackOrder }) {
   return (
@@ -13,33 +15,25 @@ export default function PaymentSuccessScreen({ onBackToHome, onTrackOrder }) {
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
-        padding: 40,
-        background: "var(--bg)",
+        padding: "40px 24px",
+        background: "#F9FAFC",
+        fontFamily: "'Montserrat', sans-serif",
       }}
     >
-      <div
-        style={{
-          width: 100,
-          height: 100,
-          borderRadius: "50%",
-          background: "var(--success)",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          marginBottom: 24,
-          boxShadow: "0 0 0 8px var(--success-soft-strong)",
-        }}
-      >
-        <span style={{ color: "var(--on-primary)", fontSize: 48, fontWeight: 300, lineHeight: 1 }}>{"\u2713"}</span>
+      {/* Success Icon */}
+      <div style={{ marginBottom: 16 }}>
+        <SuccessIcon width={152} height={152} />
       </div>
+
+      {/* Message */}
       <p
         style={{
-          fontSize: 18,
-          fontWeight: 700,
-          color: "var(--text)",
-          margin: "0 0 28px",
+          fontSize: 14,
+          fontWeight: 500,
+          color: "#333333",
+          margin: "0 48px 16px",
           textAlign: "center",
-          lineHeight: 1.4,
+          lineHeight: "20px",
         }}
       >
         Payment Process is Successfully Done
@@ -49,14 +43,14 @@ export default function PaymentSuccessScreen({ onBackToHome, onTrackOrder }) {
         onClick={onTrackOrder}
         style={{
           width: "100%",
-          maxWidth: 260,
+          maxWidth: 160,
           padding: "15px 24px",
-          borderRadius: 14,
+          borderRadius: 10000,
           border: "none",
           background: "var(--primary)",
           color: "var(--on-primary)",
-          fontSize: 15,
-          fontWeight: 700,
+          fontSize: 14,
+          fontWeight: 400,
           cursor: "pointer",
           fontFamily: "inherit",
           letterSpacing: 0.2,
@@ -73,11 +67,11 @@ export default function PaymentSuccessScreen({ onBackToHome, onTrackOrder }) {
           border: "none",
           cursor: "pointer",
           padding: 0,
-          fontFamily: "inherit",
           fontSize: 14,
-          fontWeight: 600,
-          color: "var(--primary)",
-          textDecoration: "underline",
+          fontWeight: 500,
+          color: "#DA1A35",
+          textDecoration: "none",
+          fontFamily: "'Montserrat', sans-serif",
         }}
       >
         Back to Home

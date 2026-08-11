@@ -1,90 +1,96 @@
 import React from "react";
-
-const BRAND_RED = "var(--primary)";
-
+import LoadingIcon from "../../public/assets/icons/loading.svg"
 /**
  * Proceed to Payment confirmation modal with spinner, message, Cancel and Pay Now.
+ * Matches the Figma design layout exactly.
  */
 export default function ProceedToPaymentModal({ open, amount, onCancel, onPayNow }) {
   if (!open) return null;
 
   return (
     <>
+      {/* Overlay */}
       <div
         onClick={onCancel}
         style={{
           position: "fixed",
           inset: 0,
-          background: "var(--overlay)",
+          background: "rgba(0, 0, 0, 0.4)",
+          backdropFilter: "blur(2px)",
           zIndex: 9998,
         }}
       />
+
+      {/* Modal Container */}
       <div
         style={{
           position: "fixed",
           left: "50%",
           top: "50%",
           transform: "translate(-50%, -50%)",
-          width: "calc(100% - 40px)",
-          maxWidth: 340,
-          background: "var(--surface)",
-          borderRadius: 20,
-          boxShadow: "0 20px 60px rgba(0,0,0,0.2)",
+          width: "calc(100% - 32px)",
+          maxWidth: 335,
+          background: "#FFFFFF",
+          borderRadius: 8,
+          boxShadow: "0 10px 40px rgba(0, 0, 0, 0.15)",
           zIndex: 9999,
-          padding: "28px 24px 24px",
+          padding: "14px 20px 16px",
+          fontFamily: "'Montserrat', sans-serif",
+          boxSizing: "border-box",
         }}
       >
+        {/* Spinner Loader */}
         <div style={{ display: "flex", justifyContent: "center", marginBottom: 16 }}>
-          <div
-            style={{
-              width: 48,
-              height: 48,
-              border: `3px solid ${BRAND_RED}`,
-              borderTopColor: "transparent",
-              borderRadius: "50%",
-              animation: "spin 0.8s linear infinite",
-            }}
-          />
+          <LoadingIcon />
         </div>
-        <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+
+        {/* Title */}
         <h2
           style={{
-            fontSize: 18,
-            fontWeight: 800,
-            color: "var(--text)",
+            fontSize: 14,
+            fontWeight: 500,
+            color: "#000000",
             margin: "0 0 10px",
             textAlign: "center",
+            fontFamily: "'Montserrat', sans-serif",
           }}
         >
-          Proceed to Payment
+          Procced to Payment
         </h2>
+
+        {/* Message */}
         <p
           style={{
             fontSize: 14,
-            color: "var(--muted)",
-            margin: "0 0 24px",
+            color: "#A4A4A4",
+            margin: "0 0 20px",
             textAlign: "center",
-            lineHeight: 1.5,
+            lineHeight: "20px",
+            fontWeight: 400,
           }}
         >
           Are you sure you want to pay{" "}
-          <span style={{ color: BRAND_RED, fontWeight: 700 }}>€{amount}</span> for these items?
+          <span style={{ color: "#DA1A35", fontWeight: 500 }}>€{amount}</span> for these items
         </p>
-        <div style={{ display: "flex", gap: 12 }}>
+
+        {/* Buttons */}
+        <div style={{ display: "flex", gap: 8 }}>
           <button
             type="button"
             onClick={onCancel}
             style={{
-              flex: 1,
-              padding: "14px",
-              borderRadius: 14,
-              border: "1.5px solid var(--border)",
-              background: "var(--surface)",
-              color: "var(--muted)",
-              fontSize: 14,
-              fontWeight: 700,
+              // flex: 1,
+              paddingLeft:"34px",
+              paddingRight:"34px",
+              height: 40,
+              borderRadius: 22,
+              border: "1px solid #E8E8E8",
+              background: "#FFFFFF",
+              color: "#333333",
+              fontSize: 12,
+              fontWeight: 400,
               cursor: "pointer",
-              fontFamily: "inherit",
+              fontFamily: "'Montserrat', sans-serif",
             }}
           >
             Cancel
@@ -94,15 +100,16 @@ export default function ProceedToPaymentModal({ open, amount, onCancel, onPayNow
             onClick={onPayNow}
             style={{
               flex: 1,
-              padding: "14px",
-              borderRadius: 14,
+              width:180,
+              height: 40,
+              borderRadius: 22,
               border: "none",
-              background: BRAND_RED,
-              color: "#fff",
-              fontSize: 14,
-              fontWeight: 700,
+              background: "#DA1A35",
+              color: "#FFFFFF",
+              fontSize: 12,
+              fontWeight: 400,
               cursor: "pointer",
-              fontFamily: "inherit",
+              fontFamily: "'Montserrat', sans-serif",
             }}
           >
             Pay Now

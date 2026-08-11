@@ -47,16 +47,30 @@ function RenderFlag({ countryCode }) {
 }
 
 const CustomSingleValue = (props) => {
-  const { data } = props;
+  const { data, selectProps } = props;
+  const isModal = selectProps?.isModal;
   const { isDark } = useTheme();
   return (
     <components.SingleValue {...props}>
-      <div className="flex items-center gap-2 cursor-pointer">
-        <div className="w-5 h-5 rounded-full overflow-hidden flex items-center justify-center shrink-0 bg-white ">
+      <div
+        className="flex items-center cursor-pointer"
+        style={{ gap: isModal ? 4 : 8 }}
+      >
+        <div
+          className="rounded-full overflow-hidden flex items-center justify-center shrink-0"
+          style={{
+            width: isModal ? 16 : 20,
+            height: isModal ? 16 : 20,
+            backgroundColor: isModal ? "transparent" : "#FCFCFC",
+          }}
+        >
           <RenderFlag countryCode={data.value} />
         </div>
-        <ArrowDown className="ml-1.5" />
-        <span className={`text-sm font-normal font-montserrat pl-0.5 ${isDark ? "text-white" : "text-[#777777]"}`}>
+        <ArrowDown style={{ marginLeft: isModal ? 10 : 6, marginRight: isModal ? 8 : 0 }} />
+        <span
+          className={`font-normal font-montserrat ${isDark ? "text-white" : "text-[#777777]"}`}
+          style={{ fontSize: isModal ? 10 : 14, paddingLeft: isModal ? 0 : 2 }}
+        >
           {data.dialCode}
         </span>
       </div>
@@ -88,7 +102,7 @@ const CustomOption = (props) => {
 };
 
 // react-select custom styles for seamless integration
-const customSelectStyles = (isDark) => ({
+const customSelectStyles = (isDark, isModal) => ({
   control: (base) => ({
     ...base,
     backgroundColor: "transparent",
@@ -97,7 +111,7 @@ const customSelectStyles = (isDark) => ({
     minHeight: "auto",
     cursor: "pointer",
     padding: 0,
-    width: "100px",
+    width: isModal ? "" : "100px",
   }),
   valueContainer: (base) => ({
     ...base,
@@ -147,7 +161,7 @@ const customSelectStyles = (isDark) => ({
   }),
 });
 
-export default function CountrySelect({ value, onChange }) {
+export default function CountrySelect({ value, onChange, isModal }) {
   const { isDark } = useTheme();
 
   const selectedOption = COUNTRY_OPTIONS.find((c) => c.dialCode === value) || DEFAULT_COUNTRY;
@@ -158,11 +172,12 @@ export default function CountrySelect({ value, onChange }) {
       options={COUNTRY_OPTIONS}
       value={selectedOption}
       onChange={onChange}
+      isModal={isModal}
       components={{
         SingleValue: CustomSingleValue,
         Option: CustomOption,
       }}
-      styles={customSelectStyles(isDark)}
+      styles={customSelectStyles(isDark, isModal)}
       isSearchable
       menuPortalTarget={typeof document !== "undefined" ? document.body : undefined}
       menuPosition="fixed"

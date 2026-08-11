@@ -44,6 +44,7 @@ export default function PaymentMethodsSection({
           <div
             style={{
               width: "100%",
+              height:"100px",
               border: "1.5px solid #E8E8E8",
               borderRadius: 8,
               padding: "12px 10px 14px",
@@ -76,7 +77,7 @@ export default function PaymentMethodsSection({
                         fontSize: 12,
                         fontWeight: 400,
                         color: "#A4A4A4",
-                        margin: "0 0 12px",
+                        margin: "0 0 10px",
                         fontFamily: "'Montserrat', sans-serif",
                         letterSpacing: 0,
                       }}
@@ -84,7 +85,7 @@ export default function PaymentMethodsSection({
                       {savedCard.first4} **** {savedCard.last4} ****
                     </p>
                       </div>
-              <div style={{ display: "flex", alignItems: "center", gap: 2, position: "relative", width: 44, height: 28 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 2, position: "relative", width: 32, height: 28 }}>
                 <MastercardIcon alt="MasterCard" />
               </div>
             </div>
@@ -93,49 +94,30 @@ export default function PaymentMethodsSection({
               style={{
                 display: "flex",
                 gap: 0,
-                borderTop: "1px solid var(--border-subtle)",
-                paddingTop: 10,
+                // borderTop: "1px solid var(--border-subtle)",
+                // paddingTop: 10,
               }}
             >
               {[
-                { label: "Card Holder", value: savedCard.cardHolder },
-                { label: "Expires", value: savedCard.expiry },
-                { label: "CVV", value: "***" },
-              ].map((col, i) => (
+                { label: "Card Holder", value: savedCard.cardHolder, flex: "0 0 35%" },
+                { label: "Expires", value: savedCard.expiry, flex: "0 0 25%" },
+                { label: "CVV", value: savedCard.cvv || "***", flex: "0 0 25%" },
+              ].map((col) => (
                 <div
                   key={col.label}
                   style={{
-                    flex: 1,
-                    borderLeft: i > 0 ? "1px solid var(--border-subtle)" : "none",
-                    paddingLeft: i > 0 ? 12 : 0,
+                    flex: col.flex,
                   }}
                 >
-                  <p style={{ fontSize: 10, color: "var(--subtle)", margin: "0 0 3px", fontWeight: 500 }}>
+                  <p style={{ fontSize: 12, color: "#333333", margin: "0 0 3px", fontWeight: 400 }}>
                     {col.label}
                   </p>
-                  <p style={{ fontSize: 12.5, fontWeight: 600, color: "var(--text)", margin: 0 }}>
+                  <p style={{ fontSize: 12, fontWeight: 400, color: "#A4A4A4", margin: 0 }}>
                     {col.value}
                   </p>
                 </div>
               ))}
             </div>
-            <button
-              type="button"
-              onClick={(e) => { e.stopPropagation(); onAddCard?.(); }}
-              style={{
-                marginTop: 12,
-                padding: 0,
-                background: "none",
-                border: "none",
-                cursor: "pointer",
-                fontSize: 12,
-                fontWeight: 600,
-                color: "var(--primary)",
-                fontFamily: "inherit",
-              }}
-            >
-              Change Card
-            </button>
           </div>
         </div>
       ) : (
@@ -143,7 +125,12 @@ export default function PaymentMethodsSection({
           <div key={pm.id}>
             <button
               type="button"
-              onClick={() => onSelect(pm.id)}
+              onClick={() => {
+                onSelect(pm.id);
+                if (pm.id === "card") {
+                  onAddCard?.();
+                }
+              }}
               style={{
                 display: "flex",
                 alignItems: "center",
@@ -183,28 +170,6 @@ export default function PaymentMethodsSection({
                 <CircleTickEmpty />
               )}
             </button>
-            {pm.id === "card" && selectedId === "card" && (
-              <div style={{ padding: "0 2px 14px 0" }}>
-                <button
-                  type="button"
-                  onClick={(e) => { e.stopPropagation(); onAddCard?.(); }}
-                  style={{
-                    width: "100%",
-                    padding: "12px 16px",
-                    background: "var(--primary-soft)",
-                    border: "2px dashed var(--primary)",
-                    borderRadius: 14,
-                    cursor: "pointer",
-                    fontFamily: "inherit",
-                    fontSize: 13,
-                    fontWeight: 700,
-                    color: "var(--primary)",
-                  }}
-                >
-                  Add Card Details
-                </button>
-              </div>
-            )}
           </div>
         ))
       )}

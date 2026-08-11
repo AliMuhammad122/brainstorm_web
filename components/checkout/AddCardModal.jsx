@@ -1,7 +1,6 @@
 import React, { useState } from "react";
-import { IcoClose } from "../../src/screensFlow/icons";
-
-const BRAND_RED = "var(--primary)";
+import RequiredIcon from "../../public/assets/icons/required.svg"
+import CloseIcon from "../../public/assets/icons/close.svg"
 
 /**
  * Add Card Details modal: Card Number, Expiry Date, CVV, Add Card button.
@@ -60,23 +59,27 @@ export default function AddCardModal({ open, onClose, onAdd }) {
 
   const inputStyle = {
     width: "100%",
-    padding: "14px 16px",
-    border: "1.5px solid var(--border)",
-    borderRadius: 14,
-    fontSize: 14,
-    color: "var(--text)",
-    background: "var(--surface)",
-    fontFamily: "inherit",
+    height: "40px",
+    padding: "12px 10px",
+    border: "1px solid #F4F6F8",
+    borderRadius: 8,
+    fontSize: 10,
+    color: "#333333",
+    background: "#FFFFFF",
+    fontFamily: "'Montserrat', sans-serif",
     boxSizing: "border-box",
+    outline: "none",
   };
 
   const labelStyle = {
-    display: "block",
-    fontSize: 13,
-    fontWeight: 600,
-    color: "var(--text)",
-    marginBottom: 8,
-    letterSpacing: -0.1,
+    display: "flex",
+    alignItems: "center",
+    gap: 2,
+    fontSize: 12,
+    fontWeight: 400,
+    color: "#333333",
+    marginBottom: 2,
+    fontFamily: "'Montserrat', sans-serif",
   };
 
   return (
@@ -86,11 +89,12 @@ export default function AddCardModal({ open, onClose, onAdd }) {
         style={{
           position: "fixed",
           inset: 0,
-          background: "var(--overlay)",
+          background: "rgba(0, 0, 0, 0.4)",
           backdropFilter: "blur(2px)",
           zIndex: 9998,
         }}
       />
+
       <div
         style={{
           position: "fixed",
@@ -99,99 +103,116 @@ export default function AddCardModal({ open, onClose, onAdd }) {
           transform: "translate(-50%, -50%)",
           width: "calc(100% - 32px)",
           maxWidth: 335,
-          background: "#fff",
+          background: "#FFFFFF",
           borderRadius: 8,
-          boxShadow: "0 20px 60px rgba(0,0,0,0.2)",
+          boxShadow: "0 10px 40px rgba(0, 0, 0, 0.15)",
           zIndex: 9999,
-          padding: "20px 20px 24px",
+          padding: "20px 14px 18px",
+          fontFamily: "'Montserrat', sans-serif",
+          boxSizing: "border-box",
         }}
       >
         <div
           style={{
             display: "flex",
             alignItems: "center",
-            justifyContent: "space-between",
-            marginBottom: 20,
+            justifyContent: "center",
+            position: "relative",
+            marginBottom: 16,
           }}
         >
-          <h2
+          <span
             style={{
-              fontSize: 18,
-              fontWeight: 800,
-              color: "var(--text)",
-              margin: 0,
-              letterSpacing: -0.3,
+              fontSize: 14,
+              fontWeight: 500,
+              color: "#333333",
             }}
           >
             Add Card Details
-          </h2>
+          </span>
           <button
             type="button"
             onClick={onClose}
             style={{
-              background: "none",
+              position: "absolute",
+              width: "20px",
+              height: "20px",
+              borderRadius: "50%",
+              right: 0,
+              top: "50%",
+              transform: "translateY(-50%)",
+              background: "#F4F6F8",
               border: "none",
               cursor: "pointer",
-              padding: 4,
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
+              color: "#8E8E8E",
             }}
           >
-            <IcoClose />
+            <CloseIcon />
           </button>
         </div>
 
+        <div style={{ height: 1, background: "#E8E8E8", marginBottom: 16 }} />
+
         <form onSubmit={handleSubmit}>
-          <div style={{ marginBottom: 16 }}>
+          <div style={{ marginBottom: 14 }}>
             <label style={labelStyle}>
-              Card Number <span style={{ color: BRAND_RED }}>*</span>
+              Card Number <RequiredIcon style={{ width: 6, height: 10 }} />
             </label>
             <input
               type="text"
               value={cardNumber}
               onChange={handleCardNumberChange}
               placeholder="**** **** **** ****"
+              className="placeholder:text-[#A4A4A4]"
               maxLength={19}
               style={inputStyle}
             />
           </div>
-          <div style={{ marginBottom: 16 }}>
+
+          <div style={{ marginBottom: 14 }}>
             <label style={labelStyle}>
-              Card Holder Name
+              Card Holder Name <RequiredIcon style={{ width: 6, height: 10 }} />
             </label>
             <input
               type="text"
               value={cardHolder}
               onChange={(e) => setCardHolder(e.target.value)}
-              placeholder="David Miller"
+              placeholder="Enter Card Holder Name"
+              className="placeholder:text-[#A4A4A4]"
               style={inputStyle}
             />
           </div>
+
           <div style={{ display: "flex", gap: 12, marginBottom: 20 }}>
             <div style={{ flex: 1 }}>
               <label style={labelStyle}>
-                Expiry Date <span style={{ color: BRAND_RED }}>*</span>
+                Expiry Date <RequiredIcon style={{ width: 6, height: 10 }} />
               </label>
               <input
                 type="text"
                 value={expiry}
                 onChange={handleExpiryChange}
                 placeholder="MM/YY"
+                className="placeholder:text-[#A4A4A4]"
                 maxLength={5}
                 style={inputStyle}
               />
             </div>
+
             <div style={{ flex: 1 }}>
               <label style={labelStyle}>
-                CVV <span style={{ color: BRAND_RED }}>*</span>
+                CVV <RequiredIcon style={{ width: 6, height: 10 }} />
               </label>
               <input
-                type="password"
+                type="text"
                 value={cvv}
                 onChange={handleCvvChange}
                 placeholder="***"
-                maxLength={4}
+                className="placeholder:text-[#A4A4A4]"
+                maxLength={3}
                 style={inputStyle}
               />
             </div>
@@ -201,16 +222,15 @@ export default function AddCardModal({ open, onClose, onAdd }) {
             type="submit"
             style={{
               width: "100%",
-              padding: "16px",
-              borderRadius: 14,
+              height: 40,
+              borderRadius: 22,
               border: "none",
-              background: BRAND_RED,
-              color: "#fff",
-              fontSize: 15,
-              fontWeight: 700,
+              background: "#DA1A35",
+              color: "#FFFFFF",
+              fontSize: 12,
+              fontWeight: 400,
               cursor: "pointer",
-              fontFamily: "inherit",
-              letterSpacing: 0.2,
+              fontFamily: "'Montserrat', sans-serif",
             }}
           >
             Add Card

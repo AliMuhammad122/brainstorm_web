@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { IcoClose } from "../../src/screensFlow/icons";
 import Eye from "../../public/assets/icons/Eye.svg"
 import EyeSlash from "../../public/assets/icons/EyeSlash.svg"
 import ErrorIcon from "../../public/assets/icons/Error.svg"
