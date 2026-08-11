@@ -8,21 +8,22 @@ export default function ShippingSection({ address, onAddOrChange }) {
   const hasAddress = address && (address.fullName || address.address);
 
   return (
-    <div style={{ marginBottom: 22 }}>
+    <div style={{ marginBottom: 16 }}>
       <div
         style={{
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
-          marginBottom: 12,
+          marginBottom: 10,
         }}
       >
         <span
           style={{
             fontSize: 16,
-            fontWeight: 800,
-            color: "var(--text)",
-            letterSpacing: -0.35,
+            fontWeight: 400,
+            color: "#333333",
+            letterSpacing: "0px",
+            fontFamily: "'Montserrat', sans-serif",
           }}
         >
           Shipping To
@@ -54,10 +55,11 @@ export default function ShippingSection({ address, onAddOrChange }) {
           onClick={onAddOrChange}
           style={{
             width: "100%",
-            padding: "16px 18px",
-            background: "var(--primary-soft)",
-            border: "2px dashed var(--primary)",
-            borderRadius: 16,
+            // padding: "16px 18px",
+            height: "68px",
+            background: "#DA1A351A",
+            border: "1px dashed var(--primary)",
+            borderRadius: 8,
             cursor: "pointer",
             fontFamily: "inherit",
             display: "flex",
@@ -68,9 +70,10 @@ export default function ShippingSection({ address, onAddOrChange }) {
           <span
             style={{
               fontSize: 14,
-              fontWeight: 700,
-              color: "var(--primary)",
-              letterSpacing: 0.1,
+              fontWeight: 400,
+              color: "#DA1A35",
+              letterSpacing: "0px",
+              fontFamily: "'Montserrat', sans-serif",
             }}
           >
             Add New Shipping Address

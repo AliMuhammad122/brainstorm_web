@@ -7,31 +7,29 @@ export default function SummarySection({
   subtotal,
   discount,
   total,
-  useLoyalty,
-  loyaltyPts,
 }) {
-  const discountVal = useLoyalty ? loyaltyPts / 20 : 0;
   const rows = [
     { label: "Sub Total", val: `€${subtotal.toFixed(2)}`, bold: false },
     { label: "Tax", val: "€0.00", bold: false },
     {
       label: "Discount",
-      val: useLoyalty && loyaltyPts > 0 ? `-€${discountVal.toFixed(2)}` : "€0.00",
+      val: discount > 0 ? `-€${discount.toFixed(2)}` : "€0.00",
       bold: false,
-      red: useLoyalty && loyaltyPts > 0,
+      red: discount > 0,
     },
     { label: "Tip", val: "€0.00", bold: false },
     { label: "Total", val: `€${total.toFixed(2)}`, bold: true },
   ];
 
   return (
-    <div style={{ marginBottom: 16 }}>
+    <div style={{ marginBottom: 0, borderTop: "1px solid #E8E8E8", paddingTop: "9px" }}>
       <span
         style={{
-          fontSize: 16,
-          fontWeight: 800,
-          color: "var(--text)",
-          letterSpacing: -0.35,
+          fontSize: 12,
+          fontWeight: 400,
+          color: "#333333",
+          letterSpacing: "0px",
+          fontFamily: "'Montserrat', sans-serif",
           display: "block",
           marginBottom: 4,
         }}
@@ -41,41 +39,40 @@ export default function SummarySection({
       <p
         style={{
           fontSize: 12,
-          color: "var(--subtle)",
-          margin: "0 0 12px",
+          color: "#A4A4A4",
+          margin: "5px 0 6px",
           fontWeight: 400,
+          fontFamily: "'Montserrat', sans-serif",
         }}
       >
         incl. all taxes (if applicable)
       </p>
-      {rows.map((row, i) => (
+      {rows.map((row) => (
         <div
           key={row.label}
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
-            padding: row.bold ? "13px 0 2px" : "9px 0",
-            borderTop:
-              row.bold ? "1.5px solid var(--border-subtle)" : i > 0 ? "1px solid var(--border-subtle)" : "none",
+            padding: row.bold ? "6px 0 2px" : "6px 0",
           }}
         >
           <span
             style={{
-              fontSize: row.bold ? 15 : 13.5,
-              fontWeight: row.bold ? 800 : 400,
-              color: row.bold ? "var(--text)" : "var(--muted)",
-              letterSpacing: row.bold ? -0.3 : 0,
+              fontSize: 12,
+              fontWeight: 400,
+              color: row.bold ? "#333333" : "#A4A4A4",
+              letterSpacing: 0,
             }}
           >
             {row.label}
           </span>
           <span
             style={{
-              fontSize: row.bold ? 15 : 13.5,
-              fontWeight: row.bold ? 800 : 600,
-              color: row.red ? "var(--primary)" : row.bold ? "var(--text)" : "var(--muted)",
-              letterSpacing: row.bold ? -0.3 : 0,
+              fontSize: 12,
+              fontWeight: 400,
+              color: '#333333',
+              letterSpacing: 0,
             }}
           >
             {row.val}

@@ -87,6 +87,7 @@ export default function AddCardModal({ open, onClose, onAdd }) {
           position: "fixed",
           inset: 0,
           background: "var(--overlay)",
+          backdropFilter: "blur(2px)",
           zIndex: 9998,
         }}
       />
@@ -97,9 +98,9 @@ export default function AddCardModal({ open, onClose, onAdd }) {
           top: "50%",
           transform: "translate(-50%, -50%)",
           width: "calc(100% - 32px)",
-          maxWidth: 400,
-          background: "var(--surface)",
-          borderRadius: 20,
+          maxWidth: 335,
+          background: "#fff",
+          borderRadius: 8,
           boxShadow: "0 20px 60px rgba(0,0,0,0.2)",
           zIndex: 9999,
           padding: "20px 20px 24px",

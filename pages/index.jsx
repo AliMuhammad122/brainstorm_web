@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/router";
 import ScreensFrame from "../src/screensFlow/Frame";
 import { getRestaurantByName } from "../src/screensFlow/data";
@@ -9,11 +9,6 @@ import { useScreensFlow } from "../context/ScreensFlowContext";
 export default function HomePage() {
   const router = useRouter();
 
-  useEffect(() => {
-    router.prefetch("/menu");
-    router.prefetch("/categories");
-    router.prefetch("/cart");
-  }, [router]);
   const { state, cartCount, applyFilter, clearFilter, setActiveRestaurant } =
     useScreensFlow();
 

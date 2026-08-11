@@ -25,7 +25,7 @@ export default function ScreensFrame({ children }) {
       <div
         style={{
           width: "100%",
-          maxWidth: 385,
+          maxWidth: 370,
           minHeight: "100vh",
           background: tokens.bg,
           borderRadius: 0,

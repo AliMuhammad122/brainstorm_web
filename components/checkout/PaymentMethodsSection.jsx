@@ -1,62 +1,16 @@
 import React from "react";
-import { RadioDot } from "../../src/screensFlow/ui";
+import GpayLogo from "../../public/assets/icons/g_pay.svg"
+import CDCLogo from "../../public/assets/icons/CDC.svg"
+import ApplepayLogo from "../../public/assets/icons/apple_pay.svg"  
+import CircleTickIcon from "../../public/assets/icons/choose.svg"
+import CircleTickEmpty from "../../public/assets/icons/tick-circle-empty.svg"
+import MastercardIcon from "../../public/assets/icons/mastercard.svg"
 
-const MCLogo = () => (
-  <div style={{ position: "relative", width: 40, height: 24, flexShrink: 0 }}>
-    <div
-      style={{
-        width: 24,
-        height: 24,
-        borderRadius: "50%",
-        background: "#EB001B",
-        position: "absolute",
-        left: 0,
-        top: 0,
-      }}
-    />
-    <div
-      style={{
-        width: 24,
-        height: 24,
-        borderRadius: "50%",
-        background: "#F79E1B",
-        position: "absolute",
-        left: 16,
-        top: 0,
-        mixBlendMode: "multiply",
-      }}
-    />
-  </div>
-);
-
-const GPayLogo = () => (
-  <div style={{ display: "flex", alignItems: "center", gap: 0 }}>
-    <span style={{ fontSize: 12, fontWeight: 800, fontFamily: "Arial,sans-serif", letterSpacing: -0.3 }}>
-      <span style={{ color: "#4285F4" }}>G</span>
-      <span style={{ color: "#EA4335" }}>o</span>
-      <span style={{ color: "#FBBC04" }}>o</span>
-      <span style={{ color: "#4285F4" }}>g</span>
-      <span style={{ color: "#34A853" }}>l</span>
-      <span style={{ color: "#EA4335" }}>e</span>
-    </span>
-    <span style={{ fontSize: 12, fontWeight: 500, color: "var(--muted)", marginLeft: 3 }}> Pay</span>
-  </div>
-);
-
-const APayLogo = () => (
-  <div style={{ display: "flex", alignItems: "center", gap: 4, color: "var(--text)" }}>
-    <svg width="13" height="16" viewBox="0 0 13 16" fill="none">
-      <path d="M10.8 8.4c0-2.2 1.8-3.3 1.8-3.3S11.6 3.6 10 3.6c-1.1 0-2.1.7-2.7.7-.6 0-1.5-.7-2.4-.7C3.1 3.6 1.2 5.1 1.2 7.9 1.2 10.9 2.9 14 4.2 14c.8 0 1.5-.6 2.4-.6.9 0 1.3.6 2.4.6 1.4 0 3.1-3.2 3.1-3.2S10.8 10.4 10.8 8.4z" fill="currentColor" />
-      <path d="M8.7 2.2c.5-.6.8-1.4.7-2.2C8.7 0 7.8.5 7.3 1c-.5.5-.8 1.2-.7 2 .7.1 1.6-.2 2.1-.8z" fill="currentColor" />
-    </svg>
-    <span style={{ fontSize: 12, fontWeight: 600, color: "var(--text)" }}>Pay</span>
-  </div>
-);
 
 const PAYMENT_OPTIONS = [
-  { id: "gpay", label: "Google Pay", Logo: GPayLogo },
-  { id: "apple", label: "Apple Pay", Logo: APayLogo },
-  { id: "card", label: "Credit/Debit Cards", Logo: MCLogo },
+  { id: "gpay", label: "Google Pay", Logo: GpayLogo },
+  { id: "apple", label: "Apple Pay", Logo: ApplepayLogo },
+  { id: "card", label: "Credit/Debit Cards", Logo: CDCLogo },
 ];
 
 /**
@@ -71,185 +25,166 @@ export default function PaymentMethodsSection({
   const hasCard = savedCard && savedCard.last4;
 
   return (
-    <div style={{ marginBottom: 22 }}>
+    <div style={{ marginBottom: 14 }}>
       <span
         style={{
           fontSize: 16,
-          fontWeight: 800,
-          color: "var(--text)",
-          letterSpacing: -0.35,
+          fontWeight: 400,
+          color: "#333333",
+          letterSpacing: "0px",
+          fontFamily: "'Montserrat', sans-serif",
           display: "block",
-          marginBottom: 14,
+          marginBottom: 2,
         }}
       >
         Payment Methods
       </span>
-      {PAYMENT_OPTIONS.map((pm, i) => (
-        <div
-          key={pm.id}
-          style={{
-            borderBottom: i < PAYMENT_OPTIONS.length - 1 ? "1px solid var(--border-subtle)" : "none",
-          }}
-        >
-          <button
-            type="button"
-            onClick={() => onSelect(pm.id)}
+      {hasCard ? (
+        <div style={{ padding: "8px 2px 14px 0" }}>
+          <div
             style={{
-              display: "flex",
-              alignItems: "center",
               width: "100%",
-              padding: "14px 2px",
-              background: "none",
-              border: "none",
-              cursor: "pointer",
-              fontFamily: "inherit",
-              textAlign: "left",
-              gap: 14,
+              border: "1.5px solid #E8E8E8",
+              borderRadius: 8,
+              padding: "12px 10px 14px",
             }}
           >
+            {/* Row 1: Master Card label + MC logo */}
             <div
               style={{
-                width: 48,
                 display: "flex",
                 alignItems: "center",
-                justifyContent: "flex-start",
-                flexShrink: 0,
+                justifyContent: "space-between",
+                marginBottom: 6,
               }}
             >
-              <pm.Logo />
-            </div>
-            <span
-              style={{
-                flex: 1,
-                fontSize: 14,
-                fontWeight: selectedId === pm.id ? 600 : 400,
-                color: selectedId === pm.id ? "var(--text)" : "var(--muted)",
-                letterSpacing: -0.1,
-              }}
-            >
-              {pm.label}
-            </span>
-            <RadioDot active={selectedId === pm.id} activeColor="var(--primary)" />
-          </button>
-          {pm.id === "card" && selectedId === "card" && (
-            <div style={{ padding: "0 2px 14px 0" }}>
-              {hasCard ? (
-                <div
-                  style={{
-                    width: "100%",
-                    border: "1.5px solid var(--border)",
-                    borderRadius: 16,
-                    padding: "16px 16px 14px",
-                    background: "var(--surface)",
-                  }}
-                >
-                  {/* Row 1: Master Card label + MC logo */}
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                      marginBottom: 6,
-                    }}
-                  >
-                    <span
+              <div style={{display:"flex", flexDirection:"column", gap:4}}>
+
+              <span
+                style={{
+                  fontSize: 12,
+                  fontWeight: 400,
+                  color: "var(--text)",
+                  letterSpacing: 0,
+                }}
+              >
+                Master Card
+              </span>
+                    {/* Row 2: masked card number */}
+                    <p
                       style={{
-                        fontSize: 15,
-                        fontWeight: 700,
-                        color: "var(--text)",
-                        letterSpacing: -0.2,
+                        fontSize: 12,
+                        fontWeight: 400,
+                        color: "#A4A4A4",
+                        margin: "0 0 12px",
+                        fontFamily: "'Montserrat', sans-serif",
+                        letterSpacing: 0,
                       }}
                     >
-                      Master Card
-                    </span>
-                    <div style={{ display: "flex", alignItems: "center", gap: 2, position: "relative", width: 44, height: 28 }}>
-                      <div
-                        style={{
-                          width: 28,
-                          height: 28,
-                          borderRadius: "50%",
-                          background: "#EB001B",
-                          position: "absolute",
-                          left: 0,
-                          top: 0,
-                        }}
-                      />
-                      <div
-                        style={{
-                          width: 28,
-                          height: 28,
-                          borderRadius: "50%",
-                          background: "#F79E1B",
-                          position: "absolute",
-                          left: 16,
-                          top: 0,
-                          opacity: 0.85,
-                        }}
-                      />
-                    </div>
-                  </div>
-                  {/* Row 2: masked card number */}
-                  <p
-                    style={{
-                      fontSize: 14,
-                      fontWeight: 500,
-                      color: "var(--muted)",
-                      margin: "0 0 12px",
-                      letterSpacing: 1,
-                    }}
-                  >
-                    {savedCard.first4} **** {savedCard.last4} ****
-                  </p>
-                  {/* Row 3: Card Holder | Expires | CVV */}
-                  <div
-                    style={{
-                      display: "flex",
-                      gap: 0,
-                      borderTop: "1px solid var(--border-subtle)",
-                      paddingTop: 10,
-                    }}
-                  >
-                    {[
-                      { label: "Card Holder", value: savedCard.cardHolder },
-                      { label: "Expires", value: savedCard.expiry },
-                      { label: "CVV", value: savedCard.cvv },
-                    ].map((col, i) => (
-                      <div
-                        key={col.label}
-                        style={{
-                          flex: 1,
-                          borderLeft: i > 0 ? "1px solid var(--border-subtle)" : "none",
-                          paddingLeft: i > 0 ? 12 : 0,
-                        }}
-                      >
-                        <p style={{ fontSize: 10, color: "var(--subtle)", margin: "0 0 3px", fontWeight: 500 }}>
-                          {col.label}
-                        </p>
-                        <p style={{ fontSize: 12.5, fontWeight: 600, color: "var(--text)", margin: 0 }}>
-                          {col.value}
-                        </p>
+                      {savedCard.first4} **** {savedCard.last4} ****
+                    </p>
                       </div>
-                    ))}
-                  </div>
-                  <button
-                    type="button"
-                    onClick={(e) => { e.stopPropagation(); onAddCard?.(); }}
-                    style={{
-                      marginTop: 12,
-                      padding: 0,
-                      background: "none",
-                      border: "none",
-                      cursor: "pointer",
-                      fontSize: 12,
-                      fontWeight: 600,
-                      color: "var(--primary)",
-                      fontFamily: "inherit",
-                    }}
-                  >
-                    Change Card
-                  </button>
+              <div style={{ display: "flex", alignItems: "center", gap: 2, position: "relative", width: 44, height: 28 }}>
+                <MastercardIcon alt="MasterCard" />
+              </div>
+            </div>
+            {/* Row 3: Card Holder | Expires | CVV */}
+            <div
+              style={{
+                display: "flex",
+                gap: 0,
+                borderTop: "1px solid var(--border-subtle)",
+                paddingTop: 10,
+              }}
+            >
+              {[
+                { label: "Card Holder", value: savedCard.cardHolder },
+                { label: "Expires", value: savedCard.expiry },
+                { label: "CVV", value: "***" },
+              ].map((col, i) => (
+                <div
+                  key={col.label}
+                  style={{
+                    flex: 1,
+                    borderLeft: i > 0 ? "1px solid var(--border-subtle)" : "none",
+                    paddingLeft: i > 0 ? 12 : 0,
+                  }}
+                >
+                  <p style={{ fontSize: 10, color: "var(--subtle)", margin: "0 0 3px", fontWeight: 500 }}>
+                    {col.label}
+                  </p>
+                  <p style={{ fontSize: 12.5, fontWeight: 600, color: "var(--text)", margin: 0 }}>
+                    {col.value}
+                  </p>
                 </div>
+              ))}
+            </div>
+            <button
+              type="button"
+              onClick={(e) => { e.stopPropagation(); onAddCard?.(); }}
+              style={{
+                marginTop: 12,
+                padding: 0,
+                background: "none",
+                border: "none",
+                cursor: "pointer",
+                fontSize: 12,
+                fontWeight: 600,
+                color: "var(--primary)",
+                fontFamily: "inherit",
+              }}
+            >
+              Change Card
+            </button>
+          </div>
+        </div>
+      ) : (
+        PAYMENT_OPTIONS.map((pm) => (
+          <div key={pm.id}>
+            <button
+              type="button"
+              onClick={() => onSelect(pm.id)}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                width: "100%",
+                padding: "10px 0px 4px 2px",
+                background: "none",
+                border: "none",
+                cursor: "pointer",
+                fontFamily: "inherit",
+                textAlign: "left",
+              }}
+            >
+              <div
+                style={{
+                  width: 38,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "flex-start",
+                  flexShrink: 0,
+                }}
+              >
+                <pm.Logo />
+              </div>
+              <span
+                style={{
+                  flex: 1,
+                  fontSize: 14,
+                  fontWeight: 400,
+                  color: "#A4A4A4",
+                }}
+              >
+                {pm.label}
+              </span>
+              {selectedId === pm.id ? (
+                <CircleTickIcon width={18} height={18} alt="" />
               ) : (
+                <CircleTickEmpty />
+              )}
+            </button>
+            {pm.id === "card" && selectedId === "card" && (
+              <div style={{ padding: "0 2px 14px 0" }}>
                 <button
                   type="button"
                   onClick={(e) => { e.stopPropagation(); onAddCard?.(); }}
@@ -268,11 +203,11 @@ export default function PaymentMethodsSection({
                 >
                   Add Card Details
                 </button>
-              )}
-            </div>
-          )}
-        </div>
-      ))}
+              </div>
+            )}
+          </div>
+        ))
+      )}
     </div>
   );
 }
