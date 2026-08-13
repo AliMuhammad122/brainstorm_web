@@ -62,7 +62,7 @@
 html.dark {
   color-scheme: dark;
   --color-primary: #DA1A35;
-  --color-heading: #FFFFFF;
+  --color-heading: #EAEAF2;
   --color-primaryText: #D9D9D9;
   --color-secondaryText: #9B9B9B;
   --color-success: #66BB6A;
@@ -70,9 +70,9 @@ html.dark {
   --color-danger: #FF5252;
   --color-secondary: #1C1C1E;
   --color-accent: #1A1A1A;
-  --color-borderColor: #2A2A2A;
+  --color-borderColor: #2A2A40;
   --color-secondaryBorderColor: #3A3A3A;
-  --color-background: #0B0B0B;
+  --color-background: #0D0D1A;
   --color-secondaryBackground: #121212;
   --shadow-form: 0px 16px 40px -8px rgba(0, 0, 0, 0.6);
   --border-subtle: #1f1f1f;
@@ -88,8 +88,8 @@ html.dark {
   --status-bar-chip: rgba(255, 255, 255, 0.18);
   --status-bar-text: #ffffff;
   --icon-filter: invert(1) brightness(1.1);
-  color: #FFFFFF !important;
-  background-color: #0B0B0B !important;
+  color: #EAEAF2 !important;
+  background-color: #0D0D1A !important;
 }
 
 /* ✅ Apply font globally */

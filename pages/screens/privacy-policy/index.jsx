@@ -34,10 +34,10 @@ export default function PrivacyPolicyPage() {
       <div style={{ minHeight: "100vh", background: "var(--bg)", color: "var(--text)" }}>
         <PageHeader title="Privacy Policy" onBack={() => router.back()} />
 
-        <div style={{ padding: "14px 20px 24px" }}>
+        <div style={{ padding: "14px 18px 24px" }}>
           {sections.map((section) => (
-            <div key={section.title} style={{ marginBottom: 18 }}>
-              <div style={{ fontSize: 13, fontWeight: 600, color: "var(--text)" }}>
+            <div key={section.title} style={{ marginBottom: 12 }}>
+              <div style={{ fontSize: 16, fontWeight: 400, color: "#333333" }}>
                 {section.title}
               </div>
               <p
@@ -45,7 +45,7 @@ export default function PrivacyPolicyPage() {
                   margin: "6px 0 0",
                   fontSize: 12,
                   lineHeight: 1.55,
-                  color: "var(--muted)",
+                  color: "#A4A4A4",
                 }}
               >
                 {section.body}

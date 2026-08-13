@@ -14,7 +14,6 @@ import {
 import { BANNERS, CATEGORY_DATA, PRICES } from "./data";
 import {
   IcoBack,
-  IcoChevron,
   IcoClose,
 } from "./icons";
 import FoodCart from "../../public/assets/icons/food-cart.png";
@@ -25,6 +24,8 @@ import LocationIcon from "../../public/assets/icons/location.svg"
 import DropDown from "../../public/assets/icons/Drop_down.svg"
 import CloseIcon from "../../public/assets/icons/close.svg"
 import BackIcon from "../../public/assets/icons/back.svg"
+import MenuClose from "../../public/assets/icons/menuclose.svg"
+import IcoChevron  from "../../public/assets/icons/IcoChevron.svg";
 
 
 export function PageHeader({ title, onBack, transparent }) {
@@ -43,6 +44,7 @@ export function PageHeader({ title, onBack, transparent }) {
         padding: "12px 20px 10px",
         background: headerBg,
         flexShrink: 0,
+        borderBottom:"1px solid #F4F6F8"
       }}
     >
       <button
@@ -233,7 +235,7 @@ export function Carousel() {
               width: i === active ? 17 : 11,
               height: 5,
               borderRadius: 8,
-              background: i === active ? "#E31C3D" : "#F4F6F8",
+              background: i === active ? "#E31C3D" : "var(--surface)",
             }}
           />
         ))}
@@ -392,35 +394,35 @@ export function FilterModal({ onClose, onApply, initCats, initPrice }) {
         >
           <div className="border-b border-[#E8E8E8] flex justify-center items-center w-full pb-4.5 relative">
             <span
-            style={{
-              fontSize: 14,
-              fontWeight: 500,
-              color: "#333333",
-              fontFamily: "'Montserrat'",
-              lineHeight: "normal",
-              textAlign:"center",
-            }}
-          >
-            Filter
-          </span>
-          <button
-            style={{
-              width: 20,
-              height: 20,
-              borderRadius: 10,
-              background: "#F4F6F8",
-              border: "none",
-              cursor: "pointer",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              position: "absolute",
-              right: 0,
-            }}
-            onClick={onClose}
-          >
-            <CloseIcon />
-          </button>
+              style={{
+                fontSize: 14,
+                fontWeight: 500,
+                color: "#333333",
+                fontFamily: "'Montserrat'",
+                lineHeight: "normal",
+                textAlign: "center",
+              }}
+            >
+              Filter
+            </span>
+            <button
+              style={{
+                width: 20,
+                height: 20,
+                borderRadius: 10,
+                background: "#F4F6F8",
+                border: "none",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                position: "absolute",
+                right: 0,
+              }}
+              onClick={onClose}
+            >
+              <CloseIcon />
+            </button>
           </div>
         </div>
         {/* <div style={{ height: 1, background: "#E8E8E8", margin: "16px 0 0" }} /> */}
@@ -431,8 +433,8 @@ export function FilterModal({ onClose, onApply, initCats, initPrice }) {
               fontWeight: 400,
               color: "#333333",
               margin: "0 0 7px",
-              fontFamily:"Montserrat",
-              lineHeight:"100%"
+              fontFamily: "Montserrat",
+              lineHeight: "100%"
             }}
           >
             Category
@@ -446,9 +448,9 @@ export function FilterModal({ onClose, onApply, initCats, initPrice }) {
                   onClick={() => toggle(c)}
                   style={{
                     padding: "4px 10px",
-                    display:"flex",
-                    justifyContent:"center",
-                    alignItems:"center",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
                     borderRadius: 8,
                     fontSize: 8,
                     fontWeight: 400,
@@ -468,12 +470,12 @@ export function FilterModal({ onClose, onApply, initCats, initPrice }) {
         <div style={{ padding: "10px 18px 0" }}>
           <p
             style={{
-               fontSize: 10,
+              fontSize: 10,
               fontWeight: 400,
               color: "#333333",
               margin: "0 0 7px",
-              fontFamily:"Montserrat",
-              lineHeight:"100%"
+              fontFamily: "Montserrat",
+              lineHeight: "100%"
             }}
           >
             Price Range
@@ -531,7 +533,7 @@ export function FilterModal({ onClose, onApply, initCats, initPrice }) {
               background: sc.length || sp ? "#DA1A35" : "#D2D2D2",
             }}
           >
-            Apply Filter 
+            Apply Filter
             {/* {sc.length || sp ? "✓" : ""} */}
           </button>
         </div>
@@ -561,7 +563,7 @@ export function ViewOrderFAB({ cartCount, total, onTap }) {
         zIndex: 50,
         display: "flex",
         alignItems: "center",
-        justifyContent:"center",
+        justifyContent: "center",
       }}
     >
       <button
@@ -576,7 +578,7 @@ export function ViewOrderFAB({ cartCount, total, onTap }) {
           cursor: "pointer",
           display: "flex",
           alignItems: "center",
-          justifyContent:"space-between",
+          justifyContent: "space-between",
           // alignSelf:"center",
           padding: "0 16px",
           fontFamily: "'Montserrat',sans-serif",
@@ -645,9 +647,9 @@ export function AppChrome({ cart, onMenu, onCartTap }) {
           justifyContent: "space-between",
           alignItems: "center",
           padding: "10px 20px 9px",
-          background: "#FFFFFF",
+          background: "var(--bg)",
           flexShrink: 0,
-          borderBottom:"1px solid #F4F6F8"
+          borderBottom: "1px solid var(--border)"
         }}
       >
         <button
@@ -655,7 +657,7 @@ export function AppChrome({ cart, onMenu, onCartTap }) {
             width: 32,
             height: 32,
             borderRadius: 14,
-            background: "#F4F6F8",
+            background: "var(--surface)",
             border: "none",
             cursor: "pointer",
             display: "flex",
@@ -664,7 +666,7 @@ export function AppChrome({ cart, onMenu, onCartTap }) {
           }}
           onClick={onMenu}
         >
-          <MenuIcon color="#232323" width={20} height={20}/>
+          <MenuIcon color="var(--text)" width={20} height={20} className="theme-icon" />
         </button>
         <div
           style={{
@@ -675,7 +677,7 @@ export function AppChrome({ cart, onMenu, onCartTap }) {
           }}
         >
           <p
-            style={{ fontSize: 10, color: "#333333", fontWeight: 400, marginBottom: 5 }}
+            style={{ fontSize: 10, color: "var(--text)", fontWeight: 400, marginBottom: 5 }}
           >
             Your Location
           </p>
@@ -689,12 +691,12 @@ export function AppChrome({ cart, onMenu, onCartTap }) {
               maxWidth: "100%",
             }}
           >
-            <LocationIcon color="#DA1A35" width={20} height={20}/>
+            <LocationIcon color="#DA1A35" width={20} height={20} />
             <span
               style={{
                 fontSize: 14,
                 fontWeight: 400,
-                color: "#333333",
+                color: "var(--text)",
                 letterSpacing: -0.4,
                 whiteSpace: "nowrap",
                 overflow: "hidden",
@@ -705,7 +707,7 @@ export function AppChrome({ cart, onMenu, onCartTap }) {
             >
               {state.selectedLocation?.address || "Limassol, Cyprus"}
             </span>
-            <DropDown width={10} height={6} color={"#DA1A35"} style={{flexShrink:0}}/>
+            <DropDown width={10} height={6} color={"#DA1A35"} style={{ flexShrink: 0 }} />
           </div>
         </div>
         <button
@@ -713,7 +715,7 @@ export function AppChrome({ cart, onMenu, onCartTap }) {
             width: 32,
             height: 32,
             borderRadius: 14,
-            background: "#F4F6F8",
+            background: "var(--surface)",
             border: "none",
             cursor: "pointer",
             display: "flex",
@@ -725,7 +727,7 @@ export function AppChrome({ cart, onMenu, onCartTap }) {
         >
           {/* <Image src={FoodCart} width={22} height={22} alt="Cart" className="theme-icon" /> */}
           {/* <Image src={CartIcon} width={22} height={22} alt="Cart" className="theme-icon" /> */}
-          <CartIcon color="var(--text)" width={20} height={20}/>
+          <CartIcon color="var(--text)" width={20} height={20} />
           {cart > 0 && (
             <div
               style={{
@@ -758,6 +760,7 @@ export function AppChrome({ cart, onMenu, onCartTap }) {
 }
 
 export function Drawer({
+  isOpen,
   onClose,
   onOrdersHistory,
   onLoyaltyRewards,
@@ -779,12 +782,13 @@ export function Drawer({
   };
 
   useEffect(() => {
+    if (!isOpen) return;
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     return () => {
       document.body.style.overflow = prev;
     };
-  }, []);
+  }, [isOpen]);
 
   // Icons use actual filenames from public/assets/icons (names may differ slightly, e.g. loylity_icon.svg for Loyalty).
   const sectionOne = [
@@ -796,7 +800,7 @@ export function Drawer({
   const sectionTwo = [
     { label: "My Profile", icon: "/assets/icons/profile_icon.svg" },
     { label: "Change Password", icon: "/assets/icons/change_password_icon.svg" },
-    { label: "App Appearance", icon: "/assets/icons/app_appearance_icon.svg" },
+    { label: "App Appearance", icon: "/assets/icons/theme.svg" },
     { label: "Languages", icon: "/assets/icons/language_icon.svg" },
     { label: "Privacy Policy", icon: "/assets/icons/privacy_icon.svg" },
     { label: "Terms & Conditions", icon: "/assets/icons/terms_icon.svg" },
@@ -835,11 +839,11 @@ export function Drawer({
   const cardBg = isDark ? "#1C1C1E" : "#F4F6F8";
   const pageBg = isDark ? "#0B0B0B" : "#fff";
   const iconFilter = isDark ? "brightness(0) invert(1)" : "none";
-  const textColor = isDark ? "#fff" : "var(--text)";
+  const textColor = isDark ? "#fff" : "#333333";
   const dividerColor = isDark ? "rgba(255,255,255,0.08)" : "#ECEFF3";
   const chevronColor = isDark ? "#fff" : "#ccc";
 
-  const renderRow = (item, isLast, onClick) => (
+  const renderRow = (item, isLast, onClick, hideChevron) => (
     <button
       key={item.label}
       type="button"
@@ -848,12 +852,14 @@ export function Drawer({
         display: "flex",
         alignItems: "center",
         width: "100%",
-        padding: "14px 16px",
+        padding: "10px 8px",
         background: "none",
         border: "none",
-        borderBottom: isLast ? "none" : `1px solid ${dividerColor}`,
+        // borderBottom: isLast ? "none" : `1px solid ${dividerColor}`,
         cursor: "pointer",
         textAlign: "left",
+        fontSize: 14,
+        fontWeight: 400,
       }}
     >
       <div
@@ -861,21 +867,19 @@ export function Drawer({
           width: 32,
           height: 32,
           borderRadius: 10,
-          background: isDark ? "#1C1C1E" : "#fff",
+          background: isDark ? "#1C1C1E" : "",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          marginRight: 12,
+          marginRight: 4,
           flexShrink: 0,
-          boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
+          fontWeight: 400,
         }}
       >
         <img
           src={item.icon}
           alt={item.label}
           style={{
-            width: 18,
-            height: 18,
             objectFit: "contain",
             filter: iconFilter,
           }}
@@ -888,20 +892,21 @@ export function Drawer({
         style={{
           flex: 1,
           fontSize: 14,
-          fontWeight: 500,
+          fontWeight: 400,
           color: textColor,
         }}
       >
         {item.label}
       </span>
-      <IcoChevron c={chevronColor} />
+      {!hideChevron && <IcoChevron c={chevronColor} />}
     </button>
   );
 
   const drawerContent = (
     <div
       style={{
-        position: "fixed",
+        position: "absolute",
+        width: "100%",
         inset: 0,
         background: pageBg,
         zIndex: 200,
@@ -909,6 +914,9 @@ export function Drawer({
         flexDirection: "column",
         overflow: "hidden",
         overscrollBehavior: "none",
+        transition: "transform 0.3s ease-in-out, visibility 0.3s",
+        transform: isOpen ? "translateX(0)" : "translateX(-100%)",
+        visibility: isOpen ? "visible" : "hidden",
       }}
     >
       {/* Header */}
@@ -919,31 +927,37 @@ export function Drawer({
           justifyContent: "space-between",
           padding: "16px 20px 12px",
           flexShrink: 0,
+          borderBottom: "1px solid #F4F6F8"
+
         }}
       >
-        <button
-          type="button"
-          onClick={onClose}
-          style={{
-            width: 32,
-            height: 32,
-            borderRadius: 16,
-            border: "none",
-            background: isDark ? "#1C1C1E" : "#fff",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            cursor: "pointer",
-            boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
-          }}
-        >
-          <IcoBack c={textColor} />
-        </button>
+        {/* <button
+            type="button"
+            onClick={onClose}
+            style={{
+              width: 32,
+              height: 32,
+              borderRadius: 16,
+              border: "none",
+              background: isDark ? "#1C1C1E" : "#fff",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              cursor: "pointer",
+              boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
+            }}
+          >
+            <IcoBack c={textColor} />
+          </button> */}
         <span
           style={{
             fontSize: 16,
-            fontWeight: 600,
+            fontWeight: 400,
             color: textColor,
+            width: "100%",
+            textAlign: "center",
+            letterSpacing: "0px",
+            fontFamily: "'Montserrat',sans-serif",
           }}
         >
           Menu
@@ -953,18 +967,17 @@ export function Drawer({
           onClick={onClose}
           style={{
             width: 32,
-            height: 32,
-            borderRadius: 16,
+            height: 30,
+            borderRadius: 10000,
             border: "none",
-            background: isDark ? "#1C1C1E" : "#fff",
+            background: isDark ? "#1C1C1E" : "#F4F6F8",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             cursor: "pointer",
-            boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
           }}
         >
-          <IcoClose c={textColor} />
+          <MenuClose />
         </button>
       </div>
 
@@ -973,19 +986,22 @@ export function Drawer({
         style={{
           flex: 1,
           minHeight: 0,
-          padding: "20px 20px 0",
-          overflow: "hidden",
+          padding: "16px 20px 24px",
+          overflowY: "auto",
           display: "flex",
           flexDirection: "column",
           gap: 16,
+          scrollbarWidth: "none",
         }}
       >
         <div
           style={{
             background: cardBg,
-            borderRadius: 16,
-            boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
+            borderRadius: 8,
+            // boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
             flexShrink: 0,
+            paddingTop:"2px",
+            paddingRight:"3px"
           }}
         >
           {sectionOne.map((item, idx) =>
@@ -1005,9 +1021,11 @@ export function Drawer({
         <div
           style={{
             background: cardBg,
-            borderRadius: 16,
-            boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
+            borderRadius: 8,
+            // boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
             flexShrink: 0,
+            paddingBottom:"12px",
+            paddingRight:"3px"
           }}
         >
           {sectionTwo.map((item, idx) =>
@@ -1040,31 +1058,21 @@ export function Drawer({
             }),
           )}
         </div>
-        <div style={{ flex: 1, minHeight: 24 }} />
-      </div>
-
-      {/* Logout at bottom */}
-      <div
-        style={{
-          flexShrink: 0,
-          padding: "16px 20px calc(24px + env(safe-area-inset-bottom, 0px))",
-        }}
-      >
         <div
           style={{
+            marginTop:"70px",
             background: cardBg,
-            borderRadius: 16,
-            boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
+            borderRadius: 8,
+            flexShrink: 0,
+            paddingRight: "3px",
           }}
         >
-          {renderRow(logoutItem, true, handleLogout)}
+          {renderRow(logoutItem, true, handleLogout, true)}
         </div>
       </div>
+
     </div>
   );
 
-  if (typeof document !== "undefined") {
-    return createPortal(drawerContent, document.body);
-  }
   return drawerContent;
 }

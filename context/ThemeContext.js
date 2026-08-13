@@ -14,16 +14,16 @@ const themeTokens = {
     headerText: '#111',
   },
   dark: {
-    bg: '#0b0b0b',
+    bg: '#0D0D1A',
     bgCard: '#1c1c1e',
-    bgHeader: '#0b0b0b',
-    text: '#ffffff',
+    bgHeader: '#0D0D1A',
+    text: '#EAEAF2',
     textMuted: '#9b9b9b',
     textSubtle: '#6f6f6f',
-    border: '#2a2a2a',
+    border: '#2A2A40',
     primary: '#DA1A35',
-    headerBg: '#0b0b0b',
-    headerText: '#ffffff',
+    headerBg: '#0D0D1A',
+    headerText: '#EAEAF2',
   },
 };
 

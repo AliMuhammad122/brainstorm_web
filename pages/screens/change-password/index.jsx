@@ -3,20 +3,22 @@ import { useRouter } from "next/router";
 import ScreensFrame from "../../../src/screensFlow/Frame";
 import { PageHeader } from "../../../src/screensFlow/ui";
 import { useChangePasswordMutation } from "../../../src/store/authApiSlice";
+import Eye from "../../../public/assets/icons/Eye.svg";
+import EyeSlash from "../../../public/assets/icons/EyeSlash.svg";
 
 const Field = ({ label, placeholder, value, onChange }) => {
   const [showPassword, setShowPassword] = useState(false);
 
   return (
     <div style={{ marginBottom: 16 }}>
-      <div style={{ fontSize: 12, color: "var(--text)", marginBottom: 6 }}>
+      <div style={{ fontSize: 14, color: "#333333", marginBottom: 8, fontWeight:400 }}>
         {label}
       </div>
       <div
         style={{
-          height: 44,
-          borderRadius: 10,
-          background: "var(--surface)",
+          height: 48,
+          borderRadius: 8,
+          background: "#F4F6F8",
           display: "flex",
           alignItems: "center",
           padding: "0 12px",
@@ -28,13 +30,15 @@ const Field = ({ label, placeholder, value, onChange }) => {
           type={showPassword ? "text" : "password"}
           value={value}
           onChange={onChange}
+          className="placeholder:text-[#777777]"
           style={{
             flex: 1,
             border: "none",
             background: "transparent",
-            fontSize: 13,
-            color: "var(--text)",
+            fontSize: 14,
+            // color: "#A4A4A4",
             outline: "none",
+            fontWeight:400
           }}
         />
         <button
@@ -49,35 +53,9 @@ const Field = ({ label, placeholder, value, onChange }) => {
             padding: 0,
           }}
         >
-          <svg
-            width="18"
-            height="18"
-            viewBox="0 0 24 24"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            aria-hidden="true"
-          >
-            {showPassword ? (
-              <>
-                <path
-                  d="M2 12s4-6 10-6 10 6 10 6-4 6-10 6-10-6-10-6Z"
-                  stroke="#777"
-                  strokeWidth="1.6"
-                />
-                <circle cx="12" cy="12" r="2.8" stroke="#777" strokeWidth="1.6" />
-              </>
-            ) : (
-              <>
-                <path
-                  d="M2 12s4-6 10-6 10 6 10 6-4 6-10 6-10-6-10-6Z"
-                  stroke="#777"
-                  strokeWidth="1.6"
-                />
-                <circle cx="12" cy="12" r="2.8" stroke="#777" strokeWidth="1.6" />
-                <path d="M2 2l20 20" stroke="#777" strokeWidth="1.6" />
-              </>
-            )}
-          </svg>
+        
+            {showPassword ? <EyeSlash /> : <Eye />}
+
         </button>
       </div>
     </div>
@@ -177,18 +155,19 @@ export default function ChangePasswordPage() {
             disabled={isLoading}
             style={{
               width: "100%",
-              height: 52,
+              height: 48,
               borderRadius: 26,
               border: "none",
-              background: isLoading ? "var(--disabled)" : "#D9142C",
+              background: isLoading ? "var(--disabled)" : "#DA1A35",
               color: "#fff",
-              fontSize: 15,
-              fontWeight: 600,
+              fontSize: 14,
+              fontWeight: 400,
               cursor: isLoading ? "not-allowed" : "pointer",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
               gap: 8,
+              fontFamily:"'Open Sans'"
             }}
           >
             {isLoading && (

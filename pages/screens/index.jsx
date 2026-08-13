@@ -27,32 +27,31 @@ export default function ScreensIndexPage() {
         />
       )}
 
-        {drawerOpen && (
-          <Drawer
-            onClose={() => setDrawerOpen(false)}
-            onHome={() => {
-              setDrawerOpen(false);
-              router.push("/");
-            }}
-            onOrdersHistory={() => {
-              setDrawerOpen(false);
-              router.push("/screens/order-history");
-            }}
-            onLoyaltyRewards={() => {
-              setDrawerOpen(false);
-              router.push("/screens/rewards");
-            }}
-            onMenuScreen={() => {
-              setDrawerOpen(false);
-              setActiveRestaurant(defaultResto.name, defaultResto.id, defaultResto.image);
-              router.push("/menu");
-            }}
-          onCatScreen={() => {
-            setDrawerOpen(false);
-            router.push("/categories");
-          }}
-        />
-      )}
+      <Drawer
+        isOpen={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+        onHome={() => {
+          setDrawerOpen(false);
+          router.push("/");
+        }}
+        onOrdersHistory={() => {
+          setDrawerOpen(false);
+          router.push("/screens/order-history");
+        }}
+        onLoyaltyRewards={() => {
+          setDrawerOpen(false);
+          router.push("/screens/rewards");
+        }}
+        onMenuScreen={() => {
+          setDrawerOpen(false);
+          setActiveRestaurant(defaultResto.name, defaultResto.id, defaultResto.image);
+          router.push("/menu");
+        }}
+        onCatScreen={() => {
+          setDrawerOpen(false);
+          router.push("/categories");
+        }}
+      />
 
       <AppChrome
         cart={cartCount}

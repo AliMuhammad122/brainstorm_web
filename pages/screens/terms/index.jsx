@@ -3,57 +3,53 @@ import { useRouter } from "next/router";
 import ScreensFrame from "../../../src/screensFlow/Frame";
 import { PageHeader } from "../../../src/screensFlow/ui";
 
-const sections = [
-  {
-    title: "1. Acceptance of Terms",
-    body:
-      "By accessing and using this application, you agree to be bound by these terms and all applicable laws and regulations.",
-  },
-  {
-    title: "2. User Responsibilities",
-    body:
-      "You are responsible for maintaining the confidentiality of your account and for all activities that occur under your account.",
-  },
-  {
-    title: "3. Service Changes",
-    body:
-      "We may modify or discontinue any part of the service at any time without prior notice.",
-  },
-  {
-    title: "4. Limitation of Liability",
-    body:
-      "We are not liable for any indirect, incidental, or consequential damages arising from the use of the service.",
-  },
-];
-
 export default function TermsPage() {
   const router = useRouter();
 
   return (
     <ScreensFrame>
       <div style={{ minHeight: "100vh", background: "var(--bg)", color: "var(--text)" }}>
-        <PageHeader title="Terms & Conditions" onBack={() => router.back()} />
+        <PageHeader title="Terms and Conditions" onBack={() => router.back()} />
 
-        <div style={{ padding: "14px 20px 24px" }}>
-          {sections.map((section) => (
-            <div key={section.title} style={{ marginBottom: 18 }}>
-              <div style={{ fontSize: 13, fontWeight: 600, color: "var(--text)" }}>
-                {section.title}
-              </div>
-              <p
-                style={{
-                  margin: "6px 0 0",
-                  fontSize: 12,
-                  lineHeight: 1.55,
-                  color: "var(--muted)",
-                }}
-              >
-                {section.body}
-              </p>
+        <div style={{ padding: "14px 18px 24px" }}>
+          <p
+            style={{
+              fontSize: 12,
+              color: "#A4A4A4",
+              margin: "2px 0 16px",
+              fontFamily: "'Montserrat', sans-serif",
+            }}
+          >
+            Last updated on 06/12/2025
+          </p>
+
+          <div style={{ marginBottom: 12 }}>
+            <div
+              style={{
+                fontSize: 16,
+                fontWeight: 400,
+                color: "#333333",
+                fontFamily: "'Montserrat', sans-serif",
+              }}
+            >
+              Terms and Conditions
             </div>
-          ))}
+            <p
+              style={{
+                margin: "8px 0 0",
+                fontSize: 12,
+                lineHeight: 1.2,
+                fontWeight: 400,
+                color: "#A4A4A4",
+                fontFamily: "'Montserrat', sans-serif",
+              }}
+            >
+              Hello and welcome to Brainstorm! We're thrilled to have you here. By using our app, you agree to our terms of service, so please use it responsibly and ensure your account remains secure. Your privacy is important to us, and we handle your data in accordance with our Privacy Policy. Remember, all content within the app is owned by Brainstorm and is protected by copyright laws, so please refrain from any unauthorized use. While we strive for a smooth experience, we cannot be held liable for any issues that may arise during your use of the app. Our terms may be updated occasionally, and by continuing to use the app, you acknowledge and accept these changes. Thank you for being part of our community!
+            </p>
+          </div>
         </div>
       </div>
     </ScreensFrame>
   );
 }
+

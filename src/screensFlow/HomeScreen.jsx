@@ -94,7 +94,8 @@ export function HomeScreen({
           style={{
             flex: 1,
             height: 48,
-            background: "#F4F6F8",
+            background: "var(--bg)",
+            border: "1px solid var(--border)",
             borderRadius: 1000,
             display: "flex",
             alignItems: "center",
@@ -102,7 +103,7 @@ export function HomeScreen({
             padding: "0 14px",
           }}
         >
-          <SearchIcon width={20} height={20} alt="Search" className="text-black"/>
+          <SearchIcon width={20} height={20} alt="Search" color="var(--text)" className="theme-icon"/>
           <input
             type="text"
             placeholder="Search restaurant etc"
@@ -115,7 +116,7 @@ export function HomeScreen({
               border: "none",
               outline: "none",
               fontSize: 14,
-              // color: "var(--color-primaryText)",
+              color: "var(--text)",
               fontFamily: "'Montserrat'",
             }}
           />
@@ -301,7 +302,7 @@ export function HomeScreen({
                   marginBottom: 16,
                   // boxShadow: "0 2px 14px rgba(0,0,0,0.2)",
                   cursor: "pointer",
-                  border: "1px solid #F4F6F8",
+                  border: "1px solid var(--border)",
                 }}
               >
                 <div
@@ -346,7 +347,7 @@ export function HomeScreen({
                     alignItems: "center",
                     justifyContent: "space-between",
                     padding: "13px 8px 8px",
-                    backgroundColor: "#ffffff"
+                    backgroundColor: "var(--bg)"
                   }}
                 >
                   <div style={{ flex: 1, minWidth: 0 }}>
@@ -354,11 +355,11 @@ export function HomeScreen({
                       style={{
                         fontSize: 14,
                         fontWeight: 400,
-                        color: "#333333",
+                        color: "var(--text)",
                         margin: "0 0 7px",
                         fontFamily:"'Montserrat',sans-serif",
                         lineHeight:"100%"
-
+ 
                       }}
                     >
                       {r.name}
