@@ -55,13 +55,13 @@ export default function ForgotPasswordPage() {
     w-full px-3 py-4 rounded-[8px] font-normal text-sm font-montserrat placeholder:text-sm outline-none 
     focus:ring-0 focus:outline-0 transition
     ${isDark
-      ? "bg-[#2B2B2B] text-white placeholder-[#777777]"
-      : "bg-[#F2F2F2] placeholder-[#777777]"}
+      ? "bg-[#161625] text-[#EAEAF2] placeholder-[#9595AA]"
+      : "bg-[#F4F6F8] text-[#333333] placeholder-[#777777]"}
   `;
-  const labelCls = `text-sm font-montserrat font-normal ${isDark ? "text-gray-200" : "text-[#333333]"}`;
+  const labelCls = `text-sm font-montserrat font-normal ${isDark ? "text-[#EAEAF2]" : "text-[#333333]"}`;
 
   return (
-    <div className="min-h-screen flex justify-center" style={{ backgroundColor: isDark ? "#0B0B0B" : "#F8F9FA" }}>
+    <div className="min-h-screen flex justify-center" style={{ backgroundColor: isDark ? "#0D0D1A" : "#F8F9FA" }}>
       <div className="w-full max-w-[385px] min-h-screen flex flex-col relative shadow-2xl" style={shellStyle}>
         {/* Header section */}
         <div className="relative h-[52vh] min-h-[240px] shrink-0 overflow-hidden">
@@ -88,7 +88,7 @@ export default function ForgotPasswordPage() {
           flex-1 rounded-t-[12px] px-6 pt-6.5 
           flex flex-col gap-3 overflow-y-auto
           ${isDark
-              ? "bg-[#0B0B0B] text-white shadow-[0_-10px_30px_rgba(0,0,0,0.35)]"
+              ? "bg-[#0D0D1A] text-white shadow-[0_-10px_30px_rgba(0,0,0,0.35)]"
               : "bg-white shadow-[0_-12px_30px_rgba(218,26,53,0.12)]"}
         `}
         >
@@ -98,20 +98,20 @@ export default function ForgotPasswordPage() {
             className={`
             w-8 h-8 rounded-full flex items-center justify-center
              active:scale-95 transition self-start cursor-pointer
-            ${isDark ? "bg-[#1A1A1A]" : "bg-[#F4F6F8]"}
+            ${isDark ? "bg-[#161625]" : "bg-[#F4F6F8]"}
           `}
           >
-           <BackIcon width={20} height={20} alt="" className={isDark ? "text-white" : "text-[#333333]"}/>
+           <BackIcon width={20} height={20} alt="" className={isDark ? "text-[#555570]" : "text-[#333333]"}/>
           </button>
 
           <div className="flex flex-col items-center " style={{gap:"6px"}}>
             <h1
-              className="text-center text-[24px] text-[#333333] font-normal uppercase"
-              style={{ fontFamily: "Anton, sans-serif" }}
+              className="text-center text-[24px] font-normal uppercase"
+              style={{ fontFamily: "Anton, sans-serif",color: isDark ? "#EAEAF2" : "#333333" }}
             >
               Forgot Password
             </h1>
-            <p className={`text-center text-sm font-montserrat font-normal leading-snug ${isDark ? "text-gray-400" : "text-[#606060]"}`}
+            <p className={`text-center text-sm font-montserrat font-normal leading-snug ${isDark ? "text-[#9595AA]" : "text-[#606060]"}`}
               style={{  width:"270px"}}
             >
               Please enter your email address linked with account
@@ -137,11 +137,11 @@ export default function ForgotPasswordPage() {
             <button
               type="submit"
               disabled={loading}
-              className="
-              w-full bg-[#DA1A35] ` text-white h-[48px] rounded-full 
+              className={`
+              w-full ${isDark ? "bg-[#E52E4A]" : "bg-[#DA1A35]"} text-white h-[48px] rounded-full 
               text-sm font-open-sans font-normal cursor-pointer
               active:scale-95 transition disabled:opacity-50
-              "
+              `}
               >
               {loading ? "Sending..." : "Send Code"}
             </button>

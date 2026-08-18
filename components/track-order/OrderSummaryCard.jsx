@@ -9,9 +9,9 @@ export default function OrderSummaryCard({
   return (
     <div
       style={{
-        border: "1px solid var(--border)",
-        borderRadius: 12,
-        padding: "18px 20px 16px",
+        border: "1px solid #E8E8E8",
+        borderRadius: 8,
+        padding: "10px 12px 14px",
         marginBottom: 14,
         background: "var(--bg)", 
       }}
@@ -20,28 +20,32 @@ export default function OrderSummaryCard({
         style={{
           display: "flex",
           justifyContent: "space-between",
-          alignItems: "flex-start",
-          marginBottom: 18,
+          alignItems: "center",
+          marginBottom: 6,
+          borderBottom: "1px solid #E8E8E8",
+          paddingBottom: 8,
         }}
       >
-        <div>
+        <div >
           <p
             style={{
-              fontSize: 14,
-              fontWeight: 500,
-              color: "var(--text)",
-              margin: "0 0 4px",
+              fontSize: 12,
+              fontWeight: 400,
+              color: "#333333",
+              margin: "0 0 7px",
             }}
           >
             {restaurantName}
           </p>
-          <p style={{ fontSize: 11, color: "var(--subtle)", margin: 0, fontWeight: 400 }}>
+          <p style={{ fontSize: 10, color: "#A4A4A4", margin: 0, fontWeight: 400, fontFamily:"'Montserrat'" }}>
             Order Summary
           </p>
         </div>
-        <span style={{ fontSize: 11, color: "var(--subtle)", fontWeight: 400 }}>
+        <div>
+        <p style={{ fontSize: 10, color: "#A4A4A4", fontWeight: 400, fontFamily:"'Montserrat'" }}>
           {date}
-        </span>
+        </p>
+        </div>
       </div>
       <div>
         {items.map((item, i) => (
@@ -53,24 +57,24 @@ export default function OrderSummaryCard({
               padding: "4px 0",
             }}
           >
-            <span style={{ fontSize: 12, color: "var(--subtle)", fontWeight: 400 }}>
-              <span style={{ fontWeight: 600, color: "var(--text)" }}>{item.qty}x</span>{" "}
+            <span style={{ fontSize: 10, color: "#A4A4A4", fontWeight: 400 }}>
+              <span style={{ fontWeight: 600, color: "#A4A4A4" }}>{item.qty}x</span>{" "}
               {item.name}
             </span>
-            <span style={{ fontSize: 12, color: "var(--subtle)", fontWeight: 400 }}>
+            <span style={{ fontSize: 10, color: "#333333", fontWeight: 400 }}>
               €{item.price.toFixed(2)}
             </span>
           </div>
         ))}
-        <div style={{ height: 1, background: "var(--border)", margin: "14px 0 10px" }} />
         <div
           style={{
             display: "flex",
             justifyContent: "space-between",
+            marginTop: "4px",
           }}
         >
-          <span style={{ fontSize: 12, fontWeight: 500, color: "var(--text)" }}>Total</span>
-          <span style={{ fontSize: 12, fontWeight: 500, color: "var(--text)" }}>
+          <span style={{ fontSize: 10, fontWeight: 400, color: "#333333" }}>Total</span>
+          <span style={{ fontSize: 10, fontWeight: 400, color: "#333333" }}>
             €{total.toFixed(2)}
           </span>
         </div>

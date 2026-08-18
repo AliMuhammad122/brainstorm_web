@@ -3,18 +3,21 @@ import { createPortal } from "react-dom";
 
 const BRAND_RED = "var(--primary)";
 
-const STATUS_LABELS = [
+const DELIVERY_STATUS_LABELS = [
   "Your Order is Confirmed",
   "Your Order is Processed",
   "Your Order is Shipped",
   "Your Order is Delivered",
 ];
 
-/**
- * Minimized bottom bar - rendered via Portal so it's always visible on all devices.
- * Dark bar per design, safe-area aware, large tap target for Pixel/Android.
- */
-export default function OrderStatusBar({ activeStep = 0, onTap }) {
+const PICKUP_STATUS_LABELS = [
+  "Your Order is Confirmed",
+  "Your Order is Ready to Pickup",
+  "Your Order is Received",
+];
+
+export default function OrderStatusBar({ activeStep = 0, onTap, orderType = "delivery" }) {
+  const statusLabels = orderType === "pickup" ? PICKUP_STATUS_LABELS : DELIVERY_STATUS_LABELS;
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -38,7 +41,7 @@ export default function OrderStatusBar({ activeStep = 0, onTap }) {
         left: "50%",
         transform: "translateX(-50%)",
         width: "100%",
-        maxWidth: 430,
+        maxWidth: 370,
         zIndex: 9999,
         background: "var(--status-bar-bg)",
         borderTop: "1px solid var(--status-bar-border)",
@@ -74,7 +77,7 @@ export default function OrderStatusBar({ activeStep = 0, onTap }) {
           textAlign: "left",
         }}
       >
-        {STATUS_LABELS[activeStep] || STATUS_LABELS[0]}
+        {statusLabels[activeStep] || statusLabels[0]}
       </span>
       <div
         style={{

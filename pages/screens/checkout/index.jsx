@@ -102,7 +102,13 @@ export default function ScreensCheckoutPage() {
 
   const handleTrackOrder = () => {
     setPaymentSuccess(false);
-    router.push("/track-order");
+    router.push({
+      pathname: "/screens/track-order",
+      query: {
+        orderType: orderType,
+        restaurant: state.activeRestaurantName,
+      },
+    });
   };
 
   if (paymentSuccess) {

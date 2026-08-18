@@ -57,11 +57,11 @@ export default function LoginPage() {
   const shellStyle = { backgroundColor: "#DA1A35" };
 
   const inputClass = `
-    w-full px-4 py-4  rounded-[8px] font-normal font-montserrat placeholder:text-sm outline-none
-    focus:ring-0 focus:outline-0  transition
+    w-full px-4 py-4 rounded-[8px] font-normal font-montserrat placeholder:text-sm outline-none
+    focus:ring-0 focus:outline-0 transition
     ${isDark
-      ? "bg-[#2B2B2B] text-white placeholder-[#777777]"
-      : "bg-[#F2F2F2] text-[#1a1a1a] placeholder-[#777777]"}
+      ? "bg-[#161625] text-[#EAEAF2] placeholder-[#9595AA]"
+      : "bg-[#F4F6F8] text-[#333333] placeholder-[#777777]"}
   `;
 
   return (
@@ -100,18 +100,18 @@ export default function LoginPage() {
           gap-5
           overflow-y-auto
           ${isDark
-              ? "bg-[#0D0D1A] text-white shadow-[0_-10px_30px_rgba(0,0,0,0.35)]"
-              : "bg-white text-[#1a1a1a] border border-[#F0F0F0] shadow-[0_-12px_30px_rgba(218,26,53,0.12)]"}
+              ? "bg-[#0D0D1A] border border-[#2A2A40] shadow-[0_-10px_30px_rgba(0,0,0,0.35)]"
+              : "bg-white border border-[#F0F0F0] shadow-[0_-12px_30px_rgba(218,26,53,0.12)]"}
         `}
         >
           <div className="flex flex-col items-center " style={{ gap: "6px" }}>
             <h1
               className="text-center text-[24px] font-normal uppercase"
-              style={{ fontFamily: "Anton, sans-serif", color: isDark ? "#EAEAF2" : "#ffffff" }}
+              style={{ fontFamily: "Anton, sans-serif", color: isDark ? "#EAEAF2" : "#333333" }}
             >
               Login to Account
             </h1>
-            <p className={`text-center text-sm font-montserrat font-normal leading-snug ${isDark ? "text-gray-400" : "text-gray-500"}`}
+            <p className={`text-center text-sm font-montserrat font-normal ${isDark ? "text-[#9595AA]" : "text-[#606060]"}`}
               style={{ width: "270px" }}
             >
               Please enter your email and password to continue
@@ -120,7 +120,7 @@ export default function LoginPage() {
 
           <form onSubmit={handleLogin} className="flex flex-col gap-4">
             <div className="flex flex-col gap-1.5">
-              <label className={`text-sm font-montserrat font-normal ${isDark ? "text-gray-200" : "text-[#333333]"}`}>
+              <label className={`text-sm font-montserrat font-normal ${isDark ? "text-[#EAEAF2]" : "text-[#333333]"}`}>
                 Email
               </label>
               <input
@@ -134,7 +134,7 @@ export default function LoginPage() {
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <label className={`text-sm font-montserrat font-normal ${isDark ? "text-gray-200" : "text-[#1a1a1a]"}`}>
+              <label className={`text-sm font-montserrat font-normal ${isDark ? "text-[#EAEAF2]" : "text-[#333333]"}`}>
                 Password
               </label>
               <div className="relative">
@@ -159,7 +159,7 @@ export default function LoginPage() {
             <div className="text-right -mt-3 pb-1.5">
               <Link
                 href="/auth/forgot-password"
-                className={`text-xs transition font-normal font-montserrat ${isDark ? "text-gray-400 hover:text-white" : "text-[#A4A4A4]"}`}
+                className={`text-xs transition font-normal font-montserrat ${isDark ? "text-[#6E6E85]" : "text-[#A4A4A4]"}`}
               >
                 Forgot Password?
               </Link>
@@ -168,20 +168,20 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={isLoading}
-              className="
-              w-full bg-[#DA1A35]  text-white py-4 rounded-full
+              className={`
+              w-full ${isDark ? "bg-[#E52E4A]" : "bg-[#DA1A35]"}  text-white py-4 rounded-full
               text-sm font-open-sans font-normal cursor-pointer
               active:scale-95 transition disabled:opacity-50
-            "
+            `}
             >
               {isLoading ? "Logging in..." : "Login"}
             </button>
           </form>
 
           <div className="flex items-center gap-3">
-            <div className={`flex-1 h-px ${isDark ? "bg-[#222]" : "bg-[#F4F6F8]"}`} />
-            <span className={`text-sm font-normal font-montserrat whitespace-nowrap ${isDark ? "text-gray-400" : "text-[#A4A4A4]"}`}>Or Login with</span>
-            <div className={`flex-1 h-px ${isDark ? "bg-[#222]" : "bg-[#F4F6F8]"}`} />
+            <div className={`flex-1 h-px ${isDark ? "bg-[#2A2A40]" : "bg-[#F4F6F8]"}`} />
+            <span className={`text-sm font-normal font-montserrat whitespace-nowrap ${isDark ? "text-[#6E6E85]" : "text-[#A4A4A4]"}`}>Or Login with</span>
+            <div className={`flex-1 h-px ${isDark ? "bg-[#2A2A40]" : "bg-[#F4F6F8]"}`} />
           </div>
 
           <div className="flex justify-center  gap-5">
@@ -195,8 +195,8 @@ export default function LoginPage() {
                 onClick={() => handleSocialLogin(key)}
                 className="w-9 h-9 rounded-full cursor-pointer flex items-center justify-center active:scale-105 transition"
                 style={{
-                  background: isDark ? "#141414" : "#FFFFFF",
-                  border: isDark ? "1px solid #2A2A2A" : "1px solid #F4F6F8",
+                  background: isDark ? "#0D0D1A" : "#FFFFFF",
+                  border: isDark ? "1px solid #2A2A40" : "1px solid #F4F6F8",
                 }}
               >
                 <img src={icon} className="" alt={key} />
@@ -210,14 +210,14 @@ export default function LoginPage() {
             text-sm font-normal font-open-sans active:scale-95 transition
           "
             style={{
-              color: isDark ? "#FFFFFF" : "#1a1a1a",
+              color: isDark ? "#EAEAF2" : "#1a1a1a",
               background: isDark ? "transparent" : "#FFFFFF",
             }}
           >
             Continue as Guest
           </button>
 
-          <p className={`text-center font-normal font-montserrat text-sm ${isDark ? "text-gray-400" : "text-[#A4A4A4]"}`}>
+          <p className={`text-center font-normal font-montserrat text-sm ${isDark ? "text-[#A4A4A4]" : "text-[#A4A4A4]"}`}>
             Don&apos;t have an account?{" "}
             <Link href="/auth/signup" className="text-[#DA1A35] font-normal font-montserrat hover:underline">
               Sign Up

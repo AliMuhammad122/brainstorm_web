@@ -14,6 +14,8 @@ export default function TrackOrderBottomSheet({
   customerName = "David Miller",
   customerPhone = "357 345236521",
   deliveryAddress = "Ammochostou Block-Ground Floor Main Road Limassol, Cyprus",
+  orderType = "delivery",
+  storeAddress = "",
   onMinimize,
 }) {
   const COLLAPSED_HEIGHT = 380; // Enough to show Stepper
@@ -77,20 +79,21 @@ export default function TrackOrderBottomSheet({
   return (
     <div
       style={{
-        position: "fixed",
-        // Using larger margin + safe-area variable (or fallback) to avoid browser nav bars
-        bottom: "max(16px, env(safe-area-inset-bottom, 16px))",
-        left: 16,
-        right: 16,
-        height: Math.max(0, sheetHeight),
-        background: "var(--surface)",
-        borderRadius: 20,
-        boxShadow: "0 -4px 30px rgba(0,0,0,0.15)",
+        position: "absolute",
+        bottom: 16,
+        left: "50%",
+        transform: "translateX(-50%)",
+        width: "335px",
+        height: "335px",
+        background: "white",
+        borderRadius: 14,
+        boxShadow: "0px 2px 4px -2px #1018280F, 0px 4px 8px -2px #1018281A",
         transition: dragStartY.current != null ? "none" : "height 0.3s cubic-bezier(0.2, 0.8, 0.2, 1)",
         zIndex: 1000,
         display: "flex",
         flexDirection: "column",
         overflow: "hidden",
+        border:"1px solid #E8E8E8"
       }}
     >
       {/* Drag handle */}
@@ -112,14 +115,14 @@ export default function TrackOrderBottomSheet({
       >
         <div
           style={{
-            width: 44,
-            height: 4,
+            width: 51,
+            height: 3,
             borderRadius: 2,
-            background: "var(--border)",
+            background: "#E8E8E8",
           }}
         />
         {/* The chevron close button as seen in design (in the pill view it's up, here we can keep it as a close button or just omit it since swipe handles it. Original had a button here.) */}
-        <button
+        {/* <button
           type="button"
           onClick={onMinimize}
           style={{
@@ -142,7 +145,7 @@ export default function TrackOrderBottomSheet({
           <svg width="14" height="8" viewBox="0 0 14 8" fill="none">
             <path d="M1 1l6 6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
-        </button>
+        </button> */}
       </div>
 
       {/* Scrollable content */}
@@ -150,7 +153,7 @@ export default function TrackOrderBottomSheet({
         style={{
           flex: 1,
           overflowY: "auto",
-          padding: "0 24px 24px",
+          padding: "0 20px 0px",
         }}
         onPointerDown={(e) => e.stopPropagation()} // Prevent content drag interfering
       >
@@ -160,27 +163,27 @@ export default function TrackOrderBottomSheet({
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
-            marginBottom: 20,
+            marginBottom: 10,
           }}
         >
-          <span style={{ fontSize: 16, fontWeight: 500, color: "var(--text)" }}>
+          <span style={{ fontSize: 14, fontWeight: 500, color: "var(--text)" }}>
             {orderNumber}
           </span>
           <div style={{ textAlign: "right" }}>
-            <p style={{ fontSize: 11, fontWeight: 500, color: "var(--text)", margin: "0 0 2px", letterSpacing: 0.5 }}>
+            <p style={{ fontSize: 12, fontWeight: 400, color: "var(--text)", margin: "0 0 4px", letterSpacing: 0.5 }}>
               EST.TIME
             </p>
-            <p style={{ fontSize: 13, fontWeight: 400, color: "var(--subtle)", margin: 0 }}>
+            <p style={{ fontSize: 10, fontWeight: 400, color: "var(--subtle)", margin: 0, fontFamily: "var(--font-poppins), sans-serif" }}>
               {estTime}
             </p>
           </div>
         </div>
 
-        <div style={{ height: 1, background: "var(--border-subtle)", marginBottom: 26 }} />
+        <div style={{ height: 1, background: "var(--border-subtle)", marginBottom: 22 }} />
 
         {/* Progress stepper */}
-        <div style={{ marginBottom: 30 }}>
-          <OrderProgressStepper activeStep={activeStep} />
+        <div style={{ marginBottom: 20 }}>
+          <OrderProgressStepper activeStep={activeStep} orderType={orderType} />
         </div>
 
         {/* Order summary */}
@@ -195,7 +198,6 @@ export default function TrackOrderBottomSheet({
         <DeliveryAddressCard
           name={customerName}
           phone={customerPhone}
-          address={deliveryAddress}
         />
       </div>
     </div>

@@ -25,7 +25,7 @@ const order = {
 
 export default function OrderDetailsPage() {
   const router = useRouter();
-  const { id, status, restaurant, date, time } = router.query;
+  const { id, status, restaurant, date, time, orderType } = router.query;
 
   const currentOrderId = id || order.id;
   const currentStatus = status || order.status;
@@ -277,7 +277,16 @@ export default function OrderDetailsPage() {
           <div style={{ padding: "0 20px 24px" }}>
             <button
               type="button"
-              onClick={() => router.push("/screens/track-order")}
+              onClick={() =>
+                router.push({
+                  pathname: "/screens/track-order",
+                  query: {
+                    id: currentOrderId,
+                    restaurant: currentRestaurant,
+                    orderType: orderType || (currentRestaurant.toLowerCase().includes("friday") ? "pickup" : "delivery"),
+                  },
+                })
+              }
               style={{
                 width: "100%",
                 height: 48,

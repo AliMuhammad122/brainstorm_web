@@ -86,16 +86,13 @@ export default function SignupPage() {
   
   let score = 0;
   if (password) {
-    if (hasUppercase && hasNumber) {
-      if (hasSymbol) {
-        if (hasMinLength) {
-          score = 4;
-        } else {
-          score = 3;
-        }
-      } else {
-        score = 2;
-      }
+    const completedCount = [hasUppercase, hasNumber, hasSymbol, hasMinLength].filter(Boolean).length;
+    if (completedCount === 2) {
+      score = 2;
+    } else if (completedCount === 3) {
+      score = 3;
+    } else if (completedCount === 4) {
+      score = 4;
     } else {
       score = 0;
     }
@@ -221,13 +218,13 @@ export default function SignupPage() {
     w-full px-3 py-4 rounded-[8px] font-normal text-sm font-montserrat placeholder:text-sm outline-none
     focus:ring-0 focus:outline-0 transition
     ${isDark
-      ? "bg-[#2B2B2B] text-white placeholder-[#777777]"
-      : "bg-[#F2F2F2] placeholder-[#777777]"}
+      ? "bg-[#161625] text-[#EAEAF2] placeholder-[#9595AA]"
+      : "bg-[#F4F6F8] text-[#333333] placeholder-[#777777]"}
   `;
-  const labelCls = `text-sm font-montserrat font-normal ${isDark ? "text-gray-200" : "text-[#333333]"}`;
+  const labelCls = `text-sm font-montserrat font-normal ${isDark ? "text-[#EAEAF2]" : "text-[#333333]"}`;
 
   return (
-    <div className="min-h-screen flex justify-center" style={{ backgroundColor: isDark ? "#0B0B0B" : "#F8F9FA" }}>
+    <div className="min-h-screen flex justify-center" style={{ backgroundColor: isDark ? "#0D0D1A" : "#F8F9FA" }}>
       <div className="w-full max-w-[385px] min-h-screen flex flex-col relative shadow-2xl" style={shellStyle}>
         {/* Header section */}
         <div className="relative h-[33vh] min-h-[200px] shrink-0 overflow-hidden">
@@ -256,24 +253,24 @@ export default function SignupPage() {
           rounded-t-[12px]
           px-6
           pt-7
-          pb-10
+          pb-6
           flex
           flex-col
           gap-5
           overflow-y-auto
           ${isDark
-              ? "bg-[#0B0B0B] text-white shadow-[0_-10px_30px_rgba(0,0,0,0.35)]"
+              ? "bg-[#0D0D1A] shadow-[0_-10px_30px_rgba(0,0,0,0.35)]"
               : "bg-white  shadow-[0_-12px_30px_rgba(218,26,53,0.12)]"}
         `}
         >
           <div className="flex flex-col items-center " style={{ gap: "6px" }}>
             <h1
               className="text-center text-[24px] text-[#333333] font-normal uppercase"
-              style={{ fontFamily: "Anton, sans-serif" }}
+              style={{ fontFamily: "Anton, sans-serif",color: isDark ? "#EAEAF2" : "#333333" }}
             >
               Sign Up Account
             </h1>
-            <p className={`text-center text-sm font-montserrat font-normal leading-snug ${isDark ? "text-gray-400" : "text-[#606060]"}`}
+            <p className={`text-center text-sm font-montserrat font-normal leading-snug ${isDark ? "text-[#9595AA]" : "text-[#606060]"}`}
               style={{ width: "270px" }}
             >
               Please enter your details to sign up account
@@ -320,7 +317,7 @@ export default function SignupPage() {
             <div className="flex flex-col gap-1.5">
               <label className={labelCls}>Phone Number</label>
 
-              <div className={`flex items-center rounded-[8px] transition pl-2.5 ${isDark ? "bg-[#2B2B2B]" : "bg-[#F2F2F2]"}`}>
+              <div className={`flex items-center rounded-[8px] transition pl-2.5 ${isDark ? "bg-[#161625]" : "bg-[#F4F6F8]"}`}>
                 <div className="shrink-0">
                   <CountrySelect
                     value={form.phoneCode}
@@ -329,7 +326,7 @@ export default function SignupPage() {
                 </div>
 
                 {/* Divider line */}
-                <div className={`h-11 w-px  shrink-0 ${isDark ? "bg-[#3A3A3A]" : "bg-[#E9EAEB]"}`} />
+                <div className={`h-11 w-px  shrink-0 ${isDark ? "bg-[#2A2A40]" : "bg-[#E9EAEB]"}`} />
 
                 <input
                   type="tel"
@@ -339,13 +336,13 @@ export default function SignupPage() {
                   value={form.phone}
                   onChange={(e) => handlePhoneChange(e.target.value)}
                   placeholder="(444) 1234-5678"
-                  className={`flex-1 min-w-0 py-4 px-2 placeholder:text-sm bg-transparent outline-none font-normal font-montserrat ${isDark ? "text-white placeholder-[#777777]" : "text-[#1a1a1a] placeholder-[#777777]"}`}
+                  className={`flex-1 min-w-0 py-4 px-2 placeholder:text-sm bg-transparent outline-none font-normal font-montserrat ${isDark ? "text-[#EAEAF2] placeholder-[#9595AA]" : "text-[#333333] placeholder-[#777777]"}`}
                 />
 
                 <button
                   type="button"
                   className="shrink-0 pr-2 font-normal font-montserrat cursor-pointer active:scale-95 transition disabled:opacity-50"
-                  style={{ color: isVerified ? "#2ECC71" : "#DA1A35", fontSize: "14px" }}
+                  style={{ color: isVerified ? "#2ECC71" : "#DA1A35", fontSize: "14px",color:isDark ? "#E52E4A" : "#DA1A35" }}
                   onClick={handleSendOtp}
                   disabled={isSendingOtp || isVerified}
                 >
@@ -353,7 +350,7 @@ export default function SignupPage() {
                 </button>
               </div>
 
-              {phoneError && <p className="text-xs text-red-500">{phoneError}</p>}
+              {phoneError && <p className="text-sm text-[#DA1A35] font-montserrat">{phoneError}</p>}
             </div>
 
             <div className="flex flex-col gap-1.5">
@@ -376,22 +373,22 @@ export default function SignupPage() {
                 </button>
               </div>
               {password.length > 0 && (
-                <div className=" space-y-1.5">
+                <div className=" space-y-1">
                   <div className="flex justify-between items-center text-xs">
                     <span></span>
-                    <span className={`font-normal text-[8px] font-instrument text-[#A4A4A4]`}>
+                    <span className={`font-normal text-[8px] font-instrument ${isDark?"text-[#6E6E85]":"text-[#A4A4A4]"}`}>
                       {score === 0 ? "" : score <= 2 ? "Weak" : score === 3 ? "Good" : "Strong"}
                     </span>
                   </div>
                    <div className="flex gap-2">
-                    <div className={`h-1 flex-1 rounded-full ${score > 0 ? "bg-[#D00416]" : (isDark ? "bg-[#2B2B2B]" : "bg-gray-200")}`}></div>
-                    <div className={`h-1 flex-1 rounded-full ${score > 2 ? "bg-[#DFB400]" : (isDark ? "bg-[#2B2B2B]" : "bg-gray-200")}`}></div>
-                    <div className={`h-1 flex-1 rounded-full ${score > 3 ? "bg-[#1FC16B]" : (isDark ? "bg-[#2B2B2B]" : "bg-gray-200")}`}></div>
+                    <div className={`h-1 flex-1 rounded-full ${score > 0 ? (isDark ? "bg-[#DA1A35]" : "bg-[#D00416]") : (isDark ? "bg-[#2A2A40]" : "bg-[#E8E8E8]")}`}></div>
+                    <div className={`h-1 flex-1 rounded-full ${score > 2 ? "bg-[#DFB400]" : (isDark ? "bg-[#2A2A40]" : "bg-[#E8E8E8]")}`}></div>
+                    <div className={`h-1 flex-1 rounded-full ${score > 3 ? "bg-[#1FC16B]" : (isDark ? "bg-[#2A2A40]" : "bg-[#E8E8E8]")}`}></div>
                   </div>
                   {
                     password !== confirmPassword && (
-                      <div className=" text-[#777777] mt-1 space-y-1 font-instrument">
-                        <p className="text-[10px] font-normal text-[#777777]">Must contain at least:</p>
+                      <div className=" mt-1 space-y-1 font-instrument">
+                        <p className={`text-[10px] font-normal ${isDark ? "text-[#9595AA]" : "text-[#777777]"}`}>Must contain at least:</p>
                         <div className="flex gap-x-1 gap-y-1 font-normal text-[#777777] text-[8px] mt-1">
                           <span className="flex items-center justify-center">
                             {hasUppercase ? (
@@ -407,7 +404,7 @@ export default function SignupPage() {
                                 className="mr-0.5 shrink-0 inline-block align-middle"
                               />
                             )}
-                            <span className="text-[#777777]">At least 1 uppercase</span>
+                            <span className={` ${isDark ? "text-[#9595AA]" : "text-[#777777]"}`}>At least 1 uppercase</span>
                           </span>
                           <span className="flex items-center">
                             {hasNumber ? (
@@ -423,7 +420,7 @@ export default function SignupPage() {
                                 className="mr-0.5 shrink-0 inline-block align-middle"
                               />
                             )}
-                            <span className="text-[#777777]">At least 1 number</span>
+                            <span className={` ${isDark ? "text-[#9595AA]" : "text-[#777777]"}`}>At least 1 number</span>
                           </span>
                           <span className="flex items-center">
                             {hasSymbol ? (
@@ -439,7 +436,7 @@ export default function SignupPage() {
                                 className="mr-0.5 shrink-0 inline-block align-middle"
                               />
                             )}
-                            <span className="text-[#777777]">At least 1 symbol</span>
+                            <span className={` ${isDark ? "text-[#9595AA]" : "text-[#777777]"}`}>At least 1 symbol</span>
                           </span>
                           <span className="flex items-center">
                             {hasMinLength ? (
@@ -455,7 +452,7 @@ export default function SignupPage() {
                                 className="mr-0.5 shrink-0 inline-block align-middle"
                               />
                             )}
-                            <span className="text-[#777777]">At least 8 character</span>
+                            <span className={` ${isDark ? "text-[#9595AA]" : "text-[#777777]"}`}>At least 8 character</span>
                           </span>
                         </div>
                       </div>)
@@ -484,17 +481,17 @@ export default function SignupPage() {
                 </button>
               </div>
               {password && confirmPassword && password === confirmPassword && (
-                <div className="space-y-1.5">
+                <div className="space-y-1">
                   <div className="flex justify-between items-center text-xs">
                     <span></span>
-                    <span className={`font-normal text-[8px] font-instrument text-[#A4A4A4]`}>
+                    <span className={`font-normal text-[8px] font-instrument ${isDark?"text-[#6E6E85]":"text-[#A4A4A4]"}`}>
                       {score === 0 ? "" : score <= 2 ? "Weak" : score === 3 ? "Good" : "Strong"}
                     </span>
                   </div>
                   <div className="flex gap-2">
-                    <div className={`h-1 flex-1 rounded-full ${score > 0 ? "bg-[#D00416]" : (isDark ? "bg-[#2B2B2B]" : "bg-gray-200")}`}></div>
-                    <div className={`h-1 flex-1 rounded-full ${score > 2 ? "bg-[#DFB400]" : (isDark ? "bg-[#2B2B2B]" : "bg-gray-200")}`}></div>
-                    <div className={`h-1 flex-1 rounded-full ${score > 3 ? "bg-[#1FC16B]" : (isDark ? "bg-[#2B2B2B]" : "bg-gray-200")}`}></div>
+                    <div className={`h-1 flex-1 rounded-full ${score > 0 ? (isDark ? "bg-[#DA1A35]" : "bg-[#D00416]") : (isDark ? "bg-[#2A2A40]" : "bg-[#E8E8E8]")}`}></div>
+                    <div className={`h-1 flex-1 rounded-full ${score > 2 ? "bg-[#DFB400]" : (isDark ? "bg-[#2A2A40]" : "bg-[#E8E8E8]")}`}></div>
+                    <div className={`h-1 flex-1 rounded-full ${score > 3 ? "bg-[#1FC16B]" : (isDark ? "bg-[#2A2A40]" : "bg-[#E8E8E8]")}`}></div>
                   </div>
                 </div>
               )}
@@ -503,17 +500,17 @@ export default function SignupPage() {
             <button
               type="submit"
               disabled={isSendingOtp || isSigningUp}
-              className="
-              w-full bg-[#DA1A35] text-white py-4 rounded-full
+              className={`
+              w-full ${isDark ? "bg-[#E52E4A]" : "bg-[#DA1A35]"} text-white py-4 rounded-full
               text-sm font-open-sans font-normal cursor-pointer
               active:scale-95 transition disabled:opacity-50
-            "
+            `}
             >
               {isSigningUp ? "Signing up..." : isSendingOtp ? "Sending OTP..." : "Sign Up"}
             </button>
           </form>
 
-          <p className={`text-center font-normal font-montserrat text-sm ${isDark ? "text-gray-400" : "text-[#A4A4A4]"}`}>
+          <p className={`text-center font-normal font-montserrat text-sm ${isDark ? "text-[#A4A4A4]" : "text-[#A4A4A4]"}`}>
             Already have an account?{" "}
             <Link href="/auth/login" className="text-[#DA1A35] font-normal font-montserrat hover:underline">
               Login

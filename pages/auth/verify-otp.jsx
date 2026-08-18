@@ -147,7 +147,7 @@ export default function EnterOTPPage() {
   const shellStyle = { backgroundColor: "#DA1A35" };
 
   return (
-    <div className="min-h-screen flex justify-center" style={{ backgroundColor: isDark ? "#0B0B0B" : "#F8F9FA" }}>
+    <div className="min-h-screen flex justify-center" style={{ backgroundColor: isDark ? "#0D0D1A" : "#F8F9FA" }}>
       <div className="w-full max-w-[385px] min-h-screen flex flex-col relative shadow-2xl" style={shellStyle}>
         {/* Header section */}
         <div className="relative h-[52vh] min-h-[240px] shrink-0 overflow-hidden">
@@ -174,7 +174,7 @@ export default function EnterOTPPage() {
           flex-1 rounded-t-[12px] px-6 pt-6.5
           flex flex-col gap-3 overflow-y-auto
           ${isDark
-              ? "bg-[#0B0B0B] text-white shadow-[0_-10px_30px_rgba(0,0,0,0.35)]"
+              ? "bg-[#0D0D1A] text-white shadow-[0_-10px_30px_rgba(0,0,0,0.35)]"
               : "bg-white shadow-[0_-12px_30px_rgba(218,26,53,0.12)]"}
         `}
         >
@@ -184,20 +184,20 @@ export default function EnterOTPPage() {
             className={`
             w-8 h-8 rounded-full flex items-center justify-center
              active:scale-95 transition self-start cursor-pointer
-            ${isDark ? "bg-[#1A1A1A]" : "bg-[#F4F6F8]"}
+            ${isDark ? "bg-[#161625]" : "bg-[#F4F6F8]"}
           `}
           >
-            <BackIcon width={20} height={20} alt="" />
+            <BackIcon width={20} height={20} alt="" className={isDark ? "text-[#555570]" : "text-[#333333]"} />
           </button>
 
-          <div className="flex flex-col items-center " style={{gap:"6px"}}>
+          <div className="flex flex-col items-center " style={{gap:"7px"}}>
             <h1
               className="text-center text-[24px] text-[#333333] font-normal uppercase"
-              style={{ fontFamily: "Anton, sans-serif" }}
+              style={{ fontFamily: "Anton, sans-serif",color: isDark ? "#EAEAF2" : "#333333" }}
             >
               Enter OTP
             </h1>
-            <p className={`text-center text-sm font-montserrat font-normal leading-snug ${isDark ? "text-gray-400" : "text-[#606060]"}`}
+            <p className={`text-center text-sm font-montserrat font-normal leading-snug ${isDark ? "text-[#9595AA]" : "text-[#606060]"}`}
               style={{  width:"255px"}}
             >
               Enter the OTP code we just sent you on your registered Phone number
@@ -217,10 +217,10 @@ export default function EnterOTPPage() {
                   onChange={(e) => handleOTPChange(index, e.target.value)}
                   onKeyDown={(e) => handleKeyDown(index, e)}
                   onPaste={handlePaste}
-                  style={{color:isDark ? "white" : "#777777"}}
+                  style={{color:isDark ? "#9595AA" : "#777777"}}
                   className={`
                   w-16 h-16 text-center text-base font-normal font-montserrat rounded-[8px] outline-none transition
-                  focus:ring-0 focus:outline-0 bg-[#F4F6F8] 
+                  focus:ring-0 focus:outline-0 ${isDark ? "bg-[#161625]" : "bg-[#F4F6F8]"} 
                 `}
                 />
               ))}
@@ -230,11 +230,11 @@ export default function EnterOTPPage() {
               <button
                 type="submit"
                 disabled={loading || !isComplete}
-                className="
-                w-full bg-[#DA1A35] text-white h-[48px] rounded-full 
+                className={`
+                w-full ${isDark ? "bg-[#E52E4A]" : "bg-[#DA1A35]"} text-white h-[48px] rounded-full 
                 text-sm font-open-sans font-normal cursor-pointer
-                active:scale-95 transition disabled:bg-[#D2D2D2] disabled:cursor-not-allowed
-                "
+                active:scale-95 transition ${isDark ? "disabled:bg-[#353550] disabled:cursor-not-allowed" : "disabled:bg-[#D2D2D2] disabled:cursor-not-allowed"}
+                `}
               >
                 {loading ? "Verifying..." : "Submit"}
               </button>
@@ -245,7 +245,7 @@ export default function EnterOTPPage() {
             Didn&apos;t get OTP?{" "}
             <button
               type="button"
-              style={{color:isDark ? "white" : "#DA1A35"}}
+              style={{color:isDark ? "#DA1A35" : "#DA1A35"}}
               className="font-normal font-open-sans hover:underline cursor-pointer"
               onClick={handleResend}
               disabled={resending}

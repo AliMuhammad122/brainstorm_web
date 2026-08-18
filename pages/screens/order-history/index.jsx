@@ -19,6 +19,7 @@ const activeOrders = [
     restaurant: "TGI Friday's",
     time: "12:40",
     date: "24-11-2025",
+    orderType: "pickup",
   },
   {
     id: "Order #1266",
@@ -26,6 +27,7 @@ const activeOrders = [
     restaurant: "Olive Garden",
     time: "13:15",
     date: "24-11-2025",
+    orderType: "delivery",
   },
   {
     id: "Order #1267",
@@ -33,6 +35,7 @@ const activeOrders = [
     restaurant: "Cheesecake Factory",
     time: "14:00",
     date: "24-11-2025",
+    orderType: "pickup",
   },
 ];
 
@@ -43,6 +46,7 @@ const historyOrders = [
     restaurant: "TGI Friday's",
     time: "10:30",
     date: "23-11-2025",
+    orderType: "pickup",
   },
   {
     id: "Order #1261",
@@ -50,6 +54,7 @@ const historyOrders = [
     restaurant: "Olive Garden",
     time: "18:15",
     date: "22-11-2025",
+    orderType: "delivery",
   },
   {
     id: "Order #1260",
@@ -57,6 +62,7 @@ const historyOrders = [
     restaurant: "Cheesecake Factory",
     time: "11:00",
     date: "21-11-2025",
+    orderType: "pickup",
   },
 ];
 
@@ -167,6 +173,7 @@ export default function OrderHistoryPage() {
                         restaurant: order.restaurant,
                         date: order.date,
                         time: order.time,
+                        orderType: order.orderType,
                       },
                     })
                   }
@@ -285,6 +292,7 @@ export default function OrderHistoryPage() {
                           restaurant: order.restaurant,
                           date: order.date,
                           time: order.time,
+                          orderType: order.orderType,
                         },
                       })
                     }

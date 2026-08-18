@@ -26,25 +26,36 @@ import CloseIcon from "../../public/assets/icons/close.svg"
 import BackIcon from "../../public/assets/icons/back.svg"
 import MenuClose from "../../public/assets/icons/menuclose.svg"
 import IcoChevron  from "../../public/assets/icons/IcoChevron.svg";
+import OrderHistoryIcon from "../../public/assets/icons/order_history_icon.svg";
+import LoyaltyIcon from "../../public/assets/icons/loylity_icon.svg";
+import NotificationIcon from "../../public/assets/icons/notification_icon.svg";
+import ProfileIcon from "../../public/assets/icons/profile_icon.svg";
+import ChangePasswordIcon from "../../public/assets/icons/change_password_icon.svg";
+import ThemeIcon from "../../public/assets/icons/theme.svg";
+import LanguageIcon from "../../public/assets/icons/language_icon.svg";
+import PrivacyIcon from "../../public/assets/icons/privacy_icon.svg";
+import TermsIcon from "../../public/assets/icons/terms_icon.svg";
+import LogoutIcon from "../../public/assets/icons/logout_icon.svg";
 
 
 export function PageHeader({ title, onBack, transparent, rightElement }) {
   const { tokens, isDark } = useTheme();
   const isTransparent = !!transparent;
   const headerBg = isTransparent ? "transparent" : tokens.headerBg;
-  const backBg = isTransparent ? "rgba(255,255,255,0.95)" : (isDark ? "rgba(255,255,255,0.1)" : "#f4f4f4");
-  const textColor = isTransparent ? "#111" : tokens.headerText;
-  const backIconColor = isTransparent ? "#111" : tokens.headerText;
+  const backBg = isTransparent ? "white" : (isDark ? "rgba(255,255,255,0.1)" : "#f4f4f4");
+  const textColor = isTransparent ? "#333333" : tokens.headerText;
+  const backIconColor = isTransparent ? "#333333" : tokens.headerText;
 
   return (
     <div
       style={{
         display: "flex",
         alignItems: "center",
-        padding: "12px 20px 10px",
+        padding: isTransparent ? "12px 16px" : "12px 20px 10px",
         background: headerBg,
         flexShrink: 0,
-        borderBottom:"1px solid #F4F6F8"
+        borderBottom: isTransparent ? "none" : "1px solid #F4F6F8",
+        height: 56,
       }}
     >
       <button
@@ -52,7 +63,7 @@ export function PageHeader({ title, onBack, transparent, rightElement }) {
         style={{
           width: 32,
           height: 32,
-          borderRadius: 10000,
+          borderRadius: "50%",
           background: backBg,
           border: "none",
           cursor: "pointer",
@@ -60,19 +71,21 @@ export function PageHeader({ title, onBack, transparent, rightElement }) {
           alignItems: "center",
           justifyContent: "center",
           flexShrink: 0,
+          color: backIconColor,
+          boxShadow: isTransparent ? "0 2px 8px rgba(0,0,0,0.06)" : "none",
         }}
       >
-        <BackIcon />
+        <BackIcon width={20} height={20} />
       </button>
       <span
         style={{
           flex: 1,
           textAlign: "center",
           fontSize: 16,
-          fontWeight: 400,
+          fontWeight: 500,
           color: textColor,
           letterSpacing: "0px",
-          fontFamily: "'Montserrat',sans-serif",
+          fontFamily: "'Montserrat', sans-serif",
         }}
       >
         {title}
@@ -798,23 +811,23 @@ export function Drawer({
 
   // Icons use actual filenames from public/assets/icons (names may differ slightly, e.g. loylity_icon.svg for Loyalty).
   const sectionOne = [
-    { label: "Orders History", icon: "/assets/icons/order_history_icon.svg" },
-    { label: "Loyalty Rewards", icon: "/assets/icons/loylity_icon.svg" },
-    { label: "Notifications", icon: "/assets/icons/notification_icon.svg" },
+    { label: "Orders History", icon: OrderHistoryIcon },
+    { label: "Loyalty Rewards", icon: LoyaltyIcon },
+    { label: "Notifications", icon: NotificationIcon },
   ];
 
   const sectionTwo = [
-    { label: "My Profile", icon: "/assets/icons/profile_icon.svg" },
-    { label: "Change Password", icon: "/assets/icons/change_password_icon.svg" },
-    { label: "App Appearance", icon: "/assets/icons/theme.svg" },
-    { label: "Languages", icon: "/assets/icons/language_icon.svg" },
-    { label: "Privacy Policy", icon: "/assets/icons/privacy_icon.svg" },
-    { label: "Terms & Conditions", icon: "/assets/icons/terms_icon.svg" },
+    { label: "My Profile", icon: ProfileIcon },
+    { label: "Change Password", icon: ChangePasswordIcon },
+    { label: "App Appearance", icon: ThemeIcon },
+    { label: "Languages", icon: LanguageIcon },
+    { label: "Privacy Policy", icon: PrivacyIcon },
+    { label: "Terms & Conditions", icon: TermsIcon },
   ];
 
   const logoutItem = {
     label: "Logout",
-    icon: "/assets/icons/logout_icon.svg",
+    icon: LogoutIcon,
   };
 
   const navigate = (path) => {
@@ -842,71 +855,68 @@ export function Drawer({
   const handlePrivacy = () => navigate("/screens/privacy-policy");
   const handleTerms = () => navigate("/screens/terms");
 
-  const cardBg = isDark ? "#1C1C1E" : "#F4F6F8";
-  const pageBg = isDark ? "#0B0B0B" : "#fff";
-  const iconFilter = isDark ? "brightness(0) invert(1)" : "none";
-  const textColor = isDark ? "#fff" : "#333333";
+  const cardBg = isDark ? "#161625" : "#F4F6F8";
+  const pageBg = isDark ? "#0D0D1A" : "#fff";
+  const iconFilter = isDark ? "#555570" : "#333333";
+  const textColor = isDark ? "#EAEAF2" : "#333333";
   const dividerColor = isDark ? "rgba(255,255,255,0.08)" : "#ECEFF3";
-  const chevronColor = isDark ? "#fff" : "#ccc";
+  const chevronColor = isDark ? "#C8C8D8" : "#333333";
 
-  const renderRow = (item, isLast, onClick, hideChevron) => (
-    <button
-      key={item.label}
-      type="button"
-      onClick={onClick}
-      style={{
-        display: "flex",
-        alignItems: "center",
-        width: "100%",
-        padding: "10px 8px",
-        background: "none",
-        border: "none",
-        // borderBottom: isLast ? "none" : `1px solid ${dividerColor}`,
-        cursor: "pointer",
-        textAlign: "left",
-        fontSize: 14,
-        fontWeight: 400,
-      }}
-    >
-      <div
+  const renderRow = (item, isLast, onClick, hideChevron) => {
+    const IconComponent = item.icon;
+    return (
+      <button
+        key={item.label}
+        type="button"
+        onClick={onClick}
         style={{
-          width: 32,
-          height: 32,
-          borderRadius: 10,
-          background: isDark ? "#1C1C1E" : "",
           display: "flex",
           alignItems: "center",
-          justifyContent: "center",
-          marginRight: 4,
-          flexShrink: 0,
-          fontWeight: 400,
-        }}
-      >
-        <img
-          src={item.icon}
-          alt={item.label}
-          style={{
-            objectFit: "contain",
-            filter: iconFilter,
-          }}
-          onError={(e) => {
-            e.target.style.display = "none";
-          }}
-        />
-      </div>
-      <span
-        style={{
-          flex: 1,
+          width: "100%",
+          padding: "10px 8px",
+          background: "none",
+          border: "none",
+          cursor: "pointer",
+          textAlign: "left",
           fontSize: 14,
           fontWeight: 400,
-          color: textColor,
         }}
       >
-        {item.label}
-      </span>
-      {!hideChevron && <IcoChevron c={chevronColor} />}
-    </button>
-  );
+        <div
+          style={{
+            width: 32,
+            height: 32,
+            borderRadius: 10,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            marginRight: 4,
+            flexShrink: 0,
+            fontWeight: 400,
+          }}
+        >
+          <IconComponent
+            style={{
+              // width: 20,
+              // height: 20,
+              color: iconFilter,
+            }}
+          />
+        </div>
+        <span
+          style={{
+            flex: 1,
+            fontSize: 14,
+            fontWeight: 400,
+            color: textColor,
+          }}
+        >
+          {item.label}
+        </span>
+        {!hideChevron && <IcoChevron c={chevronColor} />}
+      </button>
+    );
+  };
 
   const drawerContent = (
     <div
@@ -933,7 +943,7 @@ export function Drawer({
           justifyContent: "space-between",
           padding: "16px 20px 12px",
           flexShrink: 0,
-          borderBottom: "1px solid #F4F6F8"
+          borderBottom: isDark ? "1px solid #2A2A40" : "1px solid #F4F6F8"
 
         }}
       >
@@ -976,14 +986,14 @@ export function Drawer({
             height: 30,
             borderRadius: 10000,
             border: "none",
-            background: isDark ? "#1C1C1E" : "#F4F6F8",
+            background: isDark ? "#161625" : "#F4F6F8",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             cursor: "pointer",
           }}
         >
-          <MenuClose />
+          <MenuClose color={chevronColor} />
         </button>
       </div>
 

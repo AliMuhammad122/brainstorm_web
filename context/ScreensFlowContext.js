@@ -6,8 +6,8 @@ const ScreensFlowContext = createContext(null);
 
 const defaultState = {
   // restaurant
-  activeRestaurantName: "TGI FRIDAY'S",
-  activeRestaurantId: 555,
+  activeRestaurantName: "",
+  activeRestaurantId: null,
   activeRestaurantImage: "",
 
   // item detail selection
@@ -21,8 +21,8 @@ const defaultState = {
   activePrice: "",
 
   // location
-  selectedLocation: { latitude: 34.6786, longitude: 33.0413, address: "Limassol, Cyprus" },
-  savedAddresses: [{ latitude: 34.6786, longitude: 33.0413, address: "Limassol, Cyprus" }],
+  selectedLocation: null,
+  savedAddresses: [],
 };
 
 function safeParse(json, fallback) {

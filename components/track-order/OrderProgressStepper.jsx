@@ -2,14 +2,21 @@ import React from "react";
 
 const BRAND_RED = "var(--primary)";
 
-const STEPS = [
+const DELIVERY_STEPS = [
   "Order Confirmed",
   "Order Processed",
   "Order Shipped",
   "Order Delivered",
 ];
 
-export default function OrderProgressStepper({ activeStep = 1 }) { // defaulting to 1 based on test imagery
+const PICKUP_STEPS = [
+  "Order Confirmed",
+  "Ready to Pickup",
+  "Order Received",
+];
+
+export default function OrderProgressStepper({ activeStep = 1, orderType = "delivery" }) {
+  const STEPS = orderType === "pickup" ? PICKUP_STEPS : DELIVERY_STEPS;
   return (
     <div style={{ padding: "0" }}>
       {/* Container for texts strictly positioned above each dot */}
@@ -22,22 +29,31 @@ export default function OrderProgressStepper({ activeStep = 1 }) { // defaulting
           height: 14,
         }}
       >
-        {STEPS.map((s, i) => (
-          <span
-            key={s}
-            style={{
-              position: "absolute",
-              left: `${(i / (STEPS.length - 1)) * 100}%`,
-              transform: "translateX(-50%)",
-              fontSize: 9,
-              fontWeight: 400,
-              color: "var(--subtle)",
-              whiteSpace: "nowrap",
-            }}
-          >
-            {s}
-          </span>
-        ))}
+        {STEPS.map((s, i) => {
+          const isFirst = i === 0;
+          const isLast = i === STEPS.length - 1;
+          const labelStyle = {
+            position: "absolute",
+            fontSize: 9,
+            fontWeight: 400,
+            color: "var(--subtle)",
+            whiteSpace: "nowrap",
+            fontFamily: "'Montserrat', sans-serif",
+          };
+          if (isFirst) {
+            labelStyle.left = 0;
+          } else if (isLast) {
+            labelStyle.right = 0;
+          } else {
+            labelStyle.left = `${(i / (STEPS.length - 1)) * 100}%`;
+            labelStyle.transform = "translateX(-50%)";
+          }
+          return (
+            <span key={s} style={labelStyle}>
+              {s}
+            </span>
+          );
+        })}
       </div>
 
       <div

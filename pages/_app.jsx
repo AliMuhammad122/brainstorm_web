@@ -1,6 +1,6 @@
 import { Provider } from "react-redux";
 import Head from "next/head";
-import { DM_Sans, Nunito, Montserrat } from "next/font/google";
+import { DM_Sans, Nunito, Montserrat, Poppins } from "next/font/google";
 import store from "../src/store/store";
 import { ThemeProvider } from "../context/ThemeContext";
 import { ScreensFlowProvider } from "../context/ScreensFlowContext";
@@ -28,6 +28,12 @@ const montserrat = Montserrat({
   variable: "--font-montserrat",
 });
 
+const poppins = Poppins({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  variable: "--font-poppins",
+});
+
 function AppContent({ Component, pageProps }) {
   return (
     <>
@@ -46,7 +52,7 @@ export default function MyApp({ Component, pageProps }) {
     <ThemeProvider>
       <Provider store={store}>
         <ScreensFlowProvider>
-          <div className={`${dmSans.variable} ${nunito.variable} ${montserrat.variable} font-body`}>
+          <div className={`${dmSans.variable} ${nunito.variable} ${montserrat.variable} ${poppins.variable} font-body`}>
             <SplashScreen />
             <AppContent Component={Component} pageProps={pageProps} />
           </div>

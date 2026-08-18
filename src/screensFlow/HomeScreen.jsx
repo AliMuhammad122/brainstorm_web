@@ -20,7 +20,7 @@ export function HomeScreen({
   onRestoTap,
 }) {
   const { state } = useScreensFlow();
-  const selectedLocation = state?.selectedLocation || { latitude: 34.6786, longitude: 33.0413, address: "Limassol, Cyprus" };
+  const selectedLocation = state?.selectedLocation;
 
   const [searchVal, setSearchVal] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
@@ -43,8 +43,8 @@ export function HomeScreen({
   const { data: storesRes, isLoading } = useGetStoresQuery({
     offset: 0,
     limit: 20,
-    latitude: selectedLocation.latitude,
-    longitude: selectedLocation.longitude,
+    latitude: selectedLocation?.latitude,
+    longitude: selectedLocation?.longitude,
     search: debouncedSearch || undefined,
     price_range: activePrice ? mapPriceRange(activePrice) : undefined,
     category: activeCats.length > 0 ? activeCats[0] : undefined,

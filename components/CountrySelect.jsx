@@ -66,9 +66,9 @@ const CustomSingleValue = (props) => {
         >
           <RenderFlag countryCode={data.value} />
         </div>
-        <ArrowDown style={{ marginLeft: isModal ? 10 : 6, marginRight: isModal ? 8 : 0 }} />
+        <ArrowDown style={{ marginLeft: isModal ? 10 : 6, marginRight: isModal ? 8 : 0, color:isDark ? "#777777" : "#DA1A35" }} />
         <span
-          className={`font-normal font-montserrat ${isDark ? "text-white" : "text-[#777777]"}`}
+          className={`font-normal font-montserrat ${isDark ? "text-[#9595AA]" : "text-[#777777]"}`}
           style={{ fontSize: isModal ? 10 : 14, paddingLeft: isModal ? 0 : 2 }}
         >
           {data.dialCode}
@@ -83,14 +83,14 @@ const CustomOption = (props) => {
   const { isDark } = useTheme();
   return (
     <components.Option {...props}>
-      <div className="flex items-center justify-between px-1 py-0.5 text-xs cursor-pointer">
+      <div className="flex items-center scrollbar-hide justify-between px-1 py-0.5 text-xs cursor-pointer">
         <span className="flex items-center gap-2">
           <div className="w-4 h-4 rounded-full overflow-hidden flex items-center justify-center shrink-0 bg-white ">
             <RenderFlag countryCode={data.value} />
           </div>
           <span className={isSelected
-            ? "font-medium text-[#DA1A35]"
-            : (isDark ? "text-white" : "text-[#333333]")}
+            ? "font-medium text-[#9595AA]"
+            : (isDark ? "text-[#9595AA]" : "text-[#333333]")}
           >
             {data.label}
           </span>
@@ -134,17 +134,22 @@ const customSelectStyles = (isDark, isModal) => ({
     boxShadow: "0px 4px 36px 0px #00000026",
     zIndex: 9999,
     width: "260px",
-    backgroundColor: isDark ? "#1C1C1C" : "#FFFFFF",
+    backgroundColor: isDark ? "#161625" : "#FFFFFF",
   }),
   menuList: (base) => ({
     ...base,
     maxHeight: "200px",
     padding: "4px",
+    scrollbarWidth: "none",
+    msOverflowStyle: "none",
+    "&::-webkit-scrollbar": {
+      display: "none",
+    },
   }),
   option: (base, state) => ({
     ...base,
     backgroundColor: state.isSelected
-      ? (isDark ? "#DA1A35" : "#FDE8EA")
+      ? (isDark ? "#e3213eff" : "#FDE8EA")
       : state.isFocused
         ? (isDark ? "#2B2B2B" : "#F4F6F8")
         : "transparent",
