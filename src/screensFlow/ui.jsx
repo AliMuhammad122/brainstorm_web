@@ -28,7 +28,7 @@ import MenuClose from "../../public/assets/icons/menuclose.svg"
 import IcoChevron  from "../../public/assets/icons/IcoChevron.svg";
 
 
-export function PageHeader({ title, onBack, transparent }) {
+export function PageHeader({ title, onBack, transparent, rightElement }) {
   const { tokens, isDark } = useTheme();
   const isTransparent = !!transparent;
   const headerBg = isTransparent ? "transparent" : tokens.headerBg;
@@ -77,7 +77,13 @@ export function PageHeader({ title, onBack, transparent }) {
       >
         {title}
       </span>
-      <div style={{ width: 38 }} />
+      {rightElement ? (
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 32, height: 32, flexShrink: 0 }}>
+          {rightElement}
+        </div>
+      ) : (
+        <div style={{ width: 32 }} />
+      )}
     </div>
   );
 }

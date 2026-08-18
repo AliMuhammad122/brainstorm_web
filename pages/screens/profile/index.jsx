@@ -10,6 +10,7 @@ import {
 } from "../../../src/store/authApiSlice";
 import { countryCodes } from "../../../data/countryCodes";
 import Skeleton from "../../../components/Skeleton";
+import EditProfile from "../../../public/assets/icons/editprofile.svg";
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -151,11 +152,11 @@ export default function ProfilePage() {
       <div style={{ minHeight: "100vh", background: "var(--bg)", color: "var(--text)" }}>
         <PageHeader title="My Profile" onBack={() => router.back()} />
 
-        <div style={{ padding: "14px 20px 24px" }}>
+        <div style={{ padding: "16px 20px 0px" }}>
           <div
             style={{
               background: "var(--surface)",
-              borderRadius: 14,
+              borderRadius: 8,
               padding: 12,
               display: "flex",
               alignItems: "center",
@@ -164,16 +165,16 @@ export default function ProfilePage() {
             }}
           >
             {isLoading ? (
-              <Skeleton width={56} height={56} borderRadius={10} />
+              <Skeleton width={80} height={80} borderRadius={8} />
             ) : (
               <div
                 onClick={() => !isUploading && fileInputRef.current?.click()}
                 style={{
-                  width: 56,
-                  height: 56,
-                  borderRadius: 10,
-                  background:
-                    "linear-gradient(135deg, rgba(0,0,0,0.8), rgba(0,0,0,0.2))",
+                  width: 80,
+                  height: 80,
+                  borderRadius: 8,
+                  // background:
+                  //   "linear-gradient(135deg, rgba(0,0,0,0.8), rgba(0,0,0,0.2))",
                   position: "relative",
                   overflow: "hidden",
                   cursor: isUploading ? "not-allowed" : "pointer",
@@ -223,50 +224,35 @@ export default function ProfilePage() {
                 <div
                   style={{
                     position: "absolute",
-                    right: 4,
-                    bottom: 4,
-                    width: 18,
-                    height: 18,
-                    borderRadius: 9,
-                    background: "#fff",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    boxShadow: "0 1px 2px rgba(0,0,0,0.2)",
+                    right:-1,
+                    bottom: 0,
+                    // width: 20,
+                    // height: 20,
+                    // borderRadius: 9,
+                    // background: "#fff",
+                    // display: "flex",
+                    // alignItems: "center",
+                    // justifyContent: "center",
+                    // boxShadow: "0 1px 2px rgba(0,0,0,0.2)",
                     zIndex: 2,
                   }}
                 >
-                  <svg
-                    width="10"
-                    height="10"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                    aria-hidden="true"
-                  >
-                    <path
-                      d="M4 20h4l10-10-4-4L4 16v4Z"
-                      stroke="#D9142C"
-                      strokeWidth="1.6"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
+                  <EditProfile />
                 </div>
               </div>
             )}
-            <div>
-              <div style={{ fontSize: 14, fontWeight: 600, color: "var(--text)" }}>
+            <div className="space-y-1">
+              <div style={{ fontSize: 16, fontWeight: 400, color: "var(--text)", fontFamily: "'Anton'" }}>
                 {isLoading ? <Skeleton width={120} height={14} style={{ margin: "4px 0" }} /> : `${firstName} ${lastName}`}
               </div>
-              <div style={{ fontSize: 12, color: "var(--muted)" }}>
+              <div style={{ fontSize: 12, color: "#A4A4A4", fontFamily: "'Montserrat'" }}>
                 {isLoading ? <Skeleton width={160} height={12} style={{ margin: "4px 0" }} /> : email}
               </div>
             </div>
           </div>
 
-          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-            <label style={{ fontSize: 12, color: "var(--text)" }}>First Name</label>
+          <div style={{ display: "flex", flexDirection: "column", gap: 8,marginTop:"10px" }}>
+            <label style={{ fontSize: 14, color: "#333333", }}>First Name</label>
             {isLoading ? (
               <Skeleton height={44} borderRadius={10} />
             ) : (
@@ -276,17 +262,19 @@ export default function ProfilePage() {
                 onChange={(e) => setFirstName(e.target.value)}
                 style={{
                   height: 44,
-                  borderRadius: 10,
+                  borderRadius: 8,
                   border: "none",
                   background: "var(--surface)",
                   padding: "0 12px",
-                  fontSize: 13,
-                  color: "var(--text)",
+                  fontSize: 14,
+                  color: "#333333",
+                  fontFamily: "'Montserrat'",
+                  outline:"none"
                 }}
               />
             )}
 
-            <label style={{ fontSize: 12, color: "var(--text)" }}>Last Name</label>
+            <label style={{ fontSize: 14, color: "#333333", marginTop:"4px" }}>Last Name</label>
             {isLoading ? (
               <Skeleton height={44} borderRadius={10} />
             ) : (
@@ -296,17 +284,19 @@ export default function ProfilePage() {
                 onChange={(e) => setLastName(e.target.value)}
                 style={{
                   height: 44,
-                  borderRadius: 10,
+                  borderRadius: 8,
                   border: "none",
                   background: "var(--surface)",
                   padding: "0 12px",
-                  fontSize: 13,
-                  color: "var(--text)",
+                  fontSize: 14,
+                  color: "#333333",
+                  fontFamily: "'Montserrat'",
+                  outline: "none" 
                 }}
               />
             )}
 
-            <label style={{ fontSize: 12, color: "var(--text)" }}>Email</label>
+            <label style={{ fontSize: 14, color: "#333333", marginTop:"4px" }}>Email</label>
             {isLoading ? (
               <Skeleton height={44} borderRadius={10} />
             ) : (
@@ -316,26 +306,28 @@ export default function ProfilePage() {
                 onChange={(e) => setEmail(e.target.value)}
                 style={{
                   height: 44,
-                  borderRadius: 10,
+                  borderRadius: 8,
                   border: "none",
                   background: "var(--surface)",
                   padding: "0 12px",
-                  fontSize: 13,
-                  color: "var(--text)",
+                  fontSize: 14,
+                  color: "#333333",
+                  fontFamily: "'Montserrat'",
+                  outline: "none"
                 }}
               />
             )}
 
-            <label style={{ fontSize: 12, color: "var(--text)" }}>Phone Number</label>
+            <label style={{ fontSize: 14, color: "#333333", marginTop:"4px" }}>Phone Number</label>
             {isLoading ? (
-              <Skeleton height={44} borderRadius={10} />
+              <Skeleton height={44} borderRadius={8} />
             ) : (
               <div
                 style={{
                   display: "flex",
                   alignItems: "center",
                   background: "var(--surface)",
-                  borderRadius: 10,
+                  borderRadius: 8,
                   overflow: "hidden",
                 }}
               >
@@ -347,8 +339,9 @@ export default function ProfilePage() {
                     alignItems: "center",
                     gap: 6,
                     borderRight: "1px solid var(--border)",
-                    fontSize: 12,
-                    color: "var(--muted)",
+                    fontSize: 14,
+                    color: "#777777",
+                    fontFamily: "'Montserrat'",
                   }}
                 >
                   {currentCountry ? (
@@ -371,9 +364,11 @@ export default function ProfilePage() {
                     height: 44,
                     border: "none",
                     background: "transparent",
-                    padding: "0 10px",
+                    padding: "0 8px",
                     fontSize: 13,
                     color: "var(--text)",
+                    fontFamily: "'Montserrat'",
+                    outline: "none"
                   }}
                 />
                 <button
@@ -381,9 +376,9 @@ export default function ProfilePage() {
                   style={{
                     border: "none",
                     background: "transparent",
-                    color: "#D9142C",
-                    fontSize: 12,
-                    padding: "0 12px",
+                    color: "#DA1A35",
+                    fontSize: 14,
+                    padding: "0 8px",
                     cursor: "pointer",
                   }}
                 >
@@ -392,7 +387,7 @@ export default function ProfilePage() {
               </div>
             )}
 
-            <label style={{ fontSize: 12, color: "var(--text)" }}>Gender</label>
+            <label style={{ fontSize: 14, color: "#333333", marginTop: "4px" }}>Gender</label>
             {isLoading ? (
               <Skeleton height={44} borderRadius={10} />
             ) : (
@@ -403,12 +398,12 @@ export default function ProfilePage() {
                   style={{
                     width: "100%",
                     height: 44,
-                    borderRadius: 10,
+                    borderRadius: 8,
                     border: "none",
                     background: "var(--surface)",
                     padding: "0 12px",
-                    fontSize: 13,
-                    color: gender ? "var(--text)" : "var(--muted)",
+                    fontSize: 14,
+                    color: gender ? "#333333" : "var(--muted)",
                     textAlign: "left",
                     display: "flex",
                     alignItems: "center",
@@ -441,7 +436,7 @@ export default function ProfilePage() {
                       left: 0,
                       right: 0,
                       background: "var(--surface)",
-                      borderRadius: 10,
+                      borderRadius: 8,
                       boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
                       overflow: "hidden",
                       zIndex: 10,
@@ -457,8 +452,8 @@ export default function ProfilePage() {
                         }}
                         style={{
                           padding: "12px 16px",
-                          fontSize: 13,
-                          color: "var(--text)",
+                          fontSize: 14,
+                          color: "#333333",
                           cursor: "pointer",
                           background: gender === opt ? "var(--surface-alt)" : "transparent",
                           transition: "background 0.2s",
@@ -476,9 +471,9 @@ export default function ProfilePage() {
               </div>
             )}
 
-            <label style={{ fontSize: 12, color: "var(--text)" }}>DOB</label>
+            <label style={{ fontSize: 14, color: "#333333", marginTop: "4px" }}>DOB</label>
             {isLoading ? (
-              <Skeleton height={44} borderRadius={10} />
+              <Skeleton height={44} borderRadius={8} />
             ) : (
               <input
                 placeholder="YYYY/MM/DD"
@@ -486,12 +481,14 @@ export default function ProfilePage() {
                 onChange={(e) => setDob(e.target.value)}
                 style={{
                   height: 44,
-                  borderRadius: 10,
+                  borderRadius: 8,
                   border: "none",
                   background: "var(--surface)",
                   padding: "0 12px",
-                  fontSize: 13,
-                  color: "var(--text)",
+                  fontSize: 14,
+                  color: "#333333",
+                  fontFamily: "'Montserrat'",
+                  outline: "none"
                 }}
               />
             )}
@@ -503,19 +500,20 @@ export default function ProfilePage() {
             disabled={isLoading || isUpdating || isUploading}
             style={{
               width: "100%",
-              height: 52,
+              height: 48,
               borderRadius: 26,
               border: "none",
               background: (isLoading || isUpdating || isUploading) ? "var(--disabled)" : "#D9142C",
               color: "#fff",
-              fontSize: 15,
-              fontWeight: 600,
-              marginTop: 22,
+              fontSize: 14,
+              fontWeight: 400,
+              marginTop: 20,
               cursor: (isLoading || isUpdating || isUploading) ? "not-allowed" : "pointer",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
               gap: 8,
+              fontFamily:"'Open Sans'"
             }}
           >
             {(isUpdating || isUploading) && (
@@ -550,13 +548,14 @@ export default function ProfilePage() {
             borderRadius: 30,
             boxShadow: "0 8px 32px rgba(0,0,0,0.25)",
             zIndex: 9999,
-            fontSize: 13,
-            fontWeight: 500,
+            fontSize: 12,
+            fontWeight: 400,
             whiteSpace: "nowrap",
             border: `1px solid ${toast.type === "success" ? "rgba(255, 255, 255, 0.2)" : "rgba(255, 255, 255, 0.15)"}`,
             display: "flex",
             alignItems: "center",
             gap: 8,
+            fontFamily: "'Montserrat'",
           }}
         >
           {toast.type === "success" ? (

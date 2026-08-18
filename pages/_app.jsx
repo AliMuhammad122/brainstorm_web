@@ -5,6 +5,7 @@ import store from "../src/store/store";
 import { ThemeProvider } from "../context/ThemeContext";
 import { ScreensFlowProvider } from "../context/ScreensFlowContext";
 import RouteLoader from "../components/RouteLoader";
+import SplashScreen from "../components/SplashScreen";
 import "antd/dist/reset.css";
 import "leaflet/dist/leaflet.css";
 import "../styles/globals.css";
@@ -46,6 +47,7 @@ export default function MyApp({ Component, pageProps }) {
       <Provider store={store}>
         <ScreensFlowProvider>
           <div className={`${dmSans.variable} ${nunito.variable} ${montserrat.variable} font-body`}>
+            <SplashScreen />
             <AppContent Component={Component} pageProps={pageProps} />
           </div>
         </ScreensFlowProvider>

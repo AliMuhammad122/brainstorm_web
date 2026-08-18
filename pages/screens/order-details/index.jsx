@@ -2,6 +2,8 @@ import React from "react";
 import { useRouter } from "next/router";
 import ScreensFrame from "../../../src/screensFlow/Frame";
 import { PageHeader } from "../../../src/screensFlow/ui";
+import LocationIcon from "../../../public/assets/icons/location.svg"
+import DocumentDownloadIcon from "../../../public/assets/icons/document-download.svg"
 
 const order = {
   id: "Order #1265",
@@ -23,6 +25,43 @@ const order = {
 
 export default function OrderDetailsPage() {
   const router = useRouter();
+  const { id, status, restaurant, date, time } = router.query;
+
+  const currentOrderId = id || order.id;
+  const currentStatus = status || order.status;
+  const currentRestaurant = restaurant || "TGI Friday's";
+  const currentDeliveryDate = date ? date.replace(/-/g, "/") : "24/11/2025";
+
+  const getStatusBadgeStyles = (statusVal) => {
+    switch (statusVal) {
+      case "Completed":
+        return {
+          color: "#1FC16B",
+          background: "#1FC16B1A",
+        };
+      case "Canceled":
+        return {
+          color: "#D00416",
+          background: "#D004161A",
+        };
+      case "Active Order":
+      default:
+        return {
+          color: "#D9142C",
+          background: "#DA1A351A",
+        };
+    }
+  };
+
+  const statusStyle = getStatusBadgeStyles(currentStatus);
+
+  const currentDetails = [
+    { label: "Customer Name", value: "David Miller" },
+    { label: "Phone Number", value: "+357 345236521" },
+    { label: "Venue", value: currentRestaurant.toUpperCase() },
+    { label: "Payment Method", value: "Credit Card" },
+    { label: "Delivery Date", value: currentDeliveryDate },
+  ];
 
   return (
     <ScreensFrame>
@@ -35,16 +74,63 @@ export default function OrderDetailsPage() {
           color: "var(--text)",
         }}
       >
-        <PageHeader title="Order Details" onBack={() => router.back()} />
+        <style>{`
+          @media print {
+            body * {
+              visibility: hidden;
+            }
+            #printable-order-card,
+            #printable-order-card * {
+              visibility: visible;
+            }
+            #printable-order-card {
+              position: absolute;
+              left: 0;
+              top: 0;
+              width: 100%;
+              border: none !important;
+              box-shadow: none !important;
+              padding: 0 !important;
+              margin: 0 !important;
+            }
+          }
+        `}</style>
 
-        <div style={{ padding: "12px 20px 24px", flex: 1 }}>
+        <PageHeader
+          title="Order Details"
+          onBack={() => router.back()}
+          rightElement={
+            (currentStatus === "Completed" || currentStatus === "Canceled") ? (
+              <button
+                type="button"
+                onClick={() => window.print()}
+                style={{
+                  width: 32,
+                  height: 32,
+                  borderRadius: 10000,
+                  background: "#F4F6F8",
+                  border: "none",
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  flexShrink: 0,
+                }}
+              >
+                <DocumentDownloadIcon />
+              </button>
+            ) : null
+          }
+        />
+
+        <div style={{ padding: "10px 20px 24px", flex: 1 }}>
           <div
+            id="printable-order-card"
             style={{
-              border: "1px solid var(--border)",
-              borderRadius: 16,
-              padding: 16,
-              background: "var(--surface)",
-              boxShadow: "0 1px 2px rgba(0,0,0,0.04)",
+              border: "1px solid #E8E8E8",
+              borderRadius: 8,
+              padding: "12px 12px 4px 12px",
+              background: "#FFFFFF",
             }}
           >
             <div
@@ -55,74 +141,54 @@ export default function OrderDetailsPage() {
                 gap: 12,
               }}
             >
-              <span style={{ fontSize: 18, fontWeight: 600, color: "var(--text)" }}>
-                {order.id}
+              <span style={{ fontSize: 16, fontWeight: 400, color: "#333333", fontFamily: "'Montserrat', sans-serif" }}>
+                {currentOrderId?.includes("#") ? currentOrderId.replace("#", "# ") : currentOrderId}
               </span>
               <span
                 style={{
-                  fontSize: 12,
-                  color: "#D9142C",
-                  background: "#FDE8EA",
-                  padding: "6px 14px",
-                  borderRadius: 18,
-                  fontWeight: 600,
-                }}
-              >
-                {order.status}
-              </span>
-            </div>
-
-            <div style={{ height: 1, background: "var(--border)", margin: "14px 0" }} />
-
-            <div style={{ display: "flex", gap: 10, alignItems: "flex-start" }}>
-              <div
-                style={{
-                  width: 28,
-                  height: 28,
-                  borderRadius: 14,
-                  background: "#FDE8EA",
+                  width: 83,
+                  height: 24,
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  marginTop: 2,
-                  flexShrink: 0,
+                  fontSize: 10,
+                  color: statusStyle.color,
+                  background: statusStyle.background,
+                  borderRadius: 100,
+                  fontWeight: 400,
+                  fontFamily: "'Montserrat', sans-serif",
                 }}
               >
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                  aria-hidden="true"
-                >
-                  <path
-                    d="M12 21s6-6.1 6-11a6 6 0 0 0-12 0c0 4.9 6 11 6 11Z"
-                    stroke="#D9142C"
-                    strokeWidth="1.5"
-                  />
-                  <circle cx="12" cy="10" r="2.3" fill="#D9142C" />
-                </svg>
+                {currentStatus}
+              </span>
+            </div>
+
+            <div style={{ height: 1, background: "#E8E8E8", margin: "11px 0" }} />
+
+            <div style={{ display: "flex", gap: 10, alignItems: "center", marginBottom: 10 }}>
+              <div style={{ marginTop: 0, flexShrink: 0 }}>
+                <LocationIcon />
               </div>
-              <span style={{ fontSize: 13, color: "var(--muted)", lineHeight: 1.4 }}>
+              <span style={{ fontSize: 12, color: "#8E8E8E", fontFamily: "'Montserrat', sans-serif", fontWeight: 400, lineHeight: 1.3 }}>
                 {order.address}
               </span>
             </div>
 
             <div
               style={{
-                background: "var(--surface)",
-                borderRadius: 12,
-                padding: 14,
-                marginTop: 16,
+                background: "#F4F6F8",
+                borderRadius: 8,
+                padding: "12px 12px 10px 12px",
+                marginBottom: 12,
               }}
             >
               <div
                 style={{
-                  fontSize: 13,
-                  fontWeight: 600,
-                  color: "var(--text)",
-                  marginBottom: 10,
+                  fontSize: 12,
+                  fontWeight: 400,
+                  color: "#333333",
+                  fontFamily: "'Montserrat', sans-serif",
+                  marginBottom: 8,
                 }}
               >
                 Item Names
@@ -130,73 +196,75 @@ export default function OrderDetailsPage() {
               <div
                 style={{
                   height: 1,
-                background: "var(--border)",
-                marginBottom: 10,
-              }}
-            />
+                  background: "#E8E8E8",
+                  marginBottom: 12,
+                }}
+              />
               {order.items.map((item) => (
                 <div
                   key={item.name}
                   style={{
                     display: "flex",
                     justifyContent: "space-between",
-                    fontSize: 12,
-                    color: "var(--muted)",
+                    fontSize: 10,
+                    fontFamily: "'Montserrat', sans-serif",
+                    fontWeight: 400,
                     textTransform: "uppercase",
                     letterSpacing: 0.4,
                     marginBottom: 10,
                   }}
                 >
-                  <span>{item.name}</span>
-                  <span>{item.price}</span>
+                  <span className="text-[#8E8E8E]">{item.name}</span>
+                  <span className="text-[#333333]">{item.price ? item.price.replace("EUR", "€") : ""}</span>
                 </div>
               ))}
               <div
                 style={{
                   height: 1,
-                background: "var(--border)",
-                margin: "6px 0 10px",
-              }}
-            />
+                  background: "#E8E8E8",
+                  margin: "6px 0 12px",
+                }}
+              />
               <div
                 style={{
                   display: "flex",
                   justifyContent: "space-between",
-                  fontSize: 14,
                   color: "var(--text)",
-                  fontWeight: 600,
+                  fontFamily: "'Montserrat', sans-serif",
+                  fontWeight: 400,
                 }}
               >
-                <span>Total</span>
-                <span>{order.total}</span>
+                <span className="text-xs">Total</span>
+                <span className="text-[10px]">{order.total ? order.total.replace("EUR", "€") : ""}</span>
               </div>
             </div>
 
-            <div style={{ marginTop: 18 }}>
+            <div>
               <div
                 style={{
-                  fontSize: 13,
-                  fontWeight: 600,
-                  color: "var(--text)",
-                  marginBottom: 10,
+                  fontSize: 12,
+                  fontWeight: 400,
+                  color: "#333333",
+                  fontFamily: "'Montserrat', sans-serif",
+                  marginBottom: 7,
                 }}
               >
                 Details
               </div>
-              <div style={{ height: 1, background: "var(--border)" }} />
-              {order.details.map((row) => (
+              <div style={{ height: 1, background: "#E8E8E8", marginBottom: 4 }} />
+              {currentDetails.map((row) => (
                 <div
                   key={row.label}
                   style={{
                     display: "flex",
                     justifyContent: "space-between",
-                    padding: "12px 0",
-                    borderBottom: "1px solid var(--border)",
-                    fontSize: 13,
+                    padding: "8px 0",
+                    fontSize: 12,
+                    fontFamily: "'Montserrat', sans-serif",
                   }}
                 >
-                  <span style={{ color: "var(--muted)" }}>{row.label}</span>
-                  <span style={{ color: "var(--text)", fontWeight: 500 }}>
+                  <span style={{ color: "#A4A4A4", fontWeight: 400 }}>{row.label}</span>
+                  <span style={{ color: "#333333", fontWeight: 400 }}>
                     {row.value}
                   </span>
                 </div>
@@ -205,25 +273,31 @@ export default function OrderDetailsPage() {
           </div>
         </div>
 
-        <div style={{ padding: "0 20px 24px" }}>
-          <button
-            type="button"
-            onClick={() => router.push("/screens/track-order")}
-            style={{
-              width: "100%",
-              height: 58,
-              borderRadius: 29,
-              border: "none",
-              background: "#D9142C",
-              color: "#fff",
-              fontSize: 16,
-              fontWeight: 600,
-              cursor: "pointer",
-            }}
-          >
-            Track Order
-          </button>
-        </div>
+        {currentStatus === "Active Order" && (
+          <div style={{ padding: "0 20px 24px" }}>
+            <button
+              type="button"
+              onClick={() => router.push("/screens/track-order")}
+              style={{
+                width: "100%",
+                height: 48,
+                borderRadius: 2000,
+                border: "none",
+                background: "#DA1A35",
+                color: "#fff",
+                fontSize: 14,
+                fontWeight: 400,
+                fontFamily: "'Montserrat', sans-serif",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              Track Order
+            </button>
+          </div>
+        )}
       </div>
     </ScreensFrame>
   );

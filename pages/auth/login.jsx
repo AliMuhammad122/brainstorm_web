@@ -65,7 +65,7 @@ export default function LoginPage() {
   `;
 
   return (
-    <div className="min-h-screen flex justify-center" style={{ backgroundColor: isDark ? "#0B0B0B" : "#F8F9FA" }}>
+    <div className="min-h-screen flex justify-center" style={{ backgroundColor: isDark ? "#0D0D1A" : "#F8F9FA" }}>
       <div className="w-full max-w-[385px] min-h-screen flex flex-col relative shadow-2xl" style={shellStyle}>
         {/* Header section */}
         <div className="relative h-[33vh] min-h-[200px] shrink-0 overflow-hidden">
@@ -100,14 +100,14 @@ export default function LoginPage() {
           gap-5
           overflow-y-auto
           ${isDark
-              ? "bg-[#0B0B0B] text-white shadow-[0_-10px_30px_rgba(0,0,0,0.35)]"
+              ? "bg-[#0D0D1A] text-white shadow-[0_-10px_30px_rgba(0,0,0,0.35)]"
               : "bg-white text-[#1a1a1a] border border-[#F0F0F0] shadow-[0_-12px_30px_rgba(218,26,53,0.12)]"}
         `}
         >
           <div className="flex flex-col items-center " style={{ gap: "6px" }}>
             <h1
-              className="text-center text-[24px] font-normal text-[#333333`] uppercase"
-              style={{ fontFamily: "Anton, sans-serif" }}
+              className="text-center text-[24px] font-normal uppercase"
+              style={{ fontFamily: "Anton, sans-serif", color: isDark ? "#EAEAF2" : "#ffffff" }}
             >
               Login to Account
             </h1>

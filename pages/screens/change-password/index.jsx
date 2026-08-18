@@ -127,7 +127,7 @@ export default function ChangePasswordPage() {
       >
         <PageHeader title="Change Password" onBack={() => router.back()} />
 
-        <div style={{ padding: "12px 20px", flex: 1 }}>
+        <div style={{ padding: "18px 20px", flex: 1 }}>
           <Field
             label="Enter Old Password"
             placeholder="Enter old password"
