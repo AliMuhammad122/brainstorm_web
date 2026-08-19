@@ -54,7 +54,7 @@ export function PageHeader({ title, onBack, transparent, rightElement }) {
         padding: isTransparent ? "12px 16px" : "12px 20px 10px",
         background: headerBg,
         flexShrink: 0,
-        borderBottom: isTransparent ? "none" : "1px solid #F4F6F8",
+        borderBottom: isTransparent ? "none" : `1px solid ${isDark ? "#2A2A40" : "#F4F6F8"}`,
         height: 56,
       }}
     >
@@ -75,14 +75,14 @@ export function PageHeader({ title, onBack, transparent, rightElement }) {
           boxShadow: isTransparent ? "0 2px 8px rgba(0,0,0,0.06)" : "none",
         }}
       >
-        <BackIcon width={20} height={20} />
+        <BackIcon color={isDark ? "#C8C8D8" : "#333333"} />
       </button>
       <span
         style={{
           flex: 1,
           textAlign: "center",
           fontSize: 16,
-          fontWeight: 500,
+          fontWeight: 400,
           color: textColor,
           letterSpacing: "0px",
           fontFamily: "'Montserrat', sans-serif",
@@ -369,6 +369,7 @@ export function Carousel() {
 // }
 
 export function FilterModal({ onClose, onApply, initCats, initPrice }) {
+  const {isDark} = useTheme();
   const [sc, setSc] = useState(initCats);
   const [sp, setSp] = useState(initPrice);
   const toggle = (c) =>
@@ -379,8 +380,13 @@ export function FilterModal({ onClose, onApply, initCats, initPrice }) {
     <div
       style={{
         position: "fixed",
-        inset: 0,
-        background: "#00000080",
+        top: 0,
+        bottom: 0,
+        left: "50%",
+        transform: "translateX(-50%)",
+        width: "100%",
+        maxWidth: 370,
+        background: isDark ? "#F0F0F580" : "#00000080",
         backdropFilter: "blur(2px)",
         WebkitBackdropFilter: "blur(2px)",
         zIndex: 400,
@@ -396,7 +402,7 @@ export function FilterModal({ onClose, onApply, initCats, initPrice }) {
           background: "var(--bg)",
           borderRadius: "8px",
           width: "100%",
-          maxWidth: 350,
+          maxWidth: 335,
           boxShadow: "0 24px 80px rgba(0,0,0,0.28)",
           overflow: "hidden",
           animation: "popIn 0.26s cubic-bezier(0.34,1.56,0.64,1)",
@@ -411,14 +417,14 @@ export function FilterModal({ onClose, onApply, initCats, initPrice }) {
             padding: "20px 18px 10px",
           }}
         >
-          <div className="border-b border-[#E8E8E8] flex justify-center items-center w-full pb-4.5 relative">
+          <div className="border-b flex justify-center items-center w-full pb-4.5 relative" style={{borderColor:isDark?"#2A2A40":"#E8E8E8"}}>
             <span
               style={{
                 fontSize: 14,
                 fontWeight: 500,
-                color: "#333333",
+                color: isDark?"#EAEAF2":"#333333",
                 fontFamily: "'Montserrat'",
-                lineHeight: "normal",
+                // lineHeight: "normal",
                 textAlign: "center",
               }}
             >
@@ -428,19 +434,21 @@ export function FilterModal({ onClose, onApply, initCats, initPrice }) {
               style={{
                 width: 20,
                 height: 20,
-                borderRadius: 10,
-                background: "#F4F6F8",
+                borderRadius: 10000,
+                background: isDark ? "#161625" : "#F4F6F8",
+                backdropFilter: "blur(2px)",
                 border: "none",
                 cursor: "pointer",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
                 position: "absolute",
+                // top:3,
                 right: 0,
               }}
               onClick={onClose}
             >
-              <CloseIcon />
+              <CloseIcon color={isDark?"#555570":"#333333"} />
             </button>
           </div>
         </div>
@@ -450,7 +458,7 @@ export function FilterModal({ onClose, onApply, initCats, initPrice }) {
             style={{
               fontSize: 10,
               fontWeight: 400,
-              color: "#333333",
+              color:isDark?"#EAEAF2": "#333333",
               margin: "0 0 7px",
               fontFamily: "Montserrat",
               lineHeight: "100%"
@@ -475,9 +483,17 @@ export function FilterModal({ onClose, onApply, initCats, initPrice }) {
                     fontWeight: 400,
                     cursor: "pointer",
                     fontFamily: "'Montserrat'",
-                    background: on ? "var(--surface-alt)" : "#FFFFFF",
-                    color: on ? "#777777" : "#777777",
-                    border: `1.5px solid ${on ? "var(--border)" : "#F4F6F8"}`,
+                    background: isDark
+                      ? (on ? "#E52E4A1A" : "#0D0D1A")
+                      : (on ? "#DA1A351A" : "#FFFFFF"),
+                    color: isDark
+                      ? (on ? "#E52E4A" : "#9595AA")
+                      : (on ? "#DA1A35" : "#777777"),
+                    border: `1.5px solid ${
+                      isDark
+                        ? (on ? "#DA1A351A" : "#2A2A40")
+                        : (on ? "#DA1A351A" : "#F4F6F8")
+                    }`,
                   }}
                 >
                   {c}
@@ -491,7 +507,7 @@ export function FilterModal({ onClose, onApply, initCats, initPrice }) {
             style={{
               fontSize: 10,
               fontWeight: 400,
-              color: "#333333",
+              color: isDark?"#EAEAF2": "#333333",
               margin: "0 0 7px",
               fontFamily: "Montserrat",
               lineHeight: "100%"
@@ -515,28 +531,26 @@ export function FilterModal({ onClose, onApply, initCats, initPrice }) {
                     fontWeight: 400,
                     cursor: "pointer",
                     fontFamily: "'Montserrat'",
-                    background: on ? "var(--surface-alt)" : "#FFFFFF",
-                    color: on ? "#777777" : "#777777",
-                    border: `1.5px solid ${on ? "var(--border)" : "#F4F6F8"}`,
+                    background: isDark
+                      ? (on ? "#E52E4A1A" : "#0D0D1A")
+                      : (on ? "#DA1A351A" : "#FFFFFF"),
+                    color: isDark
+                      ? (on ? "#E52E4A" : "#9595AA")
+                      : (on ? "#DA1A35" : "#777777"),
+                    border: `1.5px solid ${
+                      isDark
+                        ? (on ? "#DA1A351A" : "#2A2A40")
+                        : (on ? "#DA1A351A" : "#F4F6F8")
+                    }`,
                   }}
                 >
-                  {/* <span
-                    style={{
-                      width: 8,
-                      height: 8,
-                      borderRadius: "50%",
-                      border: `2px solid ${on ? "var(--text)" : "var(--subtle)"}`,
-                      background: on ? "var(--text)" : "transparent",
-                      display: "inline-block",
-                    }}
-                  /> */}
                   {p}
                 </button>
               );
             })}
           </div>
         </div>
-        <div style={{ padding: "14px 18px 18px" }}>
+        <div style={{ padding: "18px 18px 18px" }}>
           <button
             onClick={() => onApply(sc, sp)}
             style={{
@@ -549,7 +563,9 @@ export function FilterModal({ onClose, onApply, initCats, initPrice }) {
               color: "#FFFFFF",
               cursor: "pointer",
               fontFamily: "'Montserrat'",
-              background: sc.length || sp ? "#DA1A35" : "#D2D2D2",
+              background: sc.length || sp
+                ? (isDark ? "#E52E4A" : "#DA1A35")
+                : (isDark ? "#353550" : "#D2D2D2"),
             }}
           >
             Apply Filter
@@ -656,6 +672,7 @@ export function ViewOrderFAB({ cartCount, total, onTap }) {
 
 export function AppChrome({ cart, onMenu, onCartTap }) {
   const { state } = useScreensFlow();
+  const { isDark } = useTheme();
   const [locationModalOpen, setLocationModalOpen] = useState(false);
 
   return (
@@ -675,8 +692,8 @@ export function AppChrome({ cart, onMenu, onCartTap }) {
           style={{
             width: 32,
             height: 32,
-            borderRadius: 14,
-            background: "var(--surface)",
+            borderRadius: 10000,
+            background: isDark?"#161625":"#F4F6F8",
             border: "none",
             cursor: "pointer",
             display: "flex",
@@ -685,7 +702,7 @@ export function AppChrome({ cart, onMenu, onCartTap }) {
           }}
           onClick={onMenu}
         >
-          <MenuIcon color="var(--text)" width={20} height={20} className="theme-icon" />
+          <MenuIcon width={20} height={20} style={{ color: isDark ? '#C8C8D8' : '#333333' }} />
         </button>
         <div
           style={{
@@ -696,7 +713,7 @@ export function AppChrome({ cart, onMenu, onCartTap }) {
           }}
         >
           <p
-            style={{ fontSize: 10, color: "var(--text)", fontWeight: 400, marginBottom: 5 }}
+            style={{ fontSize: 10, color: isDark?"#EAEAF2":"#333333", fontWeight: 400, marginBottom: 5 }}
           >
             Your Location
           </p>
@@ -715,7 +732,7 @@ export function AppChrome({ cart, onMenu, onCartTap }) {
               style={{
                 fontSize: 14,
                 fontWeight: 400,
-                color: "var(--text)",
+                color: isDark?"#EAEAF2":"#333333",
                 letterSpacing: -0.4,
                 whiteSpace: "nowrap",
                 overflow: "hidden",
@@ -733,8 +750,8 @@ export function AppChrome({ cart, onMenu, onCartTap }) {
           style={{
             width: 32,
             height: 32,
-            borderRadius: 14,
-            background: "var(--surface)",
+            borderRadius: 100000,
+            background: isDark?"#161625":"#F4F6F8",
             border: "none",
             cursor: "pointer",
             display: "flex",
@@ -746,7 +763,7 @@ export function AppChrome({ cart, onMenu, onCartTap }) {
         >
           {/* <Image src={FoodCart} width={22} height={22} alt="Cart" className="theme-icon" /> */}
           {/* <Image src={CartIcon} width={22} height={22} alt="Cart" className="theme-icon" /> */}
-          <CartIcon color="var(--text)" width={20} height={20} />
+          <CartIcon width={20} height={20} style={{ color: isDark ? '#C8C8D8' : '#333333' }} />
           {cart > 0 && (
             <div
               style={{

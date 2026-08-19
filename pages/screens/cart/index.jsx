@@ -4,11 +4,12 @@ import ScreensFrame from "../../../src/screensFlow/Frame";
 import { getRestaurantByName } from "../../../src/screensFlow/data";
 import { PageHeader } from "../../../src/screensFlow/ui";
 import { useScreensFlow } from "../../../context/ScreensFlowContext";
+import { useTheme } from "../../../context/ThemeContext";
 import PlusIcon from "../../../public/assets/icons/plus16.svg";
 import MinusIcon from "../../../public/assets/icons/minus16.svg";
 import AddIcon from "../../../public/assets/icons/add.svg"
 
-function SwipeCartItem({ item, onRemove, onQtyChange }) {
+function SwipeCartItem({ item, onRemove, onQtyChange, isDark }) {
   const REVEAL = 75;
   const SNAP_AT = REVEAL * 0.38;
 
@@ -72,7 +73,7 @@ function SwipeCartItem({ item, onRemove, onQtyChange }) {
       .join(", ") || "No Add-ons";
 
   const CARD_RADIUS = 8;
-  const RED = "#D00416";
+  const RED = isDark ? "#DA1A35" : "#D00416";
 
   return (
     <div
@@ -101,12 +102,12 @@ function SwipeCartItem({ item, onRemove, onQtyChange }) {
           alignItems: "center",
           justifyContent: "center",
           cursor: "pointer",
-          opacity: ratio,
+          // opacity: ratio,
         }}
       >
         <span
           style={{
-            color: "var(--on-primary)",
+            color: "#FFFFFF",
             fontSize: 10,
             fontWeight: 400,
             letterSpacing: '0px',
@@ -123,8 +124,8 @@ function SwipeCartItem({ item, onRemove, onQtyChange }) {
         style={{
           display: "flex",
           alignItems: "stretch",
-          background: "#FFFFFF",
-          border: "1.5px solid #F4F6F8",
+          background: isDark ? "#0D0D1A" : "#FFFFFF",
+          border: `1.5px solid ${isDark ? "#2A2A40" : "#F4F6F8"}`,
           borderRadius: CARD_RADIUS,
           overflow: "hidden",
           transform: `translateX(${offsetX}px)`,
@@ -147,8 +148,6 @@ function SwipeCartItem({ item, onRemove, onQtyChange }) {
             width: 114,
             height: 86,
             flexShrink: 0,
-
-
           }}
         >
           <img
@@ -173,7 +172,6 @@ function SwipeCartItem({ item, onRemove, onQtyChange }) {
             flex: 1,
             display: "flex",
             flexDirection: "column",
-            // justifyContent: "space-between",
             padding: "8px 10px",
             minWidth: 0,
             gap:"16px"
@@ -184,7 +182,7 @@ function SwipeCartItem({ item, onRemove, onQtyChange }) {
               style={{
                 fontSize: 14,
                 fontWeight: 400,
-                color: "#333333",
+                color: isDark ? "#EAEAF2" : "#333333",
                 margin: "0 0 2px",
                 fontFamily: "'Montserrat',sans-serif",
                 lineHeight: 1.2,
@@ -200,8 +198,8 @@ function SwipeCartItem({ item, onRemove, onQtyChange }) {
             <p
               style={{
                 fontSize: 10,
-                color: "#A4A4A4",
-                margin: 0,
+                color: isDark ? "#9595AA" : "#A4A4A4",
+                marginTop: 6,
                 lineHeight: 1.2,
                 fontFamily: "'Montserrat',sans-serif",
                 fontWeight: 400,
@@ -214,7 +212,7 @@ function SwipeCartItem({ item, onRemove, onQtyChange }) {
             </p>
           </div>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8 }}>
-            <p style={{ fontSize: 14, fontWeight: 500, color: "#DA1A35", margin: 0, fontFamily: "'Montserrat',sans-serif" }}>
+            <p style={{ fontSize: 14, fontWeight: 500, color: isDark ? "#E52E4A" : "#DA1A35", margin: 0, fontFamily: "'Montserrat',sans-serif" }}>
               {"\u20AC"}{(item.priceNum * item.qty).toFixed(2)}
             </p>
             <div style={{ display: "flex", alignItems: "center", gap: 1, flexShrink: 0 }}>
@@ -226,26 +224,23 @@ function SwipeCartItem({ item, onRemove, onQtyChange }) {
                 }}
                 disabled={isMinQty}
                 style={{
-                  // width: 20,
-                  // height: 20,
                   borderRadius: "100%",
-                  // background: "#DA1A351A",
                   border: "none",
                   cursor: isMinQty ? "default" : "pointer",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
+                  background: isDark ? "#E52E4A1A" : "#DA1A351A",
                   flexShrink: 0,
-                  // opacity: isMinQty ? 0.5 : 1,
                 }}
               >
-                <MinusIcon className="w-[16px] h-[16px]" />
+              <MinusIcon color={isDark ? "#2A2A40" : "#F4F6F8"} />
               </button>
               <span
                 style={{
                   fontSize: 14,
                   fontWeight: 400,
-                  color: "#333333",
+                  color: isDark ? "#EAEAF2" : "#333333",
                   minWidth: 24,
                   textAlign: "center",
                   fontFamily: "'Montserrat',sans-serif",
@@ -261,9 +256,8 @@ function SwipeCartItem({ item, onRemove, onQtyChange }) {
                   onQtyChange(item.qty + 1);
                 }}
                 style={{
-                 
                   borderRadius: "50%",
-                  background: "#DA1A35",
+                  background: isDark ? "#E52E4A" : "#DA1A35",
                   border: "none",
                   cursor: "pointer",
                   display: "flex",
@@ -285,6 +279,7 @@ function SwipeCartItem({ item, onRemove, onQtyChange }) {
 export default function ScreensCartPage() {
   const router = useRouter();
   const { state, setCartItemQty, removeCartItem } = useScreensFlow();
+  const { isDark } = useTheme();
 
   useEffect(() => {
     router.prefetch("/checkout");
@@ -302,7 +297,7 @@ export default function ScreensCartPage() {
     <ScreensFrame>
       <div style={{ display: "flex", flexDirection: "column", height: "100%", background: "var(--bg)", position: "relative" }}>
         <PageHeader title="Your Cart" onBack={() => router.back()} />
-        <div style={{ height: 1, background: "#F4F6F8" }} />
+        <div style={{ height: 1, background: isDark ? "#2A2A40" : "#F4F6F8" }} />
 
         <div style={{ flex: 1, overflowY: "auto", overflowX: "hidden", scrollbarWidth: "none", padding: "0 20px", display: "flex", flexDirection: "column" }}>
           {cartItems.length === 0 ? (
@@ -335,7 +330,7 @@ export default function ScreensCartPage() {
                 style={{
                   fontSize: 14,
                   fontWeight: 400,
-                  color: "#333333",
+                  color: isDark ? "#EAEAF2" : "#333333",
                   margin: 0,
                   textAlign: "center",
                   fontFamily: "'Montserrat',sans-serif",
@@ -351,6 +346,7 @@ export default function ScreensCartPage() {
                   <SwipeCartItem
                     key={item.cartId ?? idx}
                     item={item}
+                    isDark={isDark}
                     onRemove={() => removeCartItem(idx)}
                     onQtyChange={(qty) => setCartItemQty(idx, qty)}
                   />
@@ -367,38 +363,36 @@ export default function ScreensCartPage() {
                   fontFamily: "'Montserrat',sans-serif",
                   fontSize: 12,
                   fontWeight: 400,
-                  color: "#DA1A35",
+                  color: isDark ? "#E52E4A" : "#DA1A35",
                 }}
               >
                 <AddIcon />
-                Add More Items
+                <span style={{ marginLeft: 4 }}>Add More Items</span>
               </button>
             </>
           )}
-          <div style={{ height: 100 }} />
+          <div style={{ height: 20 }} />
         </div>
 
         {cartItems.length > 0 && (
           <div
             style={{
-              position: "fixed",
-              bottom: 0,
-              left: 0,
-              right: 0,
-              padding: "10px 18px 12px",
+              background: isDark ? "#0D0D1A" : "#FFFFFF",
+              padding: "10px 20px 16px",
               zIndex: 50,
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
+              boxSizing: "border-box",
             }}
           >
             <button
               onClick={() => router.push("/checkout")}
               style={{
-                width: 335,
+                width: "100%",
                 height: 48,
                 borderRadius: 28,
-                background: "#DA1A35",
+                background: isDark ? "#E52E4A" : "#DA1A35",
                 border: "none",
                 cursor: "pointer",
                 display: "flex",
@@ -425,7 +419,7 @@ export default function ScreensCartPage() {
                     style={{
                       fontSize: 14,
                       fontWeight: 400,
-                      color: "#DA1A35",
+                      color: isDark ? "#E52E4A" : "#DA1A35",
                       fontFamily: "'Montserrat',sans-serif",
                       lineHeight: 1,
                     }}

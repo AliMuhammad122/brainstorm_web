@@ -80,10 +80,9 @@ export default function TrackOrderMap({
 
       if (orderType === "pickup") {
         if (isStoreCoordsValid) {
-          initialCenter = [
-            parseFloat(storeLocation.latitude),
-            parseFloat(storeLocation.longitude),
-          ];
+          const storeLat = parseFloat(storeLocation.latitude);
+          const storeLng = parseFloat(storeLocation.longitude);
+          initialCenter = [storeLat - 0.0008, storeLng + 0.0004];
           initialZoom = 18;
         }
       }
@@ -105,14 +104,14 @@ export default function TrackOrderMap({
         maxZoom: 29,
       }).addTo(map);
 
-      const restaurantIcon = L.divIcon({
+      const storeIcon = L.divIcon({
         html: renderToStaticMarkup(<RestaurantIcon />),
         className: "custom-store-pin",
         iconSize: ICON_SIZE,
         iconAnchor: ICON_ANCHOR,
       });
 
-      const destIcon = L.divIcon({
+      const userIcon = L.divIcon({
         html: destinationIconHtml(),
         className: "custom-dest-pin",
         iconSize: ICON_SIZE,
@@ -120,29 +119,26 @@ export default function TrackOrderMap({
       });
 
       if (orderType === "pickup") {
-        // For pickup orders: Destination marker is the store, start is the user
+        // For pickup orders: Destination marker is the store. User pin is omitted per Figma spec.
         const storeLatLng = [
           parseFloat(storeLocation.latitude),
           parseFloat(storeLocation.longitude),
         ];
-        L.marker(storeLatLng, { icon: restaurantIcon }).addTo(map);
+        L.marker(storeLatLng, { icon: storeIcon }).addTo(map);
 
-        if (isUserCoordsValid) {
-          const userLatLng = [
-            parseFloat(userLocation.latitude),
-            parseFloat(userLocation.longitude),
-          ];
-          L.marker(userLatLng, { icon: destIcon }).addTo(map);
-        }
-        
-        map.setView(storeLatLng, 18);
+        // Center map offset slightly South-East so the store marker floats in the upper-left quadrant
+        const offsetLatLng = [
+          storeLatLng[0] - 0.0008,
+          storeLatLng[1] + 0.0004
+        ];
+        map.setView(offsetLatLng, 18);
       } else {
         // Delivery order (traditional simulated behavior)
         L.marker([DELIVERY_RESTAURANT.lat, DELIVERY_RESTAURANT.lng], {
-          icon: restaurantIcon,
+          icon: storeIcon,
         }).addTo(map);
         L.marker([DELIVERY_DESTINATION.lat, DELIVERY_DESTINATION.lng], {
-          icon: destIcon,
+          icon: userIcon,
         }).addTo(map);
 
         const primary = "#DA1A35";

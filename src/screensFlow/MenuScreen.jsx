@@ -9,6 +9,7 @@ import { MdSearch } from "react-icons/md";
 import BackIcon from "../../public/assets/icons/back.svg"
 import SearchIcon from "../../public/assets/icons/search.svg"
 import SearchIcon2 from "../../public/assets/icons/search2.svg"
+import { useTheme } from "../../context/ThemeContext";
 
 const formatCategoryName = (str) => {
   if (!str) return "";
@@ -29,7 +30,9 @@ export function MenuScreen({
 }) {
   const { state } = useScreensFlow();
   const storeId = state?.activeRestaurantId || 555;
-
+  console.log("storeId", storeId);
+  
+  const {isDark} = useTheme();
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
@@ -128,7 +131,7 @@ export function MenuScreen({
             gap: 12,
             padding: "12px 18px 10px",
             // boxShadow: "0 2px 16px rgba(0,0,0,0.35)",
-            borderBottom:"1px solid #F4F6F8"
+            borderBottom:`1px solid ${isDark ? "#2A2A40" :"#F4F6F8"}`
           }}
         >
           <button
@@ -137,7 +140,7 @@ export function MenuScreen({
               width: 32,
               height: 32,
               borderRadius: 1000000,
-              background: "#F4F6F8",
+              background: isDark?"#161625":"#F4F6F8",
               border: "none",
               cursor: "pointer",
               display: "flex",
@@ -146,13 +149,13 @@ export function MenuScreen({
               flexShrink: 0,
             }}
           >
-            <BackIcon width={20} height={20} alt="" className="text-black" />
+            <BackIcon width={20} height={20} alt="back" color={isDark?"#C8C8D8": "#333333"} />
           </button>
           <div
             style={{
               flex: 1,
               height: 32,
-              background: "#F4F6F8",
+              background: isDark?"#161625":"#F4F6F8",
               borderRadius: 1000000,
               display: "flex",
               alignItems: "center",
@@ -160,13 +163,13 @@ export function MenuScreen({
               padding: "0 14px",
             }}
           >
-            <SearchIcon2  alt="" className="text-[#A4A4A4]" />
+            <SearchIcon2  alt="search" color={isDark? "#2A2A40" : "#A4A4A4"} />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search item"
-              className="placeholder:text-gray-400"
+              className={isDark? "placeholder:text-[#6E6E85]" : "placeholder:text-[#A4A4A4]"}
               style={{
                 flex: 1,
                 border: "none",
@@ -239,7 +242,7 @@ export function MenuScreen({
                   width: 32,
                   height: 32,
                   borderRadius: 10000,
-                  background: "#FFFFFF33",
+                  background: isDark ? "#0D0D1A33" :"#FFFFFF33",
                   backdropFilter: "blur(4px)",
                   border: "none",
                   cursor: "pointer",
@@ -258,7 +261,7 @@ export function MenuScreen({
                   width: 32,
                   height: 32,
                   borderRadius: 10000,
-                  background: "#FFFFFF33",
+                  background: isDark?"#0D0D1A33":"#FFFFFF33",
                   backdropFilter: "blur(4px)",
                   border: "none",
                   cursor: "pointer",
@@ -307,7 +310,7 @@ export function MenuScreen({
             </div>
           ) : sections.length === 0 ? (
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center", padding: "48px 20px", gap: 12 }}>
-              <p style={{ fontSize: 14, color: "var(--subtle)", fontWeight: 400, margin: 0, fontFamily: "'Montserrat',sans-serif" }}>
+              <p style={{ fontSize: 14, color: isDark?"#EAEAF2":"#333333", fontWeight: 400, margin: 0, fontFamily: "'Montserrat',sans-serif" }}>
                 No items found
               </p>
             </div>
@@ -327,7 +330,7 @@ export function MenuScreen({
                   style={{
                     fontSize: 16,
                     fontWeight: 400,
-                    color: "#333333",
+                    color: isDark?"#EAEAF2":"#333333",
                     margin: "0 0 14px",
                     padding: "0 20px",
                     fontFamily: "'Montserrat',sans-serif",
@@ -354,15 +357,15 @@ export function MenuScreen({
                         style={{
                           padding: "11px 14px",
                           borderRadius: 32,
-                          border: `1.5px solid ${on ? "#DA1A351A" : "#F4F6F8"}`,
                           cursor: "pointer",
                           fontFamily: "'Montserrat',sans-serif",
                           fontSize: 14,
                           fontWeight: on? 500 : 400,
                           flexShrink: 0,
                           transition: "all 0.2s",
-                          background: on ? "#fbe8eb" : "#FFFFFF",
-                          color: on ? "#DA1A35" : "#A4A4A4",
+                          background: isDark? (on ? "#E52E4A1A" : "#0D0D1A") : (on ? "#fbe8eb" : "#FFFFFF"),
+                          color: isDark?(on ? "#E52E4A" : "#6E6E85") : (on ? "#DA1A35" : "#A4A4A4"),
+                          border: `1.5px solid ${isDark?(on ? "#DA1A351A" : "#2A2A40") : (on ? "#DA1A351A" : "#F4F6F8")}`,
                         }}
                       >
                         {formatCategoryName(cat)}
@@ -382,7 +385,7 @@ export function MenuScreen({
                     style={{
                       fontSize: 16,
                       fontWeight: 400,
-                      color: "#333333",
+                    color: isDark?"#EAEAF2":"#333333",
                       margin: "0 0 14px",
                       padding: "0 20px",
                       letterSpacing: 0,
@@ -403,8 +406,12 @@ export function MenuScreen({
                           style={{
                             display: "flex",
                             height: 97,
-                            background: isInCart ? "#DA1A351A" : "#FFFFFF",
-                            border: isInCart ? "1.5px solid #DA1A351A" : "1.5px solid #F4F6F8",
+                            background: isInCart
+                              ? "#DA1A351A"
+                              : (isDark ? "#0D0D1A" : "#FFFFFF"),
+                            border: isInCart
+                              ? "1.5px solid #DA1A351A"
+                              : (isDark ? "1.5px solid #2A2A40" : "1.5px solid #F4F6F8"),
                             borderRadius: 8,
                             marginBottom: 10,
                             cursor: "pointer",
@@ -417,7 +424,7 @@ export function MenuScreen({
                             height: 97,
                             flexShrink: 0,
                             borderRadius:8,
-                            background: "#F4F6F8",
+                            background: isDark?"#0D0D1A":"#F4F6F8",
                           }}
                         >
                           <img
@@ -449,7 +456,7 @@ export function MenuScreen({
                               style={{
                                 fontSize: 14,
                                 fontWeight: 400,
-                                color: "#333333",
+                                color: isDark?"#EAEAF2":"#333333",
                                 margin: "0 0 2px",
                                 fontFamily: "'Montserrat',sans-serif",
                                 lineHeight: 1.2,
@@ -462,7 +469,7 @@ export function MenuScreen({
                             <p
                               style={{
                                 fontSize: 10,
-                                color: "#A4A4A4",
+                                color: isDark?"#6E6E85":"#A4A4A4",
                                 margin: "4px 0px 4px",
                                 lineHeight: 1.2,
                                 fontFamily: "'Montserrat',sans-serif",
@@ -481,7 +488,7 @@ export function MenuScreen({
                             style={{
                               fontSize: 14,
                               fontWeight: 500,
-                              color: "#DA1A35",
+                              color: isDark?"#E52E4A":"#DA1A35",
                               fontFamily: "'Montserrat',sans-serif",
                             }}
                           >

@@ -11,6 +11,7 @@ import FilterIcon from "../../public/assets/icons/filter.svg"
 import SearchIcon from "../../public/assets/icons/search.svg"     
 import TimerIcon from "../../public/assets/icons/time.svg"
 import DistanceIcon from "../../public/assets/icons/distance.svg"
+import { useTheme } from "../../context/ThemeContext";
 
 export function HomeScreen({
   onFilter,
@@ -21,7 +22,7 @@ export function HomeScreen({
 }) {
   const { state } = useScreensFlow();
   const selectedLocation = state?.selectedLocation;
-
+  const { isDark } = useTheme();
   const [searchVal, setSearchVal] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
 
@@ -94,8 +95,8 @@ export function HomeScreen({
           style={{
             flex: 1,
             height: 48,
-            background: "var(--bg)",
-            border: "1px solid var(--border)",
+            background: isDark?"#161625":"#F4F6F8",
+            // border: "1px solid var(--border)",
             borderRadius: 1000,
             display: "flex",
             alignItems: "center",
@@ -103,13 +104,13 @@ export function HomeScreen({
             padding: "0 14px",
           }}
         >
-          <SearchIcon width={20} height={20} alt="Search" color="var(--text)" className="theme-icon"/>
+          <SearchIcon alt="Search" color={isDark?"#555570":"#333333"}/>
           <input
             type="text"
             placeholder="Search restaurant etc"
             value={searchVal}
             onChange={(e) => setSearchVal(e.target.value)}
-            className="placeholder:text-gray-400"
+            className={isDark ? "placeholder:text-[#6E6E85]" : "placeholder:text-[#A4A4A4]"}
             style={{
               flex: 1,
               background: "none",
@@ -136,7 +137,7 @@ export function HomeScreen({
           }}
           onClick={onFilter}
         >
-          <FilterIcon width={20} height={20} alt="Filter" className="theme-icon"/>
+          <FilterIcon alt="Filter" color={isDark?"#C8C8D8":"#333333"}/>
           {has && (
             <div
               style={{
@@ -170,7 +171,7 @@ export function HomeScreen({
               style={{
                 fontSize: 16,
                 fontWeight: 400,
-                color: "#333333",
+                color: isDark?"#EAEAF2":"#333333",
                 margin: "0 0 6px",
                 fontFamily:"'Montserrat',sans-serif"
               }}
@@ -355,7 +356,7 @@ export function HomeScreen({
                       style={{
                         fontSize: 14,
                         fontWeight: 400,
-                        color: "var(--text)",
+                        color:isDark ? "#EAEAF2" : "#333333",
                         margin: "0 0 7px",
                         fontFamily:"'Montserrat',sans-serif",
                         lineHeight:"100%"
@@ -382,11 +383,11 @@ export function HomeScreen({
                           gap: 3,
                         }}
                       >
-                        <TimerIcon width={16} height={16} alt="Timer" color="#BBBBBB" />
+                        <TimerIcon width={16} height={16} alt="Timer" color={isDark ? "#2A2A40" : "#BBBBBB"} />
                         <span
                           style={{
                             fontSize: 12,
-                            color: "#BBBBBB",
+                            color:isDark ? "#6E6E85" : "#BBBBBB",
                             fontWeight: 400,
                             fontFamily:"'Montserrat',sans-serif"
                           }}
@@ -405,9 +406,9 @@ export function HomeScreen({
                       marginLeft: 8,
                     }}
                   >
-                    <DistanceIcon width={16} height={16} alt="Distance" color="#BBBBBB" />
+                    <DistanceIcon width={16} height={16} alt="Distance" color={isDark ? "#2A2A40" : "#BBBBBB"} />
                     <span
-                      style={{ fontSize: 12, fontWeight: 400, color: "#BBBBBB",fontFamily:"'Montserrat',sans-serif" }}
+                      style={{ fontSize: 12, fontWeight: 400, color: isDark ? "#6E6E85" : "#BBBBBB",fontFamily:"'Montserrat',sans-serif" }}
                     >
                       {r.distance + " Km"}
                     </span>

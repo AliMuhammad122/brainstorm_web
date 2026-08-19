@@ -6,6 +6,7 @@ import CircleTickIcon from "../../public/assets/icons/selected-circle.svg";
 import CircleTickEmpty from "../../public/assets/icons/unselected-circle.svg";
 import LocationIcon from "../../public/assets/icons/address.svg";
 import ScheduleModal from "./ScheduleModal";
+import { useTheme } from "../../context/ThemeContext";
 
 /**
  * Add New Address modal: Order Type (Delivery/Pickup), Full Name, Phone, Address, Postal Code,
@@ -22,6 +23,7 @@ export default function AddAddressModal({
   const [deliveryType, setDeliveryType] = useState("standard");
   const [scheduleData, setScheduleData] = useState(null);
   const [scheduleOpen, setScheduleOpen] = useState(false);
+  const { isDark } = useTheme();
 
   const [fullName, setFullName] = useState("");
   const [phoneCode, setPhoneCode] = useState("+357");
@@ -117,11 +119,11 @@ export default function AddAddressModal({
     width: "100%",
     height: "40px",
     padding: "12px 10px",
-    border: "1px solid #F4F6F8",
+    border: `1px solid ${isDark? "#161625" : "#F4F6F8"}`,
     borderRadius: 8,
     fontSize: 10,
-    color: "#333333",
-    background: "#F4F6F8",
+    color: isDark?"#EAEAF2":"#333333",
+    background: isDark? "#161625" : "#F4F6F8",
     fontFamily: "'Montserrat', sans-serif",
     boxSizing: "border-box",
     outline: "none",
@@ -131,7 +133,7 @@ export default function AddAddressModal({
     display: "block",
     fontSize: 12,
     fontWeight: 400,
-    color: "#333333",
+    color: isDark?"#EAEAF2":"#333333",
     marginBottom: 4,
     fontFamily: "'Montserrat', sans-serif",
   };
@@ -143,8 +145,13 @@ export default function AddAddressModal({
         onClick={onClose}
         style={{
           position: "fixed",
-          inset: 0,
-          background: "rgba(0, 0, 0, 0.4)",
+          top: 0,
+          bottom: 0,
+          left: "50%",
+          transform: "translateX(-50%)",
+          width: "100%",
+          maxWidth: 370,
+          background: isDark ? "#F0F0F580" : "#00000080",
           backdropFilter: "blur(2px)",
           zIndex: 9998,
         }}
@@ -161,7 +168,7 @@ export default function AddAddressModal({
           maxWidth: 335,
           maxHeight: "90vh",
           overflowY: "auto",
-          background: "#FFFFFF",
+          background: isDark ? "#0D0D1A" : "#FFFFFF",
           borderRadius: 8,
           boxShadow: "0 10px 40px rgba(0, 0, 0, 0.15)",
           zIndex: 9999,
@@ -184,7 +191,7 @@ export default function AddAddressModal({
             style={{
               fontSize: 14,
               fontWeight: 500,
-              color: "#333333",
+              color: isDark?"#EAEAF2":"#333333",
             }}
           >
             Add New Address
@@ -214,7 +221,7 @@ export default function AddAddressModal({
         </div>
 
         {/* Divider */}
-        <div style={{ height: 1, background: "#E8E8E8", marginBottom: 12 }} />
+        <div style={{ height: 1, background: isDark?"#2A2A40":"#E8E8E8", marginBottom: 12 }} />
 
         {/* Form */}
         <form onSubmit={handleSubmit}>
@@ -264,7 +271,7 @@ export default function AddAddressModal({
           </div>
 
           {/* Divider below Order Type */}
-          <div style={{ height: 1, background: "#E8E8E8", margin: "-1px 0 14px" }} />
+          <div style={{ height: 1, background: isDark?"#2A2A40":"#E8E8E8", margin: "-1px 0 14px" }} />
 
           {/* Address Details Section */}
           <div style={{ marginBottom: 14 }}>
@@ -273,12 +280,12 @@ export default function AddAddressModal({
                 display: "block",
                 fontSize: 12,
                 fontWeight: 400,
-                color: "#333333",
+                color: isDark?"#EAEAF2":"#333333",
                 marginBottom: 8,
                 fontFamily: "'Montserrat', sans-serif",
               }}
             >
-              {orderType === "delivery" ? "Shipping address" : "Pickup From"}
+              {orderType === "delivery" ? "Shipping address" : "Pickup address"}
             </span>
 
             {/* Full Name */}
@@ -289,7 +296,7 @@ export default function AddAddressModal({
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
                 placeholder="Enter full name"
-                className="placeholder:text-[#777777]"
+                className={`${isDark?"placeholder:text-[#9595AA]":"placeholder:text-[#777777]"}`}
                 style={inputStyle}
               />
             </div>
@@ -302,10 +309,10 @@ export default function AddAddressModal({
                   display: "flex",
                   alignItems: "center",
                   height: "40px",
-                  border: "1px solid #F4F6F8",
+                  border: isDark?"1px solid #161625":"1px solid #F4F6F8",
                   borderRadius: 8,
                   paddingLeft: 10,
-                  background: "#F4F6F8",
+                  background: isDark?"#161625":"#F4F6F8",
                   boxSizing: "border-box",
                 }}
               >
@@ -318,7 +325,7 @@ export default function AddAddressModal({
                   style={{
                     height: 28,
                     width: 1,
-                    backgroundColor: "#E9EAEB",
+                    backgroundColor: isDark?"#2A2A40":"#E9EAEB",
                     flexShrink: 0,
                     margin: "0 4px",
                   }}
@@ -332,7 +339,7 @@ export default function AddAddressModal({
                   value={phone}
                   onChange={(e) => handlePhoneChange(e.target.value)}
                   placeholder="(444) 1234-5678"
-                  className="placeholder:text-[#777777]"
+                className={`${isDark?"placeholder:text-[#9595AA]":"placeholder:text-[#777777]"}`}
                   style={{
                     flex: 1,
                     minWidth: 0,
@@ -343,7 +350,7 @@ export default function AddAddressModal({
                     outline: "none",
                     fontFamily: "'Montserrat', sans-serif",
                     fontSize: 10,
-                    color: "#333333",
+                    color: isDark ? "#EAEAF2" : "#333333",
                   }}
                 />
               </div>
@@ -372,7 +379,7 @@ export default function AddAddressModal({
                       value={address}
                       onChange={(e) => setAddress(e.target.value)}
                       placeholder="Enter address"
-                      className="placeholder:text-[#777777]"
+                      className={`${isDark?"placeholder:text-[#9595AA]":"placeholder:text-[#777777]"}`}
                       style={inputStyle}
                     />
                     <div
@@ -399,7 +406,7 @@ export default function AddAddressModal({
                     value={postalCode}
                     onChange={(e) => setPostalCode(e.target.value)}
                     placeholder="Enter postal code"
-                    className="placeholder:text-[#777777]"
+                className={`${isDark?"placeholder:text-[#9595AA]":"placeholder:text-[#777777]"}`}
                     style={inputStyle}
                   />
                 </div>
@@ -408,7 +415,7 @@ export default function AddAddressModal({
           </div>
 
           {/* Divider prior to bottom Order Type */}
-          <div style={{ height: 1, background: "#E8E8E8", margin: "10px 0" }} />
+          <div style={{ height: 1, background: isDark?"#2A2A40":"#E8E8E8", margin: "10px 0" }} />
 
           {/* Bottom Delivery / Pickup Toggles */}
           <div style={{ marginBottom: 22 }}>

@@ -158,7 +158,12 @@ export default function LocationModal({ onClose }) {
     <div
       style={{
         position: "fixed",
-        inset: 0,
+        top: 0,
+        bottom: 0,
+        left: "50%",
+        transform: "translateX(-50%)",
+        width: "100%",
+        maxWidth: 370,
         backgroundColor: "var(--overlay, rgba(0, 0, 0, 0.6))",
         backdropFilter: "blur(4px)",
         zIndex: 500,

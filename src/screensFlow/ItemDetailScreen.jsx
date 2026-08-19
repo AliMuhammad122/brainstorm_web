@@ -14,6 +14,8 @@ import TickIcon from "../../public/assets/icons/tick-circle.svg"
 import CircleTickIcon from "../../public/assets/icons/choose.svg"
 import PlusIcon from "../../public/assets/icons/plus.svg"
 import MinusIcon from "../../public/assets/icons/minus.svg"
+import CloseIcon from "../../public/assets/icons/close.svg"
+import { useTheme } from "../../context/ThemeContext";
 
 export function ItemDetailScreen({
   item,
@@ -24,6 +26,7 @@ export function ItemDetailScreen({
   const [selectedChoices, setSelectedChoices] = useState({});
   const [notes, setNotes] = useState("");
   const [showInfoModal, setShowInfoModal] = useState(false);
+  const { isDark } = useTheme();
 
   const { data: itemDetailsRes, isLoading } = useGetItemDetailsQuery({
     categoryId: item.categoryId || 69,
@@ -80,8 +83,7 @@ export function ItemDetailScreen({
       style={{
         display: "flex",
         flexDirection: "column",
-        height: "95%",
-        background: "white",
+        height: "100%",
         fontFamily: "'Montserrat',sans-serif",
       }}
     >
@@ -126,8 +128,8 @@ export function ItemDetailScreen({
               width: 32,
               height: 32,
               borderRadius: 100000,
-              background: "#FFFFFF33",
-              backdropFilter: "blur(4px)",
+              background: isDark ? "#0D0D1A33" : "#FFFFFF33",
+              backdropFilter: "blur(2px)",
               border: "none",
               cursor: "pointer",
               display: "flex",
@@ -143,10 +145,9 @@ export function ItemDetailScreen({
         <div
           style={{
             background: "var(--bg)",
-            // borderRadius: "22px 22px 0 0",
             position: "relative",
             zIndex: 5,
-            padding: "0px 20px 35px",
+            padding: "0px 20px 0px",
           }}
         >
           {isLoading ? (
@@ -175,7 +176,7 @@ export function ItemDetailScreen({
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "space-between",
-                  marginBottom: 6,
+                  marginTop: 3,
                 }}
               >
                 <div className="w-full flex flex-col gap-2" >
@@ -184,7 +185,7 @@ export function ItemDetailScreen({
                     style={{
                       fontSize: 18,
                       fontWeight: 500,
-                      color: "#333333",
+                      color: isDark ? "#EAEAF2" : "#333333",
                       margin: 0,
                       letterSpacing: "0px",
                       lineHeight: "100%",
@@ -197,7 +198,7 @@ export function ItemDetailScreen({
                     style={{
                       fontSize: 18,
                       fontWeight: 500,
-                      color: "#DA1A35",
+                      color: isDark ? "#E52E4A" : "#DA1A35",
                       margin: "0 0 2px",
                       letterSpacing: "0px",
                     }}
@@ -222,9 +223,9 @@ export function ItemDetailScreen({
               <p
                 style={{
                   fontSize: 12,
-                  color: "#A4A4A4",
+                  color: isDark ? "#6E6E85" : "#A4A4A4",
                   lineHeight: 1.6,
-                  margin: "0 0 14px",
+                  margin: "10px 0 14px",
                   fontWeight: 400,
                   fontFamily: "'Montserrat',sans-serif"
                 }}
@@ -251,8 +252,8 @@ export function ItemDetailScreen({
                             gap: 8,
                             padding: "8px 10px 8px 10px",
                             borderRadius: 20,
-                            border: `1.5px solid ${on ? "#DA1A351A" : "#F4F6F8"}`,
-                            background: on ? "#DA1A351A" : "#FFFFFF",
+                            border: `1.5px solid ${isDark ? (on ? "#DA1A351A" : "#2A2A40") : (on ? "#DA1A351A" : "#F4F6F8")}`,
+                            background: isDark ? (on ? "#E52E4A1A" : "#0D0D1A") : (on ? "#DA1A351A" : "#FFFFFF"),
                             cursor: "pointer",
                             fontFamily: "'Montserrat',sans-serif",
                             transition: "all 0.15s",
@@ -262,7 +263,10 @@ export function ItemDetailScreen({
                             style={{
                               fontSize: 10,
                               fontWeight: 400,
-                              color: on ? "var(--primary)" : "#A4A4A4"
+                              // color: on ? "var(--primary)" : "#A4A4A4"
+                              color: isDark
+                                ? (on ? "#E52E4A" : "#6E6E85")
+                                : (on ? "#DA1A35" : "#A4A4A4"),
                             }}
                           >
                             {choice.name}{displayPrice}
@@ -273,7 +277,7 @@ export function ItemDetailScreen({
                                 width: 16,
                                 height: 16,
                                 borderRadius: "50%",
-                                border: "1.5px solid #E8E8E8",
+                                border: `1.5px solid ${isDark ? "#2A2A40" : "#E8E8E8"}`,
                                 display: "flex",
                                 alignItems: "center",
                                 justifyContent: "center",
@@ -302,7 +306,7 @@ export function ItemDetailScreen({
                   style={{
                     width: "100%",
                     minHeight: 50,
-                    border: "1.5px solid #F4F6F8",
+                    border: `1.5px solid ${isDark ? "#2A2A40" : "#F4F6F8"}`,
                     borderRadius: 8,
                     padding: "12px 14px",
                     fontSize: 10,
@@ -310,7 +314,7 @@ export function ItemDetailScreen({
                     fontFamily: "'Montserrat',sans-serif",
                     resize: "none",
                     outline: "none",
-                    background: "#FFFFFF",
+                    background: isDark ? "#0D0D1A" : "#FFFFFF",
                     lineHeight: 1.5,
                     boxSizing: "border-box",
                   }}
@@ -319,142 +323,139 @@ export function ItemDetailScreen({
             </>
           )}
         </div>
+      </div>
+
+      <div
+        style={{
+          background: isDark ? "#0D0D1A" : "#FFFFFF",
+          padding: "0px 20px 16px",
+          zIndex: 30,
+        }}
+      >
         <div
           style={{
-            position: "absolute",
-            bottom: 0,
-            left: 0,
-            right: 0,
-            background: "#FFFFFF",
-            padding: "1px 20px 24px",
-            zIndex: 30,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            border: isDark ? "1.5px solid #2A2A40" : "1.5px solid #F4F6F8",
+            borderRadius: 1000,
+            padding: "8px 10px 8px 16px",
+            background: isDark ? "#0D0D1A" : "#FFFFFF",
+            boxSizing: "border-box",
+            width: "100%",
           }}
         >
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              border: "1.5px solid #F4F6F8",
-              borderRadius: 1000,
-              padding: "8px 10px 8px 16px",
-              background: "#FFFFFF",
-              boxSizing: "border-box",
-              width: "100%",
-            }}
-          >
-            <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-              <button
-                onClick={() => setQty((q) => Math.max(1, q - 1))}
-                style={{
-                  width: 24,
-                  height: 24,
-                  borderRadius: "100%",
-                  background: "#DA1A351A",
-                  border: "none",
-                  cursor: "pointer",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                <MinusIcon />
-              </button>
-              <span
-                style={{
-                  fontSize: 14,
-                  fontWeight: 400,
-                  color: "#333333",
-                  minWidth: 24,
-                  textAlign: "center",
-                  fontFamily: "'Montserrat',sans-serif",
-                }}
-              >
-                {String(qty).padStart(2, "0")}
-              </span>
-              <button
-                onClick={() => setQty((q) => q + 1)}
-                style={{
-                  width: 24,
-                  height: 24,
-                  borderRadius: "50%",
-                  background: "#DA1A35",
-                  border: "none",
-                  cursor: "pointer",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                <PlusIcon />
-              </button>
-            </div>
+          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
             <button
-              onClick={() => {
-                const selIngrList = [];
-                let selDrinkVal = "";
-                Object.values(selectedChoices).forEach((choice) => {
-                  const option = detailedItem?.options?.find((o) => o.id === choice.option_id);
-                  if (option) {
-                    if (option.type === "SingleChoice") {
-                      if (!selDrinkVal) {
-                        selDrinkVal = choice.name;
-                      } else {
-                        selIngrList.push(choice.name);
-                      }
-                    } else {
-                      selIngrList.push(choice.name);
-                    }
-                  }
-                });
-
-                onAddToCart({
-                  ...item,
-                  qty,
-                  selIngr: selIngrList,
-                  selRemove: [],
-                  selDrink: selDrinkVal,
-                  notes,
-                  priceNum: basePriceNum + extraCost,
-                });
-              }}
+              onClick={() => setQty((q) => Math.max(1, q - 1))}
               style={{
-                flex: 1,
-                height: 50,
-                borderRadius: 1000,
+                width: 24,
+                height: 24,
+                borderRadius: "100%",
+                background: isDark ? "#E52E4A1A" : "#DA1A351A",
+                border: "none",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <MinusIcon color={isDark ? "#2A2A40" : "#F4F6F8"} />
+            </button>
+            <span
+              style={{
+                fontSize: 14,
+                fontWeight: 400,
+                color: isDark ? "#EAEAF2" : "#333333",
+                minWidth: 24,
+                textAlign: "center",
+                fontFamily: "'Montserrat',sans-serif",
+              }}
+            >
+              {String(qty).padStart(2, "0")}
+            </span>
+            <button
+              onClick={() => setQty((q) => q + 1)}
+              style={{
+                width: 24,
+                height: 24,
+                borderRadius: "50%",
                 background: "#DA1A35",
                 border: "none",
                 cursor: "pointer",
                 display: "flex",
                 alignItems: "center",
-                justifyContent: "space-between",
-                padding: "0 14px",
-                marginLeft: 16,
-                transition: "transform 0.1s",
+                justifyContent: "center",
               }}
             >
-              <span
-                style={{
-                  fontSize: 14,
-                  fontWeight: 400,
-                  color: "#FFFFFF",
-                  fontFamily: "'Montserrat',sans-serif",
-                }}
-              >
-                Add to Cart
-              </span>
-              <span
-                style={{
-                  fontSize: 14,
-                  fontWeight: 400,
-                  color: "#FFFFFF",
-                  fontFamily: "'Montserrat',sans-serif",
-                }}
-              >
-                €{total}
-              </span>
+              <PlusIcon />
             </button>
           </div>
+          <button
+            onClick={() => {
+              const selIngrList = [];
+              let selDrinkVal = "";
+              Object.values(selectedChoices).forEach((choice) => {
+                const option = detailedItem?.options?.find((o) => o.id === choice.option_id);
+                if (option) {
+                  if (option.type === "SingleChoice") {
+                    if (!selDrinkVal) {
+                      selDrinkVal = choice.name;
+                    } else {
+                      selIngrList.push(choice.name);
+                    }
+                  } else {
+                    selIngrList.push(choice.name);
+                  }
+                }
+              });
+
+              onAddToCart({
+                ...item,
+                qty,
+                selIngr: selIngrList,
+                selRemove: [],
+                selDrink: selDrinkVal,
+                notes,
+                priceNum: basePriceNum + extraCost,
+              });
+            }}
+            style={{
+              flex: 1,
+              height: 48,
+              borderRadius: 1000,
+              background: isDark ? "#E52E4A" : "#DA1A35",
+              border: "none",
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              padding: "0 14px",
+              marginLeft: 16,
+              transition: "transform 0.1s",
+            }}
+          >
+            <span
+              style={{
+                fontSize: 14,
+                fontWeight: 400,
+                color: "#FFFFFF",
+                fontFamily: "'Montserrat',sans-serif",
+              }}
+            >
+              Add to Cart
+            </span>
+            <span
+              style={{
+                fontSize: 14,
+                fontWeight: 400,
+                color: "#FFFFFF",
+                fontFamily: "'Montserrat',sans-serif",
+              }}
+            >
+              €{total}
+            </span>
+          </button>
         </div>
       </div>
 
@@ -463,25 +464,30 @@ export function ItemDetailScreen({
         <div
           style={{
             position: "fixed",
-            inset: 0,
+            top: 0,
+            bottom: 0,
+            left: "50%",
+            transform: "translateX(-50%)",
+            width: "100%",
+            maxWidth: 370,
             zIndex: 999,
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             padding: 24,
-            background: "rgba(0, 0, 0, 0.45)",
-            backdropFilter: "blur(4px)",
+            background: isDark ? "#F0F0F580" : "#00000080",
+            backdropFilter: "blur(2px)",
           }}
           onClick={() => setShowInfoModal(false)}
         >
           <div
             style={{
               width: "100%",
-              maxWidth: 380,
-              background: "#ffffff",
+              maxWidth: 335,
+              background: isDark ? "#0D0D1A" : "#ffffff",
               borderRadius: "8px",
-              padding: "16px",
-              boxShadow: "0 10px 30px rgba(0, 0, 0, 0.15)",
+              padding: "8px 16px 14px 16px",
+              boxShadow: isDark ? "0 10px 30px rgba(0, 0, 0, 0.45)" : "0 10px 30px rgba(0, 0, 0, 0.15)",
               position: "relative",
               fontFamily: "'Montserrat', sans-serif",
             }}
@@ -494,17 +500,18 @@ export function ItemDetailScreen({
                 alignItems: "center",
                 justifyContent: "center",
                 position: "relative",
-                paddingBottom: 16,
-                paddingTop: 16,
-                borderBottom: "1px solid #E2E8F0",
-                marginBottom: 20,
+                paddingBottom: 12,
+                paddingTop: 12,
+                borderBottom: `1px solid ${isDark ? "#2A2A40" : "#E2E8F0"}`,
+                marginBottom: 14,
+
               }}
             >
               <span
                 style={{
                   fontSize: 14,
                   fontWeight: 500,
-                  color: "#333333",
+                  color: isDark ? "#EAEAF2" : "#333333",
                 }}
               >
                 Product Info
@@ -513,24 +520,24 @@ export function ItemDetailScreen({
                 onClick={() => setShowInfoModal(false)}
                 style={{
                   position: "absolute",
-                  right: 0,
-                  top: "37%",
-                  transform: "translateY(-60%)",
-                  background: "#F1F5F9",
+                  right: 1,
+                  top: "50%",
+                  transform: "translateY(-48%)",
+                  background: isDark ? "#161625" : "#F1F5F9",
                   border: "none",
                   borderRadius: "50%",
-                  width: 26,
-                  height: 26,
+                  width: 20,
+                  height: 20,
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
+                  padding: 0,
+                  lineHeight: 0,
+                  outline: "none",
                   cursor: "pointer",
-                  color: "black",
-                  fontSize: 14,
-                  fontWeight: 500,
                 }}
               >
-                ✕
+                <CloseIcon alt="close" color={isDark ? "#555570" : "#333333"} />
               </button>
             </div>
 
@@ -542,7 +549,7 @@ export function ItemDetailScreen({
                   style={{
                     fontSize: 12,
                     fontWeight: 400,
-                    color: "#333333",
+                    color: isDark ? "#EAEAF2" : "#333333",
                     margin: "0 0 6px",
                   }}
                 >
@@ -551,7 +558,7 @@ export function ItemDetailScreen({
                 <p
                   style={{
                     fontSize: 11,
-                    color: "#A4A4A4",
+                    color: isDark ? "#6E6E85" : "#A4A4A4",
                     lineHeight: 1.5,
                     margin: 0,
                   }}
@@ -566,7 +573,7 @@ export function ItemDetailScreen({
                   style={{
                     fontSize: 12,
                     fontWeight: 400,
-                    color: "#333333",
+                    color: isDark ? "#EAEAF2" : "#333333",
                     margin: "0 0 6px",
                   }}
                 >
@@ -575,7 +582,7 @@ export function ItemDetailScreen({
                 <p
                   style={{
                     fontSize: 11,
-                    color: "#A4A4A4",
+                    color: isDark ? "#6E6E85" : "#A4A4A4",
                     lineHeight: 1.5,
                     margin: 0,
                   }}
@@ -592,7 +599,7 @@ export function ItemDetailScreen({
                   style={{
                     fontSize: 12,
                     fontWeight: 400,
-                    color: "#333333",
+                    color: isDark ? "#EAEAF2" : "#333333",
                     margin: "0 0 3px",
                   }}
                 >
@@ -601,7 +608,7 @@ export function ItemDetailScreen({
                 <p
                   style={{
                     fontSize: 11,
-                    color: "#A4A4A4",
+                    color: isDark ? "#6E6E85" : "#A4A4A4",
                     lineHeight: 1.5,
                     margin: 0,
                   }}
@@ -619,19 +626,23 @@ export function ItemDetailScreen({
   );
 }
 
-const Section = ({ title, children }) => (
-  <div style={{ marginBottom: 14 }}>
-    <p
-      style={{
-        fontSize: 14,
-        fontWeight: 400,
-        color: "#333333",
-        margin: "0 0 10px",
-        fontFamily: "'Montserrat',sans-serif",
-      }}
-    >
-      {title}
-    </p>
-    {children}
-  </div>
-);
+const Section = ({ title, children }) => {
+  const { isDark } = useTheme();
+  return (
+    <div style={{ marginBottom: 14 }}>
+      <p
+        style={{
+          fontSize: 14,
+          fontWeight: 400,
+          color: isDark ? "#EAEAF2" : "#333333",
+          margin: "0 0 10px",
+          fontFamily: "'Montserrat',sans-serif",
+        }}
+      >
+        {title}
+      </p>
+      {children}
+    </div>
+
+  )
+};

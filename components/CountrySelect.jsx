@@ -59,9 +59,9 @@ const CustomSingleValue = (props) => {
         <div
           className="rounded-full overflow-hidden flex items-center justify-center shrink-0"
           style={{
-            width: isModal ? 16 : 20,
-            height: isModal ? 16 : 20,
-            backgroundColor: isModal ? "transparent" : "#FCFCFC",
+            width: isModal ? 17 : 20,
+            height: isModal ? 17 : 20,
+            backgroundColor: isModal ? "#FCFCFC" : "#FCFCFC",
           }}
         >
           <RenderFlag countryCode={data.value} />
