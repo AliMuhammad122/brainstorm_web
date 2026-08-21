@@ -1,6 +1,6 @@
 import { Provider } from "react-redux";
 import Head from "next/head";
-import { DM_Sans, Nunito, Montserrat, Poppins, Anton } from "next/font/google";
+import { DM_Sans, Nunito, Montserrat, Poppins, Anton, Open_Sans, Inter, Instrument_Sans } from "next/font/google";
 import store from "../src/store/store";
 import { ThemeProvider } from "../context/ThemeContext";
 import { ScreensFlowProvider } from "../context/ScreensFlowContext";
@@ -41,6 +41,27 @@ const anton = Anton({
   display: "swap",
 });
 
+const openSans = Open_Sans({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700", "800"],
+  variable: "--font-open-sans",
+  display: "swap",
+});
+
+const inter = Inter({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  variable: "--font-inter",
+  display: "swap",
+});
+
+const instrumentSans = Instrument_Sans({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-instrument",
+  display: "swap",
+});
+
 function AppContent({ Component, pageProps }) {
   return (
     <>
@@ -59,7 +80,7 @@ export default function MyApp({ Component, pageProps }) {
     <ThemeProvider>
       <Provider store={store}>
         <ScreensFlowProvider>
-          <div className={`${dmSans.variable} ${nunito.variable} ${montserrat.variable} ${poppins.variable} ${anton.variable} font-body`}>
+          <div className={`${dmSans.variable} ${nunito.variable} ${montserrat.variable} ${poppins.variable} ${anton.variable} ${openSans.variable} ${inter.variable} ${instrumentSans.variable} font-body`}>
             <SplashScreen />
             <AppContent Component={Component} pageProps={pageProps} />
           </div>

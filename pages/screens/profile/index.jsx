@@ -641,7 +641,8 @@ export default function ProfilePage() {
               alignItems: "center",
               justifyContent: "center",
               gap: 8,
-              fontFamily:"'Open Sans'"
+              fontFamily:"'Open Sans'",
+              marginBottom:"20px"
             }}
           >
             {(isUpdating || isUploading) && (

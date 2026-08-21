@@ -20,10 +20,11 @@
   --font-heading: var(--font-nunito), sans-serif;
   --font-body: var(--font-dm-sans), sans-serif;
   --font-anton: var(--font-anton), "Anton", sans-serif;
-  --font-montserrat: "Montserrat", sans-serif;
-  --font-inter: "Inter", sans-serif;
-  --font-open-sans: "Open Sans", sans-serif;
-  --font-instrument: "Instrument Sans", sans-serif;
+  --font-montserrat: var(--font-montserrat), "Montserrat", sans-serif;
+  --font-inter: var(--font-inter), "Inter", sans-serif;
+  --font-open-sans: var(--font-open-sans), "Open Sans", sans-serif;
+  --font-instrument: var(--font-instrument), "Instrument Sans", sans-serif;
+  --font-poppins: var(--font-poppins), "Poppins", sans-serif;
 
   /* Shadows */
   --shadow-form: 0px 16px 40px -8px rgba(88, 92, 95, 0.16);
@@ -324,11 +325,17 @@ textarea {
   font-family: var(--font-anton), "Anton", sans-serif;
 }
 .font-montserrat {
-  font-family: "Montserrat", sans-serif;
+  font-family: var(--font-montserrat), "Montserrat", sans-serif;
 }
 .font-inter {
-  font-family: "Inter", sans-serif;
+  font-family: var(--font-inter), "Inter", sans-serif;
 }
 .font-open-sans {
-  font-family: "Open Sans", sans-serif;
+  font-family: var(--font-open-sans), "Open Sans", sans-serif;
+}
+.font-instrument {
+  font-family: var(--font-instrument), "Instrument Sans", sans-serif;
+}
+.font-poppins {
+  font-family: var(--font-poppins), "Poppins", sans-serif;
 }
