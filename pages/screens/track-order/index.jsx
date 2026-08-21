@@ -20,7 +20,7 @@ const DUMMY_ITEMS = [
 ];
 const DUMMY_TOTAL = 29.0;
 
-const STEP_CYCLE_MS = 100000000;
+const STEP_CYCLE_MS = 1000000000;
 
 export default function TrackOrderPage() {
   const router = useRouter();

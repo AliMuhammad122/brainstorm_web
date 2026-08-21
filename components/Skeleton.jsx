@@ -1,4 +1,5 @@
 import React from "react";
+import { useTheme } from "../context/ThemeContext";
 
 export default function Skeleton({
   width,
@@ -9,11 +10,13 @@ export default function Skeleton({
   style = {},
   ...props
 }) {
+  const { isDark } = useTheme();
+
   const customStyle = {
     width: width !== undefined ? width : "100%",
     height: height !== undefined ? height : "16px",
     borderRadius: circle ? "50%" : (borderRadius !== undefined ? borderRadius : "8px"),
-    background: "var(--surface-alt)",
+    background: isDark ? "#2A2A40" : "#E8E8E8",
     ...style,
   };
 

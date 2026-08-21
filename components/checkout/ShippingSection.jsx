@@ -97,7 +97,7 @@ export default function ShippingSection({ address, onAddOrChange, orderType }) {
             style={{
               fontSize: 12,
               fontWeight: 400,
-              color: isDark ? "#9595AA" : "#A4A4A4",
+              color: isDark ? "#6E6E85" : "#A4A4A4",
               margin: "0 0 5px",
               letterSpacing: 0,
             }}
@@ -105,14 +105,14 @@ export default function ShippingSection({ address, onAddOrChange, orderType }) {
             {address.fullName}
           </p>
           {address.phone && (
-            <p style={{ fontSize: 12, color: isDark ? "#9595AA" : "#A4A4A4", margin: "0 0 4px" }}>
+            <p style={{ fontSize: 12, color: isDark ? "#6E6E85" : "#A4A4A4", margin: "0 0 4px" }}>
               {address.phone}
             </p>
           )}
           <p
             style={{
               fontSize: 12,
-              color: isDark ? "#9595AA" : "#A4A4A4",
+              color: isDark ? "#6E6E85" : "#A4A4A4",
               margin: "0 0 4px",
               lineHeight: 1.24,
             }}

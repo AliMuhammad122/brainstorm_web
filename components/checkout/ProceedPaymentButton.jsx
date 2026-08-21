@@ -1,4 +1,5 @@
 import React from "react";
+import { useTheme } from "../../context/ThemeContext";
 
 /**
  * Floating bottom CTA for checkout.
@@ -10,11 +11,12 @@ export default function ProceedPaymentButton({
   disabled,
   onClick,
 }) {
+  const { isDark } = useTheme();
   const isActive = !disabled;
-  const bg = isActive ? "var(--primary)" : "#D2D2D2";
+  const bg = isActive ? "var(--primary)" : isDark ? "#353550" : "#D2D2D2";
   const textColor = isActive ? "#FFFFFF" : "#FFFFFF";
   const badgeBg = isActive ? "#FFFFFF" : "#FFFFFF";
-  const badgeTextColor = isActive ? "var(--primary)" : "#D2D2D2";
+  const badgeTextColor = isActive ? "var(--primary)" : isDark ? "#505065" : "#D2D2D2";
 
   return (
     <div

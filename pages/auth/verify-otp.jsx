@@ -14,7 +14,7 @@ export default function EnterOTPPage() {
   const [otp, setOtp] = useState(["", "", "", ""]);
   const { isDark } = useTheme();
   const router = useRouter();
-  const { phone, email, type } = router.query;
+  const { phone, email, type, from } = router.query;
   const inputRefs = useRef([]);
 
   const [toast, setToast] = useState({ show: false, text: "", type: "" });
@@ -138,7 +138,7 @@ export default function EnterOTPPage() {
       showToast("Phone verified successfully!", "success");
       sessionStorage.setItem("is_phone_verified", "true");
       sessionStorage.setItem("verified_phone", phone);
-      router.push("/auth/signup");
+      router.push(from || "/auth/signup");
     } catch (err) {
       showToast(err?.data?.error?.message || err?.data?.message || "Verification failed. Please check the OTP and try again.", "error");
     }

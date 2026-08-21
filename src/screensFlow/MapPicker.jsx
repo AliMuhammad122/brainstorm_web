@@ -1,21 +1,28 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import { MapContainer, TileLayer, Marker, useMap, useMapEvents } from "react-leaflet";
 import L from "leaflet";
+import { useTheme } from "../../context/ThemeContext";
 
 const cyprusBounds = [
   [34.3, 32.0], // Southwest
   [35.9, 34.8]  // Northeast
 ];
 
-const customPinIcon = typeof window !== "undefined" ? L.divIcon({
-  html: `<div style="display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; width: 30px; height: 30px;">
-    <div style="background-color: var(--primary, #E31C3D); width: 20px; height: 20px; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); border: 2px solid #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.3); margin-top: -10px;"></div>
-    <div style="background-color: rgba(0, 0, 0, 0.25); width: 10px; height: 4px; border-radius: 50%; margin-top: 2px;"></div>
-  </div>`,
-  className: "custom-map-pin",
-  iconSize: [30, 30],
-  iconAnchor: [15, 26]
-}) : null;
+const createCustomPinIcon = () => {
+  if (typeof window === "undefined") return null;
+  return L.divIcon({
+    html: `<div style="display: flex; align-items: center; justify-content: center; position: relative;">
+      <svg width="30" height="38" viewBox="0 0 40 46" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M20 0C11.163 0 4 7.163 4 16c0 12.22 15.174 29.344 15.658 29.88a.465.465 0 0 0 .684 0C20.826 45.344 36 28.22 36 16 36 7.163 28.837 0 20 0z" fill="#DA1A35"/>
+        <circle cx="20" cy="15" r="7.5" fill="#ffffff"/>
+        <circle cx="20" cy="15" r="3.5" fill="#DA1A35"/>
+      </svg>
+    </div>`,
+    className: "custom-map-pin",
+    iconSize: [30, 38],
+    iconAnchor: [15, 38]
+  });
+};
 
 function MapEvents({ onClick }) {
   useMapEvents({
@@ -40,28 +47,51 @@ function MapController({ center }) {
 
 export default function MapPicker({ markerPosition, onMapClick }) {
   const center = markerPosition || [34.6786, 33.0413]; // Limassol
+  const { isDark } = useTheme();
+  const pinIcon = useMemo(() => createCustomPinIcon(), []);
+
+  const tileUrl = isDark
+    ? "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+    : "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png";
 
   return (
-    <div style={{ width: "100%", height: "100%", borderRadius: 16, overflow: "hidden", position: "relative" }}>
+    <div style={{ width: "100%", height: "100%", borderRadius: 12, overflow: "hidden", position: "relative" }}>
       <MapContainer
         center={center}
-        zoom={10}
+        zoom={11}
         minZoom={8}
-        maxZoom={16}
+        maxZoom={18}
         maxBounds={cyprusBounds}
         maxBoundsViscosity={1.0}
-        style={{ width: "100%", height: "100%" }}
+        style={{ width: "100%", height: "100%", background: isDark ? "#161625" : "#f4f4f4" }}
       >
         <TileLayer
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          attribution='&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors'
+          url={tileUrl}
+          attribution='&copy; <a href="https://carto.com/">CARTO</a>'
         />
-        {markerPosition && (
-          <Marker position={markerPosition} icon={customPinIcon} />
+        {markerPosition && pinIcon && (
+          <Marker position={markerPosition} icon={pinIcon} />
         )}
         <MapEvents onClick={onMapClick} />
         <MapController center={markerPosition} />
       </MapContainer>
+      <style jsx global>{`
+        .custom-map-pin {
+          background: transparent !important;
+          border: none !important;
+        }
+        .leaflet-control-zoom a {
+          background-color: ${isDark ? "#161625" : "#ffffff"} !important;
+          color: ${isDark ? "#EAEAF2" : "#333333"} !important;
+          border-color: ${isDark ? "#2A2A40" : "#E8E8E8"} !important;
+        }
+        .leaflet-control-zoom a:hover {
+          background-color: ${isDark ? "#202035" : "#F4F6F8"} !important;
+        }
+        .leaflet-container {
+          font-family: 'Montserrat', sans-serif !important;
+        }
+      `}</style>
     </div>
   );
 }

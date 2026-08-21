@@ -336,7 +336,7 @@ export default function SignupPage() {
                   value={form.phone}
                   onChange={(e) => handlePhoneChange(e.target.value)}
                   placeholder="(444) 1234-5678"
-                  className={`flex-1 min-w-0 py-4 px-2 placeholder:text-sm bg-transparent outline-none font-normal font-montserrat ${isDark ? "text-[#EAEAF2] placeholder-[#9595AA]" : "text-[#333333] placeholder-[#777777]"}`}
+                  className={`flex-1 min-w-0 py-4 px-3 placeholder:text-sm bg-transparent outline-none font-normal font-montserrat ${isDark ? "text-[#EAEAF2] placeholder-[#9595AA]" : "text-[#333333] placeholder-[#777777]"}`}
                 />
 
                 <button

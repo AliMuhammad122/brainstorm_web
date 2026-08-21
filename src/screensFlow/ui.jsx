@@ -42,8 +42,8 @@ export function PageHeader({ title, onBack, transparent, rightElement }) {
   const { tokens, isDark } = useTheme();
   const isTransparent = !!transparent;
   const headerBg = isTransparent ? "transparent" : tokens.headerBg;
-  const backBg = isTransparent ? "white" : (isDark ? "rgba(255,255,255,0.1)" : "#f4f4f4");
-  const textColor = isTransparent ? "#333333" : tokens.headerText;
+  const backBg =  (isDark ? "#161625" : "#F4F6F8");
+  const textColor = isDark ? "#EAEAF2" : "#333333";
   const backIconColor = isTransparent ? "#333333" : tokens.headerText;
 
   return (

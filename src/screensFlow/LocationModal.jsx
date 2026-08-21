@@ -4,6 +4,9 @@ import dynamic from "next/dynamic";
 import { MdClose, MdSearch, MdOutlineLocationOn, MdDeleteOutline } from "react-icons/md";
 import { useScreensFlow } from "../../context/ScreensFlowContext";
 import { useTheme } from "../../context/ThemeContext";
+import CloseIcon from "../../public/assets/icons/close.svg"
+import SearchIcon from "../../public/assets/icons/search2.svg"
+import LocationIcon from "../../public/assets/icons/location.svg"
 
 // Dynamically import the map picker with no SSR to avoid window is not defined errors in Next.js
 const MapPicker = dynamic(() => import("./MapPicker"), { ssr: false });
@@ -33,12 +36,15 @@ export default function LocationModal({ onClose }) {
   );
   const [errorMessage, setErrorMessage] = useState("");
 
-  const pageBg = isDark ? "#121212" : "#ffffff";
-  const textColor = isDark ? "#ffffff" : "#1A1A1A";
-  const subTextColor = isDark ? "#A0A0A0" : "#707070";
-  const inputBg = isDark ? "#242424" : "#F4F6F8";
-  const itemHoverBg = isDark ? "#2D2D2D" : "#F0F2F5";
-  const borderColor = isDark ? "#2D2D2D" : "#E2E8F0";
+  const pageBg = isDark ? "#0D0D1A" : "#FFFFFF";
+  const cardBg = isDark ? "#161625" : "#F4F6F8";
+  const textColor = isDark ? "#EAEAF2" : "#333333";
+  const subTextColor = isDark ? "#EAEAF2" : "#333333";
+  const inputBg = isDark ? "#161625" : "#F4F6F8";
+  const itemHoverBg = isDark ? "#202035" : "#F4F6F8";
+  const borderColor = isDark ? "#2A2A40" : "#E8E8E8";
+  const closeBtnBg = isDark ? "#161625" : "#F4F6F8";
+  const closeBtnColor = isDark ? "#C8C8D8" : "#333333";
 
   // Check if coordinates are within Cyprus boundaries
   const isWithinCyprus = (lat, lng) => {
@@ -102,7 +108,6 @@ export default function LocationModal({ onClose }) {
       });
       const data = await res.json();
       if (data && data.display_name) {
-        // Clean display name a bit: take the first few parts
         const parts = data.display_name.split(",");
         const cleanAddress = parts.slice(0, 3).join(",").trim();
         setSelectedAddressText(cleanAddress);
@@ -164,57 +169,74 @@ export default function LocationModal({ onClose }) {
         transform: "translateX(-50%)",
         width: "100%",
         maxWidth: 370,
-        backgroundColor: "var(--overlay, rgba(0, 0, 0, 0.6))",
-        backdropFilter: "blur(4px)",
-        zIndex: 500,
+        backgroundColor: isDark ? "#F0F0F580" : "#00000080",
+        backdropFilter: "blur(3px)",
+        zIndex: 10000,
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        padding: 20
+        padding: "16px",
+        boxSizing: "border-box"
       }}
       onClick={onClose}
     >
       <div
         style={{
           backgroundColor: pageBg,
-          borderRadius: 24,
+          borderRadius: 8,
           width: "100%",
-          maxWidth: 460,
-          maxHeight: "85vh",
-          boxShadow: "0 24px 80px rgba(0,0,0,0.3)",
+          maxHeight: "88vh",
+          boxShadow: isDark ? "0 12px 48px rgba(0,0,0,0.6)" : "0 12px 48px rgba(0,0,0,0.15)",
+          border: `1px solid ${borderColor}`,
           overflow: "hidden",
           display: "flex",
           flexDirection: "column",
+          fontFamily: "'Montserrat', sans-serif",
           animation: "popIn 0.28s cubic-bezier(0.34,1.56,0.64,1)"
         }}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "20px 24px 12px" }}>
-          <h3 style={{ fontSize: 18, fontWeight: 800, color: textColor, margin: 0, letterSpacing: -0.4 }}>
+        <div style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          padding: "16px 18px 12px",
+          borderBottom: `1px solid ${isDark ? "#2A2A40" : "#E8E8E8"}`
+        }}>
+          <h3 style={{ fontSize: 14, fontWeight: 500, color: textColor, margin: 0 ,fontFamily: "'Montserrat', sans-serif"}}>
             Select Location
           </h3>
           <button
             onClick={onClose}
             style={{
-              width: 32,
-              height: 32,
+              width: 20,
+              height: 20,
               borderRadius: "50%",
-              backgroundColor: inputBg,
+              backgroundColor: closeBtnBg,
               border: "none",
               cursor: "pointer",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              color: textColor
+              color: closeBtnColor
             }}
           >
-            <MdClose size={18} />
+            <CloseIcon
+             color={isDark ? "#555570" : "#333333"} />
           </button>
         </div>
 
         {/* Content Body */}
-        <div style={{ flex: 1, overflowY: "auto", padding: "0 24px 20px", display: "flex", flexDirection: "column", gap: 14 }}>
+        <div style={{
+          flex: 1,
+          overflowY: "auto",
+          padding: "14px 18px 18px",
+          display: "flex",
+          flexDirection: "column",
+          gap: 12,
+          scrollbarWidth: "none"
+        }}>
           {/* Search Box */}
           <form onSubmit={handleSearch} style={{ display: "flex", gap: 8, position: "relative" }}>
             <div style={{ flex: 1, position: "relative", display: "flex", alignItems: "center" }}>
@@ -223,34 +245,38 @@ export default function LocationModal({ onClose }) {
                 placeholder="Search address in Cyprus..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
+                className={isDark?"placeholder:text-[#6E6E85]":"placeholder:text-[#A4A4A4]"}
                 style={{
                   width: "100%",
-                  height: 44,
-                  borderRadius: 12,
-                  border: `1.5px solid ${borderColor}`,
+                  height: 34,
+                  borderRadius: 10000,
+                  border: `1px solid ${isDark?"#2A2A40":"transparent"}`,
                   backgroundColor: inputBg,
                   color: textColor,
-                  padding: "0 12px 0 38px",
-                  fontSize: 13.5,
+                  padding: "0 12px 0 34px",
+                  fontSize: 12,
                   outline: "none",
-                  fontFamily: "inherit"
+                  fontFamily: "'Montserrat', sans-serif",
+                  boxSizing: "border-box"
                 }}
               />
-              <MdSearch size={20} color="var(--subtle, #A0A0A0)" style={{ position: "absolute", left: 12 }} />
+              <SearchIcon 
+               style={{ position: "absolute", left: 10 }}
+               color={isDark ? "#2A2A40" : "#A4A4A4"} />
             </div>
             <button
               type="submit"
               style={{
-                padding: "0 16px",
-                height: 44,
-                borderRadius: 12,
-                backgroundColor: "#DA1A35",
+                padding: "0 14px",
+                height: 34,
+                borderRadius: 80000,
+                backgroundColor: isDark?"#E52E4A":"#DA1A35",
                 color: "#ffffff",
                 border: "none",
                 fontWeight: 400,
-                fontSize: 14,
+                fontSize: 12,
                 cursor: "pointer",
-                fontFamily: "inherit"
+                fontFamily: "'Montserrat', sans-serif"
               }}
             >
               {isSearching ? "..." : "Search"}
@@ -260,21 +286,21 @@ export default function LocationModal({ onClose }) {
           {/* Search Results Dropdown/Box */}
           {searchResults.length > 0 && (
             <div style={{
-              maxHeight: 180,
+              maxHeight: 160,
               overflowY: "auto",
               border: `1px solid ${borderColor}`,
-              borderRadius: 12,
-              backgroundColor: pageBg
+              borderRadius: 8,
+              backgroundColor: cardBg
             }}>
               {searchResults.map((item) => (
                 <div
                   key={item.place_id}
                   onClick={() => selectSearchResult(item)}
                   style={{
-                    padding: "10px 14px",
+                    padding: "9px 12px",
                     cursor: "pointer",
                     borderBottom: `1px solid ${borderColor}`,
-                    fontSize: 12.5,
+                    fontSize: 11.5,
                     color: textColor,
                     transition: "background-color 0.2s"
                   }}
@@ -289,22 +315,38 @@ export default function LocationModal({ onClose }) {
 
           {/* Error Message */}
           {errorMessage && (
-            <div style={{ color: "var(--primary, #E31C3D)", fontSize: 12, fontWeight: 600 }}>
+            <div style={{ color: "#DA1A35", fontSize: 11.5, fontWeight: 500 }}>
               {errorMessage}
             </div>
           )}
 
           {/* Leaflet Map Picker */}
-          <div style={{ height: 220, width: "100%", position: "relative", zIndex: 1 }}>
+          <div style={{
+            height: 190,
+            width: "100%",
+            position: "relative",
+            zIndex: 1,
+            borderRadius: 10,
+            overflow: "hidden",
+            // border: `1px solid ${borderColor}`
+          }}>
             <MapPicker markerPosition={selectedPos} onMapClick={handleMapClick} />
           </div>
 
           {/* Current Selection details */}
-          <div style={{ display: "flex", gap: 10, alignItems: "flex-start", padding: 12, backgroundColor: inputBg, borderRadius: 12 }}>
-            <MdOutlineLocationOn size={22} color="var(--primary, #E31C3D)" style={{ flexShrink: 0, marginTop: 2 }} />
+          <div style={{
+            display: "flex",
+            gap: 10,
+            alignItems: "center",
+            padding: "10px 12px",
+            backgroundColor: cardBg,
+            borderRadius: 8,
+            border: `1px solid ${borderColor}`
+          }}>
+            <LocationIcon color="#DA1A35" style={{ flexShrink: 0, marginTop: 2 }} />
             <div>
-              <div style={{ fontSize: 11, color: subTextColor, fontWeight: 500 }}>Selected Address</div>
-              <div style={{ fontSize: 13.5, fontWeight: 700, color: textColor, marginTop: 2 }}>
+              <div style={{ fontSize: 10, color: subTextColor, fontWeight: 400 }}>Selected Address</div>
+              <div style={{ fontSize: 12, fontWeight: 400, color: isDark ? "#9595AA" : "#8E8E8E", marginTop: 2 }}>
                 {selectedAddressText}
               </div>
             </div>
@@ -313,10 +355,10 @@ export default function LocationModal({ onClose }) {
           {/* Saved Addresses list */}
           {state.savedAddresses && state.savedAddresses.length > 0 && (
             <div>
-              <div style={{ fontSize: 12.5, fontWeight: 800, color: textColor, marginBottom: 8, letterSpacing: -0.2 }}>
+              <div style={{ fontSize: 12, fontWeight: 400, color: textColor, marginBottom: 6 }}>
                 Saved Addresses
               </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: 6, maxHeight: 130, overflowY: "auto" }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: 6, maxHeight: 120, overflowY: "auto" }}>
                 {state.savedAddresses.map((addr, idx) => (
                   <div
                     key={idx}
@@ -324,19 +366,19 @@ export default function LocationModal({ onClose }) {
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "space-between",
-                      padding: "8px 12px",
-                      borderRadius: 10,
+                      padding: "8px 10px",
+                      borderRadius: 8,
                       border: `1px solid ${borderColor}`,
+                      backgroundColor: inputBg,
                       cursor: "pointer",
                       transition: "background-color 0.2s"
                     }}
-                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = itemHoverBg}
-                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "transparent"}
+                 
                     onClick={() => handleSelectSaved(addr)}
                   >
                     <div style={{ display: "flex", gap: 8, alignItems: "center", overflow: "hidden", marginRight: 8 }}>
-                      <MdOutlineLocationOn size={16} color="var(--subtle, #A0A0A0)" style={{ flexShrink: 0 }} />
-                      <span style={{ fontSize: 12.5, fontWeight: 500, color: textColor, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+            <LocationIcon color="#DA1A35" style={{ flexShrink: 0, marginTop: 2 }} />
+                      <span style={{ fontSize: 12, fontWeight: 400, color: isDark ? "#9595AA" : "#8E8E8E", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
                         {addr.address}
                       </span>
                     </div>
@@ -350,17 +392,15 @@ export default function LocationModal({ onClose }) {
                         background: "none",
                         border: "none",
                         cursor: "pointer",
-                        color: "var(--subtle, #A0A0A0)",
-                        padding: 4,
+                        color: isDark?"#C8C8D8":"#333333",
+                        padding: 3,
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
                         borderRadius: 4
                       }}
-                      onMouseEnter={(e) => e.currentTarget.style.color = "var(--primary, #E31C3D)"}
-                      onMouseLeave={(e) => e.currentTarget.style.color = "var(--subtle, #A0A0A0)"}
                     >
-                      <MdDeleteOutline size={16} />
+                      <MdDeleteOutline size={20} />
                     </button>
                   </div>
                 ))}
@@ -374,16 +414,16 @@ export default function LocationModal({ onClose }) {
             disabled={selectedAddressText === "Fetching address..."}
             style={{
               width: "100%",
-              height: 48,
-              borderRadius: 24,
-              backgroundColor: "#DA1A35",
+              height: 44,
+              borderRadius: 22,
+              backgroundColor: isDark?"#E52E4A":"#DA1A35",
               color: "#ffffff",
               fontWeight: 400,
-              fontSize: 14.5,
+              fontSize: 14,
               border: "none",
               cursor: selectedAddressText === "Fetching address..." ? "not-allowed" : "pointer",
-              marginTop: 6,
-              fontFamily: "inherit"
+              marginTop: 4,
+              fontFamily: "'Montserrat', sans-serif",
             }}
           >
             Confirm Location

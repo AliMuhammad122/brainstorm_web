@@ -2,6 +2,7 @@ import React, { useState, useRef, useCallback } from "react";
 import OrderProgressStepper from "./OrderProgressStepper";
 import OrderSummaryCard from "./OrderSummaryCard";
 import DeliveryAddressCard from "./DeliveryAddressCard";
+import { useTheme } from "../../context/ThemeContext";
 
 export default function TrackOrderBottomSheet({
   orderNumber = "#29182",
@@ -24,7 +25,7 @@ export default function TrackOrderBottomSheet({
   const [sheetHeight, setSheetHeight] = useState(COLLAPSED_HEIGHT);
   const dragStartY = useRef(null);
   const dragStartH = useRef(null);
-
+  const { isDark } = useTheme();
   const swipeThresholdToClose = COLLAPSED_HEIGHT - 60;
 
   const handlePointerDown = (clientY) => {
@@ -85,15 +86,17 @@ export default function TrackOrderBottomSheet({
         transform: "translateX(-50%)",
         width: "335px",
         height: "335px",
-        background: "white",
+        background: isDark ?"#0D0D1A": "#FFFFFF",
         borderRadius: 14,
-        boxShadow: "0px 2px 4px -2px #1018280F, 0px 4px 8px -2px #1018281A",
+        boxShadow: isDark 
+          ? "0px 2px 4px -2px #1018280F, 0px 4px 8px -2px #1018281A"
+          : "0px 2px 4px -2px #1018280F, 0px 4px 8px -2px #1018281A",
         transition: dragStartY.current != null ? "none" : "height 0.3s cubic-bezier(0.2, 0.8, 0.2, 1)",
         zIndex: 1000,
         display: "flex",
         flexDirection: "column",
         overflow: "hidden",
-        border:"1px solid #E8E8E8"
+        border: `1px solid ${isDark ? "#2A2A40" : "#E8E8E8"}`
       }}
     >
       {/* Drag handle */}
@@ -118,7 +121,7 @@ export default function TrackOrderBottomSheet({
             width: 51,
             height: 3,
             borderRadius: 2,
-            background: "#E8E8E8",
+            background: isDark?"#2A2A40":"#E8E8E8",
           }}
         />
         {/* The chevron close button as seen in design (in the pill view it's up, here we can keep it as a close button or just omit it since swipe handles it. Original had a button here.) */}
@@ -166,20 +169,20 @@ export default function TrackOrderBottomSheet({
             marginBottom: 10,
           }}
         >
-          <span style={{ fontSize: 14, fontWeight: 500, color: "var(--text)" }}>
+          <span style={{ fontSize: 14, fontWeight: 500, color: isDark?"#EAEAF2":"#333333" }}>
             {orderNumber}
           </span>
           <div style={{ textAlign: "right" }}>
-            <p style={{ fontSize: 12, fontWeight: 400, color: "var(--text)", margin: "0 0 4px", letterSpacing: 0.5 }}>
+            <p style={{ fontSize: 12, fontWeight: 400, color: isDark?"#EAEAF2":"#333333" , margin: "0 0 4px", letterSpacing: 0.5 }}>
               EST.TIME
             </p>
-            <p style={{ fontSize: 10, fontWeight: 400, color: "var(--subtle)", margin: 0, fontFamily: "var(--font-poppins), sans-serif" }}>
+            <p style={{ fontSize: 10, fontWeight: 400, color: isDark?"#6E6E85":"#A4A4A4", margin: 0, fontFamily: "var(--font-poppins), sans-serif" }}>
               {estTime}
             </p>
           </div>
         </div>
 
-        <div style={{ height: 1, background: "var(--border-subtle)", marginBottom: 22 }} />
+        <div style={{ height: 1, background: isDark?"#2A2A40":"#E8E8E8", marginBottom: 22 }} />
 
         {/* Progress stepper */}
         <div style={{ marginBottom: 20 }}>

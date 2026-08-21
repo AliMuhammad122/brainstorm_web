@@ -7,6 +7,7 @@ import ActiveOrderIcon from "../../../public/assets/icons/ActiveOrder.svg"
 import OpenDetailsIcon from "../../../public/assets/icons/OpenDetails.svg"
 import TimerIcon from "../../../public/assets/icons/active_timer.svg"
 import CalenderIcon from "../../../public/assets/icons/active_calendar.svg"
+import { useTheme } from "../../../context/ThemeContext";
 
 const emptyState = {
   title: "You haven't any active order yet",
@@ -65,42 +66,42 @@ const historyOrders = [
     orderType: "pickup",
   },
 ];
-
-const getStatusStyles = (status) => {
+const getStatusStyles = (status, isDark) => {
   switch (status) {
       case "Completed":
         return {
-          color: "#1FC16B",
-          background: "#1FC16B1A",
+          color: isDark ? "#1FC16B" : "#1FC16B",
+          background: isDark ? "#25D4751A" : "#1FC16B1A",
         };
       case "Canceled":
         return {
-          color: "#D00416",
-          background: "#D004161A",
+          color: isDark ? "#DA1A35" : "#D00416",
+          background: isDark ? "#C410301A" : "#D004161A",
         };
       case "Active Order":
     default:
       return {
-        color: "#D9142C",
-        background: "#FFE7EB",
+        color: isDark ? "#DA1A35" : "#DA1A35",
+        background: isDark ? "#E52E4A1A" : "#DA1A351A",
       };
   }
 };
 
-const getStatusIconBg = (status) => {
+const getStatusIconBg = (status, isDark) => {
   switch (status) {
     case "Completed":
-      return "#E8F5E9";
+      return isDark ? "#E52E4A1A" : "#DA1A351A";
     case "Canceled":
-      return "#F4F6F8";
+      return isDark ? "#E52E4A1A" : "#DA1A351A";
     case "Active Order":
     default:
-      return "#FFE7EB";
+      return isDark ? "#E52E4A1A" : "#DA1A351A";
   }
 };
 
 export default function OrderHistoryPage() {
   const router = useRouter();
+  const { isDark } = useTheme();
   const [tab, setTab] = useState("active");
 
   return (
@@ -116,10 +117,10 @@ export default function OrderHistoryPage() {
       >
         <PageHeader title="Order History" onBack={() => router.back()} />
 
-        <div style={{ padding: "12px 20px 12px", borderBottom: "1px solid #F4F6F8" }}>
+        <div style={{ padding: "12px 20px 12px", borderBottom: `1px solid ${isDark ?"#161625":"#F4F6F8"}` }}>
           <div
             style={{
-              background: "var(--surface)",
+              background: isDark ? "#2A2A40" : "var(--surface)",
               borderRadius: 10000,
               // padding: 4,
               display: "flex",
@@ -142,8 +143,8 @@ export default function OrderHistoryPage() {
                     height: 40,
                     borderRadius: 1000,
                     border: "none",
-                    background: isActive ? "#DA1A35" : "transparent",
-                    color: isActive ? "#fff" : "#333333",
+                    background: isActive ? (isDark ? "#DA1A35" : "#DA1A35") : "transparent",
+                    color: isDark ? "#fff" : (isActive ? "#fff" : "#333333"),
                     fontSize: 14,
                     fontWeight: 400,
                     cursor: "pointer",
@@ -157,128 +158,10 @@ export default function OrderHistoryPage() {
         </div>
 
         {tab === "active" ? (
-          <div style={{ flex: 1, padding: "2px 20px 40px" }}>
-            {activeOrders.map((order) => {
-              const statusStyle = getStatusStyles(order.status);
-              return (
-                <button
-                  key={order.id}
-                  type="button"
-                  onClick={() =>
-                    router.push({
-                      pathname: "/screens/order-details",
-                      query: {
-                        id: order.id,
-                        status: order.status,
-                        restaurant: order.restaurant,
-                        date: order.date,
-                        time: order.time,
-                        orderType: order.orderType,
-                      },
-                    })
-                  }
-                  style={{
-                    width: "100%",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    gap: 12,
-                    padding: "10px 4px 10px",
-                    borderBottom: "1px solid #EFEFEF",
-                    background: "transparent",
-                    borderLeft: "none",
-                    borderRight: "none",
-                    borderTop: "none",
-                    cursor: "pointer",
-                    textAlign: "left",
-                  }}
-                >
-                  <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                    <div
-                      style={{
-                        width: 40,
-                        height: 40,
-                        borderRadius: 100000,
-                        background: getStatusIconBg(order.status),
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        flexShrink: 0,
-                      }}
-                    >
-                      <ActiveOrderIcon />
-                    </div>
-                    <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                      <div
-                        style={{
-                          fontSize: 8,
-                          color: statusStyle.color,
-                          background: statusStyle.background,
-                          padding: "2px 10px",
-                          borderRadius: 1000,
-                          width: "fit-content",
-                          fontWeight: 400,
-                          fontFamily: "'Montserrat'",
-                        }}
-                      >
-                        {order.status}
-                      </div>
-                      <div
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: 7,
-                          color: "#333333",
-                          fontWeight: 400,
-                          fontSize: 12,
-                          fontFamily: "'Montserrat', sans-serif",
-                        }}
-                      >
-                        <span>{order.restaurant}</span>
-                        <span style={{ fontSize: 12, color: "#A4A4A4", fontWeight: 500 }}>•</span>
-                        <span style={{ fontSize: 10, color: "#A4A4A4", fontWeight: 600, lineHeight: "1px" }}>
-                          {order.id?.includes("#") ? order.id.replace("#", "# ") : order.id}
-                        </span>
-                      </div>
-                      <div style={{ display: "flex", gap: 4, color: "#A4A4A4" }}>
-                        <div
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: 4,
-                            fontSize: 8,
-                          }}
-                        >
-                          <TimerIcon />
-                          {order.time}
-                        </div>
-                        <span style={{ fontSize: 8, color: "#A4A4A4" }}>•</span>
-                        <div
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: 4,
-                            fontSize: 8,
-                          }}
-                        >
-                          <CalenderIcon />
-                          {order.date}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div>
-                    <OpenDetailsIcon />
-                  </div>
-                </button>
-              );
-            })}
-          </div>
-        ) : (
-          <div style={{ flex: 1, padding: "2px 20px 40px" }}>
-            {historyOrders.length > 0 ? (
-              historyOrders.map((order) => {
-                const statusStyle = getStatusStyles(order.status);
+          <div style={{ flex: 1, display: "flex", flexDirection: "column", padding: "2px 20px 40px" }}>
+            {activeOrders.length > 0 ? (
+              activeOrders.map((order) => {
+                const statusStyle = getStatusStyles(order.status, isDark);
                 return (
                   <button
                     key={order.id}
@@ -303,7 +186,7 @@ export default function OrderHistoryPage() {
                       justifyContent: "space-between",
                       gap: 12,
                       padding: "10px 4px 10px",
-                      borderBottom: "1px solid #EFEFEF",
+                      borderBottom: `1px solid ${isDark ? "#2A2A40" : "#EFEFEF"}`,
                       background: "transparent",
                       borderLeft: "none",
                       borderRight: "none",
@@ -318,14 +201,15 @@ export default function OrderHistoryPage() {
                           width: 40,
                           height: 40,
                           borderRadius: 100000,
-                          background: getStatusIconBg(order.status),
+                          background: getStatusIconBg(order.status, isDark),
                           display: "flex",
                           alignItems: "center",
                           justifyContent: "center",
                           flexShrink: 0,
+                         
                         }}
                       >
-                        <ActiveOrderIcon />
+                        <ActiveOrderIcon color={isDark? "#E52E4A" : "#DA1A35"}/>
                       </div>
                       <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                         <div
@@ -347,19 +231,19 @@ export default function OrderHistoryPage() {
                             display: "flex",
                             alignItems: "center",
                             gap: 7,
-                            color: "#333333",
+                            color: isDark ? "#EAEAF2" : "#333333",
                             fontWeight: 400,
                             fontSize: 12,
                             fontFamily: "'Montserrat', sans-serif",
                           }}
                         >
                           <span>{order.restaurant}</span>
-                          <span style={{ fontSize: 12, color: "#A4A4A4", fontWeight: 500 }}>•</span>
-                          <span style={{ fontSize: 10, color: "#A4A4A4", fontWeight: 600, lineHeight: "1px" }}>
+                          <span style={{ fontSize: 12, color: isDark ? "#6E6E85" : "#A4A4A4", fontWeight: 500 }}>•</span>
+                          <span style={{ fontSize: 10, color: isDark ? "#6E6E85" : "#A4A4A4", fontWeight: 600, lineHeight: "1px" }}>
                             {order.id?.includes("#") ? order.id.replace("#", "# ") : order.id}
                           </span>
                         </div>
-                        <div style={{ display: "flex", gap: 4, color: "#A4A4A4" }}>
+                        <div style={{ display: "flex", gap: 4, color: isDark ? "#6E6E85" : "#A4A4A4" }}>
                           <div
                             style={{
                               display: "flex",
@@ -368,10 +252,10 @@ export default function OrderHistoryPage() {
                               fontSize: 8,
                             }}
                           >
-                            <TimerIcon />
+                            <TimerIcon color={isDark ? "#252332" : "#A4A4A4"} />
                             {order.time}
                           </div>
-                          <span style={{ fontSize: 8, color: "#A4A4A4" }}>•</span>
+                          <span style={{ fontSize: 8, color: isDark ? "#6E6E85" : "#A4A4A4" }}>•</span>
                           <div
                             style={{
                               display: "flex",
@@ -380,13 +264,13 @@ export default function OrderHistoryPage() {
                               fontSize: 8,
                             }}
                           >
-                            <CalenderIcon />
+                            <CalenderIcon color={isDark ? "#252332" : "#A4A4A4"}/>
                             {order.date}
                           </div>
                         </div>
                       </div>
                     </div>
-                    <div>
+                    <div style={{ color: isDark ? "#252332" : "#A4A4A4" }}>
                       <OpenDetailsIcon />
                     </div>
                   </button>
@@ -410,7 +294,7 @@ export default function OrderHistoryPage() {
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    color: "#9B9B9B",
+                    color: isDark ? "#2A2A40" : "#A4A4A4",
                   }}
                 >
                   <OrderIcon />
@@ -418,13 +302,168 @@ export default function OrderHistoryPage() {
                 <p
                   style={{
                     margin: 0,
-                    color: "#333333",
+                    color: isDark ? "#EAEAF2" : "#333333",
                     fontSize: 14,
                     fontWeight: 400,
                     fontFamily: "'Montserrat', sans-serif",
                   }}
                 >
                   {emptyState.title}
+                </p>
+              </div>
+            )}
+          </div>
+        ) : (
+          <div style={{ flex: 1, display: "flex", flexDirection: "column", padding: "2px 20px 40px" }}>
+            {historyOrders.length > 0 ? (
+              historyOrders.map((order) => {
+                const statusStyle = getStatusStyles(order.status, isDark);
+                return (
+                  <button
+                    key={order.id}
+                    type="button"
+                    onClick={() =>
+                      router.push({
+                        pathname: "/screens/order-details",
+                        query: {
+                          id: order.id,
+                          status: order.status,
+                          restaurant: order.restaurant,
+                          date: order.date,
+                          time: order.time,
+                          orderType: order.orderType,
+                        },
+                      })
+                    }
+                    style={{
+                      width: "100%",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      gap: 12,
+                      padding: "10px 4px 10px",
+                      borderBottom: `1px solid ${isDark ? "#2A2A40" : "#EFEFEF"}`,
+                      background: "transparent",
+                      borderLeft: "none",
+                      borderRight: "none",
+                      borderTop: "none",
+                      cursor: "pointer",
+                      textAlign: "left",
+                    }}
+                  >
+                    <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                      <div
+                        style={{
+                          width: 40,
+                          height: 40,
+                          borderRadius: 100000,
+                          background: getStatusIconBg(order.status, isDark),
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          flexShrink: 0,
+                        }}
+                      >
+                        <ActiveOrderIcon color={isDark ? "#E52E4A" : "#DA1A35"} />
+                      </div>
+                      <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                        <div
+                          style={{
+                            fontSize: 8,
+                            color: statusStyle.color,
+                            background: statusStyle.background,
+                            padding: "2px 10px",
+                            borderRadius: 1000,
+                            width: "fit-content",
+                            fontWeight: 400,
+                            fontFamily: "'Montserrat'",
+                          }}
+                        >
+                          {order.status}
+                        </div>
+                        <div
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 7,
+                            color: isDark ? "#EAEAF2" : "#333333",
+                            fontWeight: 400,
+                            fontSize: 12,
+                            fontFamily: "'Montserrat', sans-serif",
+                          }}
+                        >
+                          <span>{order.restaurant}</span>
+                          <span style={{ fontSize: 12, color: isDark ? "#6E6E85" : "#A4A4A4", fontWeight: 500 }}>•</span>
+                          <span style={{ fontSize: 10, color: isDark ? "#6E6E85" : "#A4A4A4", fontWeight: 600, lineHeight: "1px" }}>
+                            {order.id?.includes("#") ? order.id.replace("#", "# ") : order.id}
+                          </span>
+                        </div>
+                        <div style={{ display: "flex", gap: 4, color: isDark ? "#6E6E85" : "#A4A4A4" }}>
+                          <div
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              gap: 4,
+                              fontSize: 8,
+                            }}
+                          >
+                            <TimerIcon color={isDark ? "#252332" : "#A4A4A4"} />
+                            {order.time}
+                          </div>
+                          <span style={{ fontSize: 8, color: isDark ? "#6E6E85" : "#A4A4A4" }}>•</span>
+                          <div
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              gap: 4,
+                              fontSize: 8,
+                            }}
+                          >
+                            <CalenderIcon color={isDark ? "#252332" : "#A4A4A4"} />
+                            {order.date}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div style={{ color: isDark ? "#252332" : "#A4A4A4" }}>
+                      <OpenDetailsIcon />
+                    </div>
+                  </button>
+                );
+              })
+            ) : (
+              <div
+                style={{
+                  flex: 1,
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  padding: "24px 20px 60px",
+                  gap: 14,
+                }}
+              >
+                <div
+                  style={{
+                    borderRadius: 60,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    color: isDark?"#2A2A40" :"#A4A4A4",
+                  }}
+                >
+                  <OrderIcon />
+                </div>
+                <p
+                  style={{
+                    margin: 0,
+                    color: isDark ? "#EAEAF2" : "#333333",
+                    fontSize: 14,
+                    fontWeight: 400,
+                    fontFamily: "'Montserrat', sans-serif",
+                  }}
+                >
+                  You have no order history yet
                 </p>
               </div>
             )}

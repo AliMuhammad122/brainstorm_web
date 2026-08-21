@@ -69,7 +69,7 @@ const CustomSingleValue = (props) => {
         <ArrowDown style={{ marginLeft: isModal ? 10 : 6, marginRight: isModal ? 8 : 0, color:isDark ? "#777777" : "#DA1A35" }} />
         <span
           className={`font-normal font-montserrat ${isDark ? "text-[#9595AA]" : "text-[#777777]"}`}
-          style={{ fontSize: isModal ? 10 : 14, paddingLeft: isModal ? 0 : 2 }}
+          style={{ fontSize: isModal ? 10 : 14, paddingLeft: isModal ? 0 : 4 }}
         >
           {data.dialCode}
         </span>
@@ -166,7 +166,7 @@ const customSelectStyles = (isDark, isModal) => ({
   }),
 });
 
-export default function CountrySelect({ value, onChange, isModal }) {
+export default function CountrySelect({ value, onChange, isModal, isDisabled }) {
   const { isDark } = useTheme();
 
   const selectedOption = COUNTRY_OPTIONS.find((c) => c.dialCode === value) || DEFAULT_COUNTRY;
@@ -178,6 +178,7 @@ export default function CountrySelect({ value, onChange, isModal }) {
       value={selectedOption}
       onChange={onChange}
       isModal={isModal}
+      isDisabled={isDisabled}
       components={{
         SingleValue: CustomSingleValue,
         Option: CustomOption,

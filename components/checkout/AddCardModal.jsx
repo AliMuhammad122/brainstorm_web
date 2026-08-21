@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 import RequiredIcon from "../../public/assets/icons/required.svg"
 import CloseIcon from "../../public/assets/icons/close.svg"
+import { useTheme } from "../../context/ThemeContext";
 
 /**
  * Add Card Details modal: Card Number, Expiry Date, CVV, Add Card button.
  */
 export default function AddCardModal({ open, onClose, onAdd }) {
+  const { isDark } = useTheme();
   const [cardNumber, setCardNumber] = useState("");
   const [expiry, setExpiry] = useState("");
   const [cvv, setCvv] = useState("");
@@ -61,11 +63,11 @@ export default function AddCardModal({ open, onClose, onAdd }) {
     width: "100%",
     height: "40px",
     padding: "12px 10px",
-    border: "1px solid #F4F6F8",
+    border: `1px solid ${isDark ? "#2A2A40" : "#F4F6F8"}`,
     borderRadius: 8,
     fontSize: 10,
-    color: "#333333",
-    background: "#FFFFFF",
+    color: isDark ? "#EAEAF2" : "#333333",
+    background: isDark ? "#0D0D1A" : "#FFFFFF",
     fontFamily: "'Montserrat', sans-serif",
     boxSizing: "border-box",
     outline: "none",
@@ -77,7 +79,7 @@ export default function AddCardModal({ open, onClose, onAdd }) {
     gap: 2,
     fontSize: 12,
     fontWeight: 400,
-    color: "#333333",
+    color: isDark ? "#EAEAF2" : "#333333",
     marginBottom: 2,
     fontFamily: "'Montserrat', sans-serif",
   };
@@ -88,8 +90,13 @@ export default function AddCardModal({ open, onClose, onAdd }) {
         onClick={onClose}
         style={{
           position: "fixed",
-          inset: 0,
-          background: "rgba(0, 0, 0, 0.4)",
+          top: 0,
+          bottom: 0,
+          left: "50%",
+          transform: "translateX(-50%)",
+          width: "100%",
+          maxWidth: 370,
+          background: isDark ? "#F0F0F580" : "#00000080",
           backdropFilter: "blur(2px)",
           zIndex: 9998,
         }}
@@ -103,7 +110,7 @@ export default function AddCardModal({ open, onClose, onAdd }) {
           transform: "translate(-50%, -50%)",
           width: "calc(100% - 32px)",
           maxWidth: 335,
-          background: "#FFFFFF",
+          background: isDark ? "#0D0D1A" : "#FFFFFF",
           borderRadius: 8,
           boxShadow: "0 10px 40px rgba(0, 0, 0, 0.15)",
           zIndex: 9999,
@@ -125,7 +132,7 @@ export default function AddCardModal({ open, onClose, onAdd }) {
             style={{
               fontSize: 14,
               fontWeight: 500,
-              color: "#333333",
+              color: isDark ? "#EAEAF2" : "#333333",
             }}
           >
             Add Card Details
@@ -141,7 +148,7 @@ export default function AddCardModal({ open, onClose, onAdd }) {
               right: 0,
               top: "50%",
               transform: "translateY(-50%)",
-              background: "#F4F6F8",
+              background: isDark ? "#161625" : "#F4F6F8",
               border: "none",
               cursor: "pointer",
               display: "flex",
@@ -150,23 +157,23 @@ export default function AddCardModal({ open, onClose, onAdd }) {
               color: "#8E8E8E",
             }}
           >
-            <CloseIcon />
+            <CloseIcon color={isDark ? "#555570" : "#333333"} />
           </button>
         </div>
 
-        <div style={{ height: 1, background: "#E8E8E8", marginBottom: 16 }} />
+        <div style={{ height: 1, background: isDark ? "#2A2A40" : "#E8E8E8", marginBottom: 16 }} />
 
         <form onSubmit={handleSubmit}>
           <div style={{ marginBottom: 14 }}>
             <label style={labelStyle}>
-              Card Number <RequiredIcon style={{ width: 6, height: 10 }} />
+              Card Number <RequiredIcon style={{ width: 6, height: 10 }} color={`${isDark?"#DA1A35":"#FF5C02"}`}/>
             </label>
             <input
               type="text"
               value={cardNumber}
               onChange={handleCardNumberChange}
               placeholder="**** **** **** ****"
-              className="placeholder:text-[#A4A4A4]"
+              className={isDark ? "placeholder:text-[#6E6E85]" : "placeholder:text-[#A4A4A4]"}
               maxLength={19}
               style={inputStyle}
             />
@@ -174,14 +181,14 @@ export default function AddCardModal({ open, onClose, onAdd }) {
 
           <div style={{ marginBottom: 14 }}>
             <label style={labelStyle}>
-              Card Holder Name <RequiredIcon style={{ width: 6, height: 10 }} />
+              Card Holder Name <RequiredIcon style={{ width: 6, height: 10 }} color={`${isDark?"#DA1A35":"#FF5C02"}`}/>
             </label>
             <input
               type="text"
               value={cardHolder}
               onChange={(e) => setCardHolder(e.target.value)}
               placeholder="Enter Card Holder Name"
-              className="placeholder:text-[#A4A4A4]"
+              className={isDark ? "placeholder:text-[#6E6E85]" : "placeholder:text-[#A4A4A4]"}
               style={inputStyle}
             />
           </div>
@@ -189,14 +196,14 @@ export default function AddCardModal({ open, onClose, onAdd }) {
           <div style={{ display: "flex", gap: 12, marginBottom: 20 }}>
             <div style={{ flex: 1 }}>
               <label style={labelStyle}>
-                Expiry Date <RequiredIcon style={{ width: 6, height: 10 }} />
+                Expiry Date <RequiredIcon style={{ width: 6, height: 10 }} color={`${isDark?"#DA1A35":"#FF5C02"}`}/>
               </label>
               <input
                 type="text"
                 value={expiry}
                 onChange={handleExpiryChange}
                 placeholder="MM/YY"
-                className="placeholder:text-[#A4A4A4]"
+                className={isDark ? "placeholder:text-[#6E6E85]" : "placeholder:text-[#A4A4A4]"}
                 maxLength={5}
                 style={inputStyle}
               />
@@ -204,14 +211,14 @@ export default function AddCardModal({ open, onClose, onAdd }) {
 
             <div style={{ flex: 1 }}>
               <label style={labelStyle}>
-                CVV <RequiredIcon style={{ width: 6, height: 10 }} />
+                CVV <RequiredIcon style={{ width: 6, height: 10 }} color={`${isDark?"#DA1A35":"#FF5C02"}`}/>
               </label>
               <input
                 type="text"
                 value={cvv}
                 onChange={handleCvvChange}
                 placeholder="***"
-                className="placeholder:text-[#A4A4A4]"
+                className={isDark ? "placeholder:text-[#6E6E85]" : "placeholder:text-[#A4A4A4]"}
                 maxLength={3}
                 style={inputStyle}
               />
@@ -225,7 +232,7 @@ export default function AddCardModal({ open, onClose, onAdd }) {
               height: 40,
               borderRadius: 22,
               border: "none",
-              background: "#DA1A35",
+              background: isDark ? "#E52E4A" : "#DA1A35",
               color: "#FFFFFF",
               fontSize: 12,
               fontWeight: 400,

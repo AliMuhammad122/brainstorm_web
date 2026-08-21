@@ -1,11 +1,14 @@
 import React from "react";
 import CancelIcon from "../../public/assets/icons/close-circle.svg"
+import { useTheme } from "../../context/ThemeContext";
 
 /**
  * Payment Failed modal with red X icon, title, message, Cancel and Try Again.
  * Matches the Figma design layout exactly.
  */
 export default function PaymentFailedModal({ open, onCancel, onTryAgain }) {
+  const { isDark } = useTheme();
+
   if (!open) return null;
 
   return (
@@ -15,8 +18,13 @@ export default function PaymentFailedModal({ open, onCancel, onTryAgain }) {
         onClick={onCancel}
         style={{
           position: "fixed",
-          inset: 0,
-          background: "rgba(0, 0, 0, 0.4)",
+          top: 0,
+          bottom: 0,
+          left: "50%",
+          transform: "translateX(-50%)",
+          width: "100%",
+          maxWidth: 370,
+          background: isDark ? "#F0F0F580" : "#00000080",
           backdropFilter: "blur(2px)",
           zIndex: 9998,
         }}
@@ -31,9 +39,9 @@ export default function PaymentFailedModal({ open, onCancel, onTryAgain }) {
           transform: "translate(-50%, -50%)",
           width: "calc(100% - 32px)",
           maxWidth: 335,
-          background: "#FFFFFF",
+          background: isDark ? "#0D0D1A" : "#FFFFFF",
           borderRadius: 8,
-          boxShadow: "0 10px 40px rgba(0, 0, 0, 0.15)",
+          // boxShadow: isDark ? "0 10px 40px rgba(0, 0, 0, 0.45)" : "0 10px 40px rgba(0, 0, 0, 0.15)",
           zIndex: 9999,
           padding: "14px 20px 16px",
           fontFamily: "'Montserrat', sans-serif",
@@ -42,7 +50,7 @@ export default function PaymentFailedModal({ open, onCancel, onTryAgain }) {
       >
         {/* Cancel Icon */}
         <div style={{ display: "flex", justifyContent: "center", marginBottom: 16 }}>
-          <CancelIcon />
+          <CancelIcon color={isDark ? "#DA1A35":"#D00416"} />
         </div>
 
         {/* Title */}
@@ -50,7 +58,7 @@ export default function PaymentFailedModal({ open, onCancel, onTryAgain }) {
           style={{
             fontSize: 14,
             fontWeight: 500,
-            color: "#000000",
+            color: isDark ? "#EAEAF2" : "#000000",
             margin: "0 0 10px",
             textAlign: "center",
             fontFamily: "'Montserrat', sans-serif",
@@ -63,7 +71,7 @@ export default function PaymentFailedModal({ open, onCancel, onTryAgain }) {
         <p
           style={{
             fontSize: 14,
-            color: "#A4A4A4",
+            color: isDark ? "#6E6E85" : "#A4A4A4",
             margin: "0 8px 20px",
             textAlign: "center",
             lineHeight: "20px",
@@ -84,9 +92,9 @@ export default function PaymentFailedModal({ open, onCancel, onTryAgain }) {
               paddingRight: "34px",
               height: 40,
               borderRadius: 22,
-              border: "1px solid #E8E8E8",
-              background: "#FFFFFF",
-              color: "#333333",
+              border: `1px solid ${isDark ? "#2A2A40" : "#E8E8E8"}`,
+              background: isDark ? "#0D0D1A" : "#FFFFFF",
+              color: isDark ? "#EAEAF2" : "#333333",
               fontSize: 12,
               fontWeight: 400,
               cursor: "pointer",
@@ -104,7 +112,7 @@ export default function PaymentFailedModal({ open, onCancel, onTryAgain }) {
               height: 40,
               borderRadius: 22,
               border: "none",
-              background: "#D00416",
+              background: isDark ? "#DA1A35" : "#D00416",
               color: "#FFFFFF",
               fontSize: 12,
               fontWeight: 400,

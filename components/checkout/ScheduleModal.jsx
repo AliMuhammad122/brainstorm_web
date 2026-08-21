@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import CloseIcon from "../../public/assets/icons/close.svg";
 import RequiredIcon from "../../public/assets/icons/required.svg";
+import { useTheme } from "../../context/ThemeContext";
 
 // Helper to generate next 7 days starting from today
 const getNext7Days = () => {
@@ -30,6 +31,7 @@ const getNext7Days = () => {
  * Matches the Figma design layout exactly.
  */
 export default function ScheduleModal({ open, orderType, onCancel, onConfirm, initialSchedule }) {
+  const { isDark } = useTheme();
   const [selectedDay, setSelectedDay] = useState("");
 
   const daysList = getNext7Days();
@@ -63,7 +65,7 @@ export default function ScheduleModal({ open, orderType, onCancel, onConfirm, in
     gap: 3,
     fontSize: 12,
     fontWeight: 400,
-    color: "#333333",
+    color: isDark ? "#EAEAF2" : "#333333",
     marginBottom: 6,
     fontFamily: "'Montserrat', sans-serif",
   };
@@ -77,8 +79,13 @@ export default function ScheduleModal({ open, orderType, onCancel, onConfirm, in
         onClick={onCancel}
         style={{
           position: "fixed",
-          inset: 0,
-          background: "rgba(0, 0, 0, 0.4)",
+          top: 0,
+          bottom: 0,
+          left: "50%",
+          transform: "translateX(-50%)",
+          width: "100%",
+          maxWidth: 370,
+          background: isDark ? "#F0F0F580" : "#00000080",
           backdropFilter: "blur(2px)",
           zIndex: 10000,
         }}
@@ -93,9 +100,9 @@ export default function ScheduleModal({ open, orderType, onCancel, onConfirm, in
           transform: "translate(-50%, -50%)",
           width: "calc(100% - 32px)",
           maxWidth: 335,
-          background: "#FFFFFF",
+          background: isDark ? "#0D0D1A" : "#FFFFFF",
           borderRadius: 8,
-          boxShadow: "0 10px 40px rgba(0, 0, 0, 0.2)",
+          boxShadow: isDark ? "0 10px 40px rgba(0, 0, 0, 0.45)" : "0 10px 40px rgba(0, 0, 0, 0.2)",
           zIndex: 10001,
           padding: "20px 14px 18px",
           fontFamily: "'Montserrat', sans-serif",
@@ -116,7 +123,7 @@ export default function ScheduleModal({ open, orderType, onCancel, onConfirm, in
             style={{
               fontSize: 14,
               fontWeight: 500,
-              color: "#333333",
+              color: isDark ? "#EAEAF2" : "#333333",
             }}
           >
             {isPickup ? "Schedule Pickup" : "Schedule Delivery"}
@@ -132,7 +139,7 @@ export default function ScheduleModal({ open, orderType, onCancel, onConfirm, in
               right: 0,
               top: "50%",
               transform: "translateY(-50%)",
-              background: "#F4F6F8",
+              background: isDark ? "#161625" : "#F4F6F8",
               border: "none",
               cursor: "pointer",
               display: "flex",
@@ -141,17 +148,17 @@ export default function ScheduleModal({ open, orderType, onCancel, onConfirm, in
               color: "#8E8E8E",
             }}
           >
-            <CloseIcon />
+            <CloseIcon color={isDark ? "#555570" : "#333333"} />
           </button>
         </div>
 
         {/* Divider */}
-        <div style={{ height: 1, background: "#E8E8E8", marginBottom: 10 }} />
+        <div style={{ height: 1, background: isDark ? "#2A2A40" : "#E8E8E8", marginBottom: 10 }} />
 
         {/* Date Selector */}
         <div style={{ marginBottom: 12 }}>
           <label style={labelStyle}>
-            Select Day <RequiredIcon style={{ width: 6, height: 10 }} />
+            Select Day <RequiredIcon style={{ width: 6, height: 10 }} color={isDark ? "#DA1A35" : "#FF5C02"} />
           </label>
           <div
             style={{
@@ -170,9 +177,9 @@ export default function ScheduleModal({ open, orderType, onCancel, onConfirm, in
                   style={{
                     padding: "5px 10px",
                     borderRadius: 8,
-                    border: isSelected ? "1px solid #DA1A351A" : "1px solid #F4F6F8",
-                    background: isSelected ? "#DA1A351A" : "#FFFFFF",
-                    color: isSelected ? "#DA1A35" : "#777777",
+                    border: `1.5px solid ${isDark ? (isSelected ? "#DA1A351A" : "#2A2A40") : (isSelected ? "#DA1A351A" : "#F4F6F8")}`,
+                    background: isDark ? (isSelected ? "#E52E4A1A" : "#0D0D1A") : (isSelected ? "#DA1A351A" : "#FFFFFF"),
+                    color: isDark ? (isSelected ? "#E52E4A" : "#9595AA") : (isSelected ? "#DA1A35" : "#777777"),
                     fontSize: 8,
                     fontWeight:  400,
                     cursor: "pointer",
@@ -191,18 +198,17 @@ export default function ScheduleModal({ open, orderType, onCancel, onConfirm, in
         <div style={{ marginBottom: 14 }}>
           <label style={labelStyle}>
             {isPickup ? "Pickup Time" : "Delivery Time"}{" "}
-            <RequiredIcon style={{ width: 6, height: 10 }} />
+            <RequiredIcon style={{ width: 6, height: 10 }} color={isDark ? "#DA1A35" : "#FF5C02"} />
           </label>
           <div
             style={{
               width: "fit-content",
-              // height:"20px",
               padding: "6px 10px",
-              border: "1px solid #F4F6F8",
+              border: `1px solid ${isDark ? "#2A2A40" : "#F4F6F8"}`,
               borderRadius: 8,
               fontSize: 8,
-              color: "#777777",
-              // background: "#F4F6F8",
+              color: isDark ? "#9595AA" : "#777777",
+              background: isDark ? "#0D0D1A" : "#FFFFFF",
               fontFamily: "'Montserrat', sans-serif",
               boxSizing: "border-box",
               display: "flex",
@@ -223,8 +229,8 @@ export default function ScheduleModal({ open, orderType, onCancel, onConfirm, in
             height: 40,
             borderRadius: 22,
             border: "none",
-            background: isFormValid ? "#DA1A35" : "#DCDCDC",
-            color: "#FFFFFF",
+            background: isFormValid ? (isDark ? "#E52E4A" : "#DA1A35") : (isDark ? "#353550" : "#DCDCDC"),
+            color: isFormValid ? "#FFFFFF" : (isDark ? "#FFFFFF" : "#FFFFFF"),
             fontSize: 12,
             fontWeight: 500,
             cursor: isFormValid ? "pointer" : "default",

@@ -1,19 +1,23 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/router";
-import ReactCountryFlag from "react-country-flag";
+import parsePhoneNumberFromString from "libphonenumber-js";
 import ScreensFrame from "../../../src/screensFlow/Frame";
 import { PageHeader } from "../../../src/screensFlow/ui";
 import {
   useGetProfileQuery,
   useGetPresignedUrlMutation,
   useUpdateProfileMutation,
+  useRequestOtpMutation,
 } from "../../../src/store/authApiSlice";
-import { countryCodes } from "../../../data/countryCodes";
+import CountrySelect, { COUNTRY_OPTIONS } from "../../../components/CountrySelect";
 import Skeleton from "../../../components/Skeleton";
 import EditProfile from "../../../public/assets/icons/editprofile.svg";
+import { useTheme } from "../../../context/ThemeContext";
+import DropDown from "../../../public/assets/icons/GenderArrow.svg"
 
 export default function ProfilePage() {
   const router = useRouter();
+  const {isDark}=useTheme()
 
   const { data, isLoading } = useGetProfileQuery();
   const profile = data?.data;
@@ -21,12 +25,15 @@ export default function ProfilePage() {
 
   const [getPresignedUrl] = useGetPresignedUrlMutation();
   const [updateProfile, { isLoading: isUpdating }] = useUpdateProfileMutation();
+  const [requestOtp, { isLoading: isSendingOtp }] = useRequestOtpMutation();
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [phoneCode, setPhoneCode] = useState("+357");
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [isVerified, setIsVerified] = useState(false);
+  const [phoneError, setPhoneError] = useState("");
   const [gender, setGender] = useState("");
   const [genderOpen, setGenderOpen] = useState(false);
   const [dob, setDob] = useState("");
@@ -93,7 +100,94 @@ export default function ProfilePage() {
     }
   };
 
+  const validatePhone = (code, phone) => {
+    if (!code) {
+      setPhoneError("Country code is required");
+      return false;
+    }
+    if (!phone) {
+      setPhoneError("Phone number is required");
+      return false;
+    }
+    const country = COUNTRY_OPTIONS.find(c => c.dialCode === code);
+    if (country) {
+      try {
+        const fullNumber = code + phone;
+        const parsed = parsePhoneNumberFromString(fullNumber, country.value);
+        if (parsed && !parsed.isValid()) {
+          setPhoneError("Please enter a valid phone number for the selected country.");
+          return false;
+        }
+      } catch {
+        setPhoneError("Please enter a valid phone number.");
+        return false;
+      }
+    } else {
+      if (phone.length < 7 || phone.length > 15) {
+        setPhoneError("Enter a valid phone number");
+        return false;
+      }
+    }
+    setPhoneError("");
+    return true;
+  };
+
+  const handleSendOtp = async () => {
+    const formattedPhone = `${phoneCode.replace("+", "")}${phoneNumber}`;
+    if (!validatePhone(phoneCode, phoneNumber)) {
+      return;
+    }
+    try {
+      await requestOtp({ phone: formattedPhone }).unwrap();
+      const payload = {
+        first_name: firstName,
+        last_name: lastName,
+        gender: gender,
+        dob: dob,
+        phoneCode,
+        phoneNumber,
+      };
+      sessionStorage.setItem("profile_data", JSON.stringify(payload));
+      router.push(`/auth/verify-otp?phone=${formattedPhone}&from=/screens/profile`);
+    } catch (error) {
+      console.error("OTP Request Error:", error);
+      showToast(error?.data?.error?.message || error?.data?.message || "Failed to send OTP. Please check your phone number and try again.", "error");
+    }
+  };
+
+  const handleCountryChange = (option) => {
+    const nextCode = option ? option.dialCode : "+357";
+    setPhoneCode(nextCode);
+    validatePhone(nextCode, phoneNumber);
+    setIsVerified(false);
+    sessionStorage.removeItem("is_phone_verified");
+    sessionStorage.removeItem("verified_phone");
+  };
+
+  const handlePhoneChange = (val) => {
+    const digitsOnly = val.replace(/\D/g, "");
+    setPhoneNumber(digitsOnly);
+    validatePhone(phoneCode, digitsOnly);
+    setIsVerified(false);
+    sessionStorage.removeItem("is_phone_verified");
+    sessionStorage.removeItem("verified_phone");
+  };
+
   const handleUpdateProfile = async () => {
+    const formattedPhone = `${phoneCode.replace("+", "")}${phoneNumber}`;
+    const originalPhone = profile?.phone || "";
+    const isPhoneModified = formattedPhone !== originalPhone;
+
+    if (isPhoneModified) {
+      const verified = sessionStorage.getItem("is_phone_verified") === "true";
+      const verifiedPhone = sessionStorage.getItem("verified_phone");
+
+      if (!verified || verifiedPhone !== formattedPhone) {
+        showToast("Please verify your new phone number first.", "error");
+        return;
+      }
+    }
+
     try {
       const payload = {
         first_name: firstName,
@@ -102,6 +196,10 @@ export default function ProfilePage() {
         dob: dob,
       };
 
+      if (isPhoneModified) {
+        payload.phone = formattedPhone;
+      }
+
       if (uploadedPicture) {
         payload.profile_picture = uploadedPicture;
       }
@@ -109,6 +207,10 @@ export default function ProfilePage() {
       const res = await updateProfile(payload).unwrap();
       if (res.status === 200 || res.success) {
         showToast(res?.message || "Profile updated successfully!", "success");
+        sessionStorage.removeItem("profile_data");
+        sessionStorage.removeItem("is_phone_verified");
+        sessionStorage.removeItem("verified_phone");
+        setIsVerified(false);
       } else {
         throw new Error(res.message || "Failed to update profile");
       }
@@ -120,25 +222,58 @@ export default function ProfilePage() {
 
   useEffect(() => {
     if (profile) {
-      setFirstName(profile.first_name || "");
-      setLastName(profile.last_name || "");
-      setEmail(profile.email || "");
-      setGender(profile.gender || "");
-      setDob(profile.dob || "");
+      let dbFirstName = profile.first_name || "";
+      let dbLastName = profile.last_name || "";
+      let dbGender = profile.gender || "";
+      let dbDob = profile.dob ? profile.dob.split("T")[0].replace(/-/g, "/") : "";
+      let dbPhoneCode = "+357";
+      let dbPhoneNumber = "";
 
       if (profile.phone) {
-        const matchingCountry = countryCodes.find(c => profile.phone.startsWith(c.dial_code.replace("+", "")));
+        const matchingCountry = COUNTRY_OPTIONS.find(c => profile.phone.startsWith(c.dialCode.replace("+", "")));
         if (matchingCountry) {
-          setPhoneCode(matchingCountry.dial_code);
-          setPhoneNumber(profile.phone.substring(matchingCountry.dial_code.replace("+", "").length));
+          dbPhoneCode = matchingCountry.dialCode;
+          dbPhoneNumber = profile.phone.substring(matchingCountry.dialCode.replace("+", "").length);
         } else {
-          setPhoneNumber(profile.phone);
+          dbPhoneNumber = profile.phone;
         }
       }
+
+      if (typeof window !== "undefined") {
+        const verified = sessionStorage.getItem("is_phone_verified") === "true";
+        const verifiedPhone = sessionStorage.getItem("verified_phone");
+        const savedDataStr = sessionStorage.getItem("profile_data");
+
+        if (savedDataStr) {
+          try {
+            const savedData = JSON.parse(savedDataStr);
+            if (savedData.first_name) dbFirstName = savedData.first_name;
+            if (savedData.last_name) dbLastName = savedData.last_name;
+            if (savedData.gender) dbGender = savedData.gender;
+            if (savedData.dob) dbDob = savedData.dob;
+            if (savedData.phoneCode) dbPhoneCode = savedData.phoneCode;
+            if (savedData.phoneNumber) {
+              dbPhoneNumber = savedData.phoneNumber;
+              const formatted = `${savedData.phoneCode.replace("+", "")}${savedData.phoneNumber}`;
+              if (verified && verifiedPhone === formatted) {
+                setIsVerified(true);
+              }
+            }
+          } catch (e) {
+            console.error("Error restoring profile data:", e);
+          }
+        }
+      }
+
+      setFirstName(dbFirstName);
+      setLastName(dbLastName);
+      setEmail(profile.email || "");
+      setGender(dbGender);
+      setDob(dbDob);
+      setPhoneCode(dbPhoneCode);
+      setPhoneNumber(dbPhoneNumber);
     }
   }, [profile]);
-
-  const currentCountry = countryCodes.find((c) => c.dial_code === phoneCode);
 
   return (
     <ScreensFrame>
@@ -155,7 +290,7 @@ export default function ProfilePage() {
         <div style={{ padding: "16px 20px 0px" }}>
           <div
             style={{
-              background: "var(--surface)",
+              background: isDark?"#161625":"#F4F6F8",
               borderRadius: 8,
               padding: 12,
               display: "flex",
@@ -237,22 +372,22 @@ export default function ProfilePage() {
                     zIndex: 2,
                   }}
                 >
-                  <EditProfile />
+                  <EditProfile color={isDark? "#0D0D1A" : "#FFFFFF"} />
                 </div>
               </div>
             )}
             <div className="space-y-1">
-              <div style={{ fontSize: 16, fontWeight: 400, color: "var(--text)", fontFamily: "'Anton'" }}>
+              <div style={{ fontSize: 16, fontWeight: 400, color: isDark?"#EAEAF2":"#333333", fontFamily: "'Anton'" }}>
                 {isLoading ? <Skeleton width={120} height={14} style={{ margin: "4px 0" }} /> : `${firstName} ${lastName}`}
               </div>
-              <div style={{ fontSize: 12, color: "#A4A4A4", fontFamily: "'Montserrat'" }}>
+              <div style={{ fontSize: 12, color: isDark?"#6E6E85":"#A4A4A4", fontFamily: "'Montserrat'" }}>
                 {isLoading ? <Skeleton width={160} height={12} style={{ margin: "4px 0" }} /> : email}
               </div>
             </div>
           </div>
 
           <div style={{ display: "flex", flexDirection: "column", gap: 8,marginTop:"10px" }}>
-            <label style={{ fontSize: 14, color: "#333333", }}>First Name</label>
+            <label style={{ fontSize: 14, color: isDark?"#EAEAF2": "#333333", }}>First Name</label>
             {isLoading ? (
               <Skeleton height={44} borderRadius={10} />
             ) : (
@@ -260,21 +395,23 @@ export default function ProfilePage() {
                 placeholder="Enter first name"
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
+                className={`${isDark?"placeholder:text-[#9595AA]"
+                  :"placeholder:text-[#777777]"}`}
                 style={{
-                  height: 44,
+                  height: 48,
                   borderRadius: 8,
                   border: "none",
-                  background: "var(--surface)",
+                  background: isDark?"#161625":"#F4F6F8",
                   padding: "0 12px",
                   fontSize: 14,
-                  color: "#333333",
+                  color: isDark?"#EAEAF2": "#333333",
                   fontFamily: "'Montserrat'",
                   outline:"none"
                 }}
               />
             )}
 
-            <label style={{ fontSize: 14, color: "#333333", marginTop:"4px" }}>Last Name</label>
+            <label style={{ fontSize: 14, color: isDark?"#EAEAF2": "#333333", marginTop:"4px" }}>Last Name</label>
             {isLoading ? (
               <Skeleton height={44} borderRadius={10} />
             ) : (
@@ -282,43 +419,48 @@ export default function ProfilePage() {
                 placeholder="Enter last name"
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
+                className={`${isDark?"placeholder:text-[#9595AA]"
+                  :"placeholder:text-[#777777]"}`}
                 style={{
-                  height: 44,
+                  height: 48,
                   borderRadius: 8,
                   border: "none",
-                  background: "var(--surface)",
+                  background: isDark?"#161625":"#F4F6F8",
                   padding: "0 12px",
                   fontSize: 14,
-                  color: "#333333",
+                  color: isDark?"#EAEAF2": "#333333",
                   fontFamily: "'Montserrat'",
                   outline: "none" 
                 }}
               />
             )}
 
-            <label style={{ fontSize: 14, color: "#333333", marginTop:"4px" }}>Email</label>
+            <label style={{ fontSize: 14, color: isDark?"#EAEAF2": "#333333", marginTop:"4px" }}>Email</label>
             {isLoading ? (
               <Skeleton height={44} borderRadius={10} />
             ) : (
               <input
                 placeholder="Enter your email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                readOnly
+                className={`${isDark?"placeholder:text-[#9595AA]"
+                  :"placeholder:text-[#777777]"}`}
                 style={{
-                  height: 44,
+                  height: 48,
                   borderRadius: 8,
                   border: "none",
-                  background: "var(--surface)",
+                  background: isDark?"#161625":"#F4F6F8",
                   padding: "0 12px",
                   fontSize: 14,
-                  color: "#333333",
+                  color: isDark?"#EAEAF2": "#333333",
                   fontFamily: "'Montserrat'",
-                  outline: "none"
+                  outline: "none",
+                  cursor: "not-allowed"
                 }}
               />
             )}
 
-            <label style={{ fontSize: 14, color: "#333333", marginTop:"4px" }}>Phone Number</label>
+            <label style={{ fontSize: 14, color: isDark ? "#EAEAF2" : "#333333", marginTop: "4px" }}>Phone Number</label>
             {isLoading ? (
               <Skeleton height={44} borderRadius={8} />
             ) : (
@@ -326,68 +468,63 @@ export default function ProfilePage() {
                 style={{
                   display: "flex",
                   alignItems: "center",
-                  background: "var(--surface)",
+                  background: isDark ? "#161625" : "#F4F6F8",
                   borderRadius: 8,
-                  overflow: "hidden",
+                  paddingLeft: 10,
+                  transition: "background 0.2s",
                 }}
               >
+                <div style={{ flexShrink: 0 }}>
+                  <CountrySelect
+                    value={phoneCode}
+                    onChange={handleCountryChange}
+                    isDisabled={true}
+                  />
+                </div>
+
+                {/* Divider line */}
                 <div
                   style={{
-                    padding: "0 10px",
                     height: 44,
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 6,
-                    borderRight: "1px solid var(--border)",
-                    fontSize: 14,
-                    color: "#777777",
-                    fontFamily: "'Montserrat'",
-                  }}
-                >
-                  {currentCountry ? (
-                    <ReactCountryFlag
-                      countryCode={currentCountry.code}
-                      svg
-                      style={{ width: 18, height: 14, objectFit: "cover", borderRadius: 2 }}
-                    />
-                  ) : (
-                    <span style={{ width: 10, height: 10, borderRadius: 5, background: "#4CAF50" }} />
-                  )}
-                  {phoneCode}
-                </div>
-                <input
-                  placeholder="(444) 1234-5678"
-                  value={phoneNumber}
-                  onChange={(e) => setPhoneNumber(e.target.value)}
-                  style={{
-                    flex: 1,
-                    height: 44,
-                    border: "none",
-                    background: "transparent",
-                    padding: "0 8px",
-                    fontSize: 13,
-                    color: "var(--text)",
-                    fontFamily: "'Montserrat'",
-                    outline: "none"
+                    width: 1,
+                    flexShrink: 0,
+                    background: isDark ? "#2A2A40" : "#E9EAEB",
                   }}
                 />
-                <button
-                  type="button"
+
+                <input
+                  type="tel"
+                  name="phone"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  value={phoneNumber}
+                  readOnly
+                  placeholder="(444) 1234-5678"
+                  className={isDark ? "placeholder:text-[#9595AA]" : "placeholder:text-[#777777]"}
                   style={{
-                    border: "none",
+                    flex: 1,
+                    minWidth: 0,
+                    height: 48,
                     background: "transparent",
-                    color: "#DA1A35",
+                    border: "none",
+                    padding: "0 12px",
+                    outline: "none",
                     fontSize: 14,
-                    padding: "0 8px",
-                    cursor: "pointer",
+                    color: isDark ? "#EAEAF2" : "#333333",
+                    fontFamily: "'Montserrat', sans-serif",
+                    fontWeight: 400,
+                    cursor: "not-allowed"
                   }}
-                >
-                  Send Otp
-                </button>
+                />
               </div>
             )}
+            {phoneError && (
+              <p style={{ margin: "4px 0 0", fontSize: 12, color: "#DA1A35", fontFamily: "'Montserrat', sans-serif" }}>
+                {phoneError}
+              </p>
+            )}
 
-            <label style={{ fontSize: 14, color: "#333333", marginTop: "4px" }}>Gender</label>
+            <label style={{ fontSize: 14, color: isDark?"#EAEAF2": "#333333", marginTop: "4px" }}>Gender</label>
             {isLoading ? (
               <Skeleton height={44} borderRadius={10} />
             ) : (
@@ -395,15 +532,17 @@ export default function ProfilePage() {
                 <button
                   type="button"
                   onClick={() => setGenderOpen(!genderOpen)}
+                  className={`${isDark?"placeholder:text-[#9595AA]"
+                  :"placeholder:text-[#777777]"}`}
                   style={{
                     width: "100%",
-                    height: 44,
+                    height: 48,
                     borderRadius: 8,
                     border: "none",
-                    background: "var(--surface)",
+                    background: isDark?"#161625":"#F4F6F8",
                     padding: "0 12px",
                     fontSize: 14,
-                    color: gender ? "#333333" : "var(--muted)",
+                    color: gender ? isDark?"#EAEAF2": "#333333" : isDark?"#9595AA":"#777777",
                     textAlign: "left",
                     display: "flex",
                     alignItems: "center",
@@ -412,20 +551,7 @@ export default function ProfilePage() {
                   }}
                 >
                   {gender || "Select Gender"}
-                  <svg
-                    width="12"
-                    height="12"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                    aria-hidden="true"
-                    style={{
-                      transform: genderOpen ? "rotate(180deg)" : "none",
-                      transition: "transform 0.2s",
-                    }}
-                  >
-                    <path d="M6 9l6 6 6-6" stroke="#666" strokeWidth="2" />
-                  </svg>
+                 <DropDown class={isDark?"#C8C8D8":"#333333"} alt="Dropdown" />
                 </button>
 
                 {genderOpen && (
@@ -435,7 +561,7 @@ export default function ProfilePage() {
                       top: 48,
                       left: 0,
                       right: 0,
-                      background: "var(--surface)",
+                      background: isDark?"#0D0D1A":"#FFFFFF",
                       borderRadius: 8,
                       boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
                       overflow: "hidden",
@@ -453,14 +579,14 @@ export default function ProfilePage() {
                         style={{
                           padding: "12px 16px",
                           fontSize: 14,
-                          color: "#333333",
+                          color: isDark?"#EAEAF2": "#333333",
                           cursor: "pointer",
-                          background: gender === opt ? "var(--surface-alt)" : "transparent",
+                          background: gender === opt ? isDark?"#161625":"#F4F6F8" : "transparent",
                           transition: "background 0.2s",
                         }}
-                        onMouseEnter={(e) => (e.target.style.background = "var(--surface-alt)")}
+                        onMouseEnter={(e) => (e.target.style.background = isDark?"#161625":"#F4F6F8")}
                         onMouseLeave={(e) =>
-                          (e.target.style.background = gender === opt ? "var(--surface-alt)" : "transparent")
+                          (e.target.style.background = gender === opt ? isDark?"#161625":"#F4F6F8" : "transparent")
                         }
                       >
                         {opt}
@@ -471,7 +597,7 @@ export default function ProfilePage() {
               </div>
             )}
 
-            <label style={{ fontSize: 14, color: "#333333", marginTop: "4px" }}>DOB</label>
+            <label style={{ fontSize: 14, color: isDark?"#EAEAF2": "#333333", marginTop: "4px" }}>DOB</label>
             {isLoading ? (
               <Skeleton height={44} borderRadius={8} />
             ) : (
@@ -479,14 +605,16 @@ export default function ProfilePage() {
                 placeholder="YYYY/MM/DD"
                 value={dob}
                 onChange={(e) => setDob(e.target.value)}
+                className={`${isDark?"placeholder:text-[#9595AA]"
+                  :"placeholder:text-[#777777]"}`}
                 style={{
-                  height: 44,
+                  height: 48,
                   borderRadius: 8,
                   border: "none",
-                  background: "var(--surface)",
+                  background: isDark?"#161625":"#F4F6F8",
                   padding: "0 12px",
                   fontSize: 14,
-                  color: "#333333",
+                  color: isDark?"#EAEAF2": "#333333",
                   fontFamily: "'Montserrat'",
                   outline: "none"
                 }}
@@ -503,7 +631,7 @@ export default function ProfilePage() {
               height: 48,
               borderRadius: 26,
               border: "none",
-              background: (isLoading || isUpdating || isUploading) ? "var(--disabled)" : "#D9142C",
+              background: (isLoading || isUpdating || isUploading) ? "var(--disabled)" : isDark?"#E52E4A":"#DA1A35",
               color: "#fff",
               fontSize: 14,
               fontWeight: 400,

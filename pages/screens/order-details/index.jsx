@@ -4,6 +4,7 @@ import ScreensFrame from "../../../src/screensFlow/Frame";
 import { PageHeader } from "../../../src/screensFlow/ui";
 import LocationIcon from "../../../public/assets/icons/location.svg"
 import DocumentDownloadIcon from "../../../public/assets/icons/document-download.svg"
+import { useTheme } from "../../../context/ThemeContext";
 
 const order = {
   id: "Order #1265",
@@ -25,6 +26,7 @@ const order = {
 
 export default function OrderDetailsPage() {
   const router = useRouter();
+  const { isDark } = useTheme();
   const { id, status, restaurant, date, time, orderType } = router.query;
 
   const currentOrderId = id || order.id;
@@ -107,8 +109,8 @@ export default function OrderDetailsPage() {
                 style={{
                   width: 32,
                   height: 32,
-                  borderRadius: 10000,
-                  background: "#F4F6F8",
+                  borderRadius: 1000,
+                  background: isDark ? "#161625" : "#F4F6F8",
                   border: "none",
                   cursor: "pointer",
                   display: "flex",
@@ -117,7 +119,7 @@ export default function OrderDetailsPage() {
                   flexShrink: 0,
                 }}
               >
-                <DocumentDownloadIcon />
+                <DocumentDownloadIcon  color={isDark ? "#555570" : "#333333"}/>
               </button>
             ) : null
           }
@@ -127,10 +129,10 @@ export default function OrderDetailsPage() {
           <div
             id="printable-order-card"
             style={{
-              border: "1px solid #E8E8E8",
+              border: `1px solid ${isDark ? "#2A2A40" : "#E8E8E8"}`,
               borderRadius: 8,
               padding: "12px 12px 4px 12px",
-              background: "#FFFFFF",
+              background: isDark ? "#0D0D1A" : "#FFFFFF",
             }}
           >
             <div
@@ -141,13 +143,13 @@ export default function OrderDetailsPage() {
                 gap: 12,
               }}
             >
-              <span style={{ fontSize: 16, fontWeight: 400, color: "#333333", fontFamily: "'Montserrat', sans-serif" }}>
+              <span style={{ fontSize: 16, fontWeight: 400, color: isDark ? "#EAEAF2" : "#333333", fontFamily: "'Montserrat', sans-serif" }}>
                 {currentOrderId?.includes("#") ? currentOrderId.replace("#", "# ") : currentOrderId}
               </span>
               <span
+              className="py-1.5"
                 style={{
                   width: 83,
-                  height: 24,
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
@@ -163,20 +165,20 @@ export default function OrderDetailsPage() {
               </span>
             </div>
 
-            <div style={{ height: 1, background: "#E8E8E8", margin: "11px 0" }} />
+            <div style={{ height: 1, background: isDark ? "#2A2A40" : "#E8E8E8", margin: "11px 0" }} />
 
             <div style={{ display: "flex", gap: 10, alignItems: "center", marginBottom: 10 }}>
               <div style={{ marginTop: 0, flexShrink: 0 }}>
                 <LocationIcon />
               </div>
-              <span style={{ fontSize: 12, color: "#8E8E8E", fontFamily: "'Montserrat', sans-serif", fontWeight: 400, lineHeight: 1.3 }}>
+              <span style={{ fontSize: 12, color: isDark ? "#9595AA" : "#8E8E8E", fontFamily: "'Montserrat', sans-serif", fontWeight: 400, lineHeight: 1.3 }}>
                 {order.address}
               </span>
             </div>
 
             <div
               style={{
-                background: "#F4F6F8",
+                background: isDark ? "#161625" : "#F4F6F8",
                 borderRadius: 8,
                 padding: "12px 12px 10px 12px",
                 marginBottom: 12,
@@ -186,7 +188,7 @@ export default function OrderDetailsPage() {
                 style={{
                   fontSize: 12,
                   fontWeight: 400,
-                  color: "#333333",
+                  color: isDark ? "#EAEAF2" : "#333333",
                   fontFamily: "'Montserrat', sans-serif",
                   marginBottom: 8,
                 }}
@@ -196,7 +198,7 @@ export default function OrderDetailsPage() {
               <div
                 style={{
                   height: 1,
-                  background: "#E8E8E8",
+                  background: isDark ? "#2A2A40" : "#E8E8E8",
                   marginBottom: 12,
                 }}
               />
@@ -214,14 +216,14 @@ export default function OrderDetailsPage() {
                     marginBottom: 10,
                   }}
                 >
-                  <span className="text-[#8E8E8E]">{item.name}</span>
-                  <span className="text-[#333333]">{item.price ? item.price.replace("EUR", "€") : ""}</span>
+                  <span style={{ color: isDark ? "#9595AA" : "#8E8E8E" }}>{item.name}</span>
+                  <span style={{ color: isDark ? "#EAEAF2" : "#333333" }}>{item.price ? item.price.replace("EUR", "€") : ""}</span>
                 </div>
               ))}
               <div
                 style={{
                   height: 1,
-                  background: "#E8E8E8",
+                  background: isDark ? "#2A2A40" : "#E8E8E8",
                   margin: "6px 0 12px",
                 }}
               />
@@ -234,8 +236,8 @@ export default function OrderDetailsPage() {
                   fontWeight: 400,
                 }}
               >
-                <span className="text-xs">Total</span>
-                <span className="text-[10px]">{order.total ? order.total.replace("EUR", "€") : ""}</span>
+                <span className="text-xs" style={{ color: isDark ? "#EAEAF2" : "#333333" }}>Total</span>
+                <span className="text-[10px]" style={{ color: isDark ? "#EAEAF2" : "#333333" }}>{order.total ? order.total.replace("EUR", "€") : ""}</span>
               </div>
             </div>
 
@@ -244,14 +246,14 @@ export default function OrderDetailsPage() {
                 style={{
                   fontSize: 12,
                   fontWeight: 400,
-                  color: "#333333",
+                  color: isDark ? "#EAEAF2" : "#333333",
                   fontFamily: "'Montserrat', sans-serif",
                   marginBottom: 7,
                 }}
               >
                 Details
               </div>
-              <div style={{ height: 1, background: "#E8E8E8", marginBottom: 4 }} />
+              <div style={{ height: 1, background: isDark ? "#2A2A40" : "#E8E8E8", marginBottom: 4 }} />
               {currentDetails.map((row) => (
                 <div
                   key={row.label}
@@ -263,8 +265,8 @@ export default function OrderDetailsPage() {
                     fontFamily: "'Montserrat', sans-serif",
                   }}
                 >
-                  <span style={{ color: "#A4A4A4", fontWeight: 400 }}>{row.label}</span>
-                  <span style={{ color: "#333333", fontWeight: 400 }}>
+                  <span style={{ color: isDark ? "#6E6E85" : "#A4A4A4", fontWeight: 400 }}>{row.label}</span>
+                  <span style={{ color: isDark ? "#EAEAF2" : "#333333", fontWeight: 400 }}>
                     {row.value}
                   </span>
                 </div>
@@ -292,7 +294,7 @@ export default function OrderDetailsPage() {
                 height: 48,
                 borderRadius: 2000,
                 border: "none",
-                background: "#DA1A35",
+                background: isDark ? "#E52E4A" : "#DA1A35",
                 color: "#fff",
                 fontSize: 14,
                 fontWeight: 400,

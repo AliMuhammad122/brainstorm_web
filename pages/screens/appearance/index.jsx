@@ -5,66 +5,78 @@ import { PageHeader } from "../../../src/screensFlow/ui";
 import { useTheme } from "../../../context/ThemeContext";
 import EmptyCircleIcon from "../../../public/assets/icons/emptymode.svg"
 import FillCircleIcon from "../../../public/assets/icons/fillcircle.svg"
+import DarkModeRadio from "../../../public/assets/icons/darkmoderadio.svg"
 
-const ThemeCard = ({ label, active, preview, onClick }) => (
-  <button
-    type="button"
-    onClick={onClick}
-    style={{
-      border: "none",
-      background: "transparent",
-      padding: 0,
-      cursor: "pointer",
-      textAlign: "center",
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "center",
-      width: "100%",
-    }}
-  >
-    <div
+const ThemeCard = ({ label, active, preview, onClick }) => {
+  const { isDark } = useTheme();
+  return (
+    <button
+      type="button"
+      onClick={onClick}
       style={{
-        width: "100%",
-        aspectRatio: "1.6",
-        borderRadius: 8,
-        background: preview.split ? "#ffffff" : preview.background,
+        border: "none",
+        background: "transparent",
+        padding: 0,
+        cursor: "pointer",
+        textAlign: "center",
         display: "flex",
-        alignItems: "flex-end",
-        justifyContent: "flex-end",
-        padding: 12,
-        // subtle border only when active OR if light/automatic needs definition
-        border: "1px solid #E9EAEB" ,
-        outline: !active && preview.needsOutline ? "1px solid var(--border-subtle)" : "none",
-        borderOffset: -1.5,
-        position: "relative",
-        overflow: "hidden",
+        flexDirection: "column",
+        alignItems: "center",
+        width: "100%",
       }}
     >
-      {preview.split && (
-        <div
-          style={{
-            position: "absolute",
-            left: 0,
-            top: 0,
-            bottom: 0,
-            width: "52%",
-            background: "#333333",
-            borderTopRightRadius: 8,
-            borderBottomRightRadius: 8,
-          }}
-        />
-      )}
-      <div style={{ zIndex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
-        {active ? <FillCircleIcon /> : <EmptyCircleIcon />}
+      <div
+        style={{
+          width: "100%",
+          aspectRatio: "1.6",
+          borderRadius: 8,
+          background: preview.split ? isDark ? "#0D0D1A" : "#ffffff" : preview.background,
+          display: "flex",
+          alignItems: "flex-end",
+          justifyContent: "flex-end",
+          padding: 12,
+          // subtle border only when active OR if light/automatic needs definition
+          border: `1px solid ${isDark ? "#2A2A40" : "#E9EAEB"}`,
+          outline: !active && preview.needsOutline ? "1px solid var(--border-subtle)" : "none",
+          borderOffset: -1.5,
+          position: "relative",
+          overflow: "hidden",
+        }}
+      >
+        {preview.split && (
+          <div
+            style={{
+              position: "absolute",
+              left: 0,
+              top: 0,
+              bottom: 0,
+              width: "52%",
+              background: isDark ? "#C8C8D8" : "#333333",
+              borderTopRightRadius: 8,
+              borderBottomRightRadius: 8,
+            }}
+          />
+        )}
+        <div style={{ zIndex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
+          {active ? (
+            label === "Automatic" && isDark ? (
+              <DarkModeRadio />
+            ) : (
+              <FillCircleIcon />
+            )
+          ) : (
+            <EmptyCircleIcon />
+          )}
+        </div>
       </div>
-    </div>
-    <div style={{ marginTop: 12, fontSize: 16, color: "#333333", fontWeight: 400 }}>{label}</div>
-  </button>
-);
+      <div style={{ marginTop: 12, fontSize: 16, color: isDark ? "#EAEAF2" : "#333333", fontWeight: 400 }}>{label}</div>
+    </button>
+  );
+}
 
 export default function AppearancePage() {
   const router = useRouter();
-  const { theme, setTheme } = useTheme();
+  const { theme, setTheme, isDark } = useTheme();
 
   return (
     <ScreensFrame>
@@ -87,7 +99,7 @@ export default function AppearancePage() {
               active={theme === "dark"}
               onClick={() => setTheme("dark")}
               preview={{
-                background: "#333333", // Matched Figma dark square gray
+                background: isDark ? "#161625" : "#333333", // Matched Figma dark square gray
               }}
             />
             <ThemeCard

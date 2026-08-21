@@ -2,9 +2,10 @@ import React from "react";
 import GpayLogo from "../../public/assets/icons/g_pay.svg"
 import CDCLogo from "../../public/assets/icons/CDC.svg"
 import ApplepayLogo from "../../public/assets/icons/apple_pay.svg"  
-import CircleTickIcon from "../../public/assets/icons/choose.svg"
+import CircleTickIcon from "../../public/assets/icons/tick_circle_20.svg"
 import CircleTickEmpty from "../../public/assets/icons/tick-circle-empty.svg"
 import MastercardIcon from "../../public/assets/icons/mastercard.svg"
+import { useTheme } from "../../context/ThemeContext";
 
 
 const PAYMENT_OPTIONS = [
@@ -22,6 +23,8 @@ export default function PaymentMethodsSection({
   savedCard,
   onAddCard,
 }) {
+  const { isDark } = useTheme();
+
   const hasCard = savedCard && savedCard.last4;
 
   return (
@@ -30,7 +33,7 @@ export default function PaymentMethodsSection({
         style={{
           fontSize: 16,
           fontWeight: 400,
-          color: "#333333",
+          color: isDark?"#EAEAF2":"#333333",
           letterSpacing: "0px",
           fontFamily: "'Montserrat', sans-serif",
           display: "block",
@@ -45,7 +48,7 @@ export default function PaymentMethodsSection({
             style={{
               width: "100%",
               height:"100px",
-              border: "1.5px solid #E8E8E8",
+              border: `1.5px solid ${isDark?"#2A2A40":"#E8E8E8"}`,
               borderRadius: 8,
               padding: "12px 10px 14px",
             }}
@@ -65,7 +68,7 @@ export default function PaymentMethodsSection({
                 style={{
                   fontSize: 12,
                   fontWeight: 400,
-                  color: "var(--text)",
+                  color: isDark?"#EAEAF2":"#333333",
                   letterSpacing: 0,
                 }}
               >
@@ -76,7 +79,7 @@ export default function PaymentMethodsSection({
                       style={{
                         fontSize: 12,
                         fontWeight: 400,
-                        color: "#A4A4A4",
+                        color: isDark?"#6E6E85":"#A4A4A4",
                         margin: "0 0 10px",
                         fontFamily: "'Montserrat', sans-serif",
                         letterSpacing: 0,
@@ -86,7 +89,7 @@ export default function PaymentMethodsSection({
                     </p>
                       </div>
               <div style={{ display: "flex", alignItems: "center", gap: 2, position: "relative", width: 32, height: 28 }}>
-                <MastercardIcon alt="MasterCard" />
+                <MastercardIcon alt="MasterCard" color={isDark? "#ffffff" : "#333333"} />
               </div>
             </div>
             {/* Row 3: Card Holder | Expires | CVV */}
@@ -109,10 +112,10 @@ export default function PaymentMethodsSection({
                     flex: col.flex,
                   }}
                 >
-                  <p style={{ fontSize: 12, color: "#333333", margin: "0 0 3px", fontWeight: 400 }}>
+                  <p style={{ fontSize: 12, color: isDark?"#EAEAF2":"#333333", margin: "0 0 3px", fontWeight: 400 }}>
                     {col.label}
                   </p>
-                  <p style={{ fontSize: 12, fontWeight: 400, color: "#A4A4A4", margin: 0 }}>
+                  <p style={{ fontSize: 12, fontWeight: 400, color: isDark?"#6E6E85":"#A4A4A4", margin: 0 }}>
                     {col.value}
                   </p>
                 </div>
@@ -159,15 +162,15 @@ export default function PaymentMethodsSection({
                   flex: 1,
                   fontSize: 14,
                   fontWeight: 400,
-                  color: "#A4A4A4",
+                  color: isDark?"#6E6E85":"#A4A4A4",
                 }}
               >
                 {pm.label}
               </span>
               {selectedId === pm.id ? (
-                <CircleTickIcon width={18} height={18} alt="" />
+                <CircleTickIcon alt="" color={isDark? "#2A2A40" : "#E8E8E8"} />
               ) : (
-                <CircleTickEmpty />
+                <CircleTickEmpty color={isDark? "#2A2A40" : "#E8E8E8"} />
               )}
             </button>
           </div>

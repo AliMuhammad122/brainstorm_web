@@ -207,7 +207,7 @@ export default function AddAddressModal({
               right: 0,
               top: "50%",
               transform: "translateY(-50%)",
-              background: "#F4F6F8",
+              background: isDark?"#161625": "#F4F6F8",
               border: "none",
               cursor: "pointer",
               display: "flex",
@@ -216,7 +216,7 @@ export default function AddAddressModal({
               color: "#8E8E8E",
             }}
           >
-            <CloseIcon />
+            <CloseIcon color={isDark?"#555570":"#333333"} />
           </button>
         </div>
 
@@ -242,10 +242,10 @@ export default function AddAddressModal({
                   fontFamily: "'Montserrat', sans-serif",
                   fontSize: 10,
                   fontWeight: 400,
-                  color: orderType === "delivery" ? "#DA1A35" : "#A4A4A4",
+                  color: orderType === "delivery" ? "#DA1A35" : isDark?"#6E6E85":"#A4A4A4",
                 }}
               >
-                {orderType === "delivery" ? <CircleTickIcon /> : <CircleTickEmpty />}
+                {orderType === "delivery" ? <CircleTickIcon /> : <CircleTickEmpty color={isDark ? "#2A2A40" : "#E8E8E8"} />}
                 Delivery
               </button>
               <button
@@ -261,10 +261,10 @@ export default function AddAddressModal({
                   fontFamily: "'Montserrat', sans-serif",
                   fontSize: 10,
                   fontWeight: 400,
-                  color: orderType === "pickup" ? "#DA1A35" : "#A4A4A4",
+                  color: orderType === "pickup" ? "#DA1A35" : isDark?"#6E6E85":"#A4A4A4",
                 }}
               >
-                {orderType === "pickup" ? <CircleTickIcon /> : <CircleTickEmpty />}
+                {orderType === "pickup" ? <CircleTickIcon /> : <CircleTickEmpty color={isDark ? "#2A2A40" : "#E8E8E8"}/>}
                 Pickup
               </button>
             </div>
@@ -281,7 +281,7 @@ export default function AddAddressModal({
                 fontSize: 12,
                 fontWeight: 400,
                 color: isDark?"#EAEAF2":"#333333",
-                marginBottom: 8,
+                marginBottom: 10,
                 fontFamily: "'Montserrat', sans-serif",
               }}
             >
@@ -289,7 +289,7 @@ export default function AddAddressModal({
             </span>
 
             {/* Full Name */}
-            <div style={{ marginBottom: 8 }}>
+            <div className="gap-0.5 flex flex-col" style={{ marginBottom: 8 }}>
               <label style={labelStyle}>Full Name</label>
               <input
                 type="text"
@@ -437,10 +437,10 @@ export default function AddAddressModal({
                   fontFamily: "'Montserrat', sans-serif",
                   fontSize: 10,
                   fontWeight: 400,
-                  color: deliveryType === "standard" ? "#DA1A35" : "#A4A4A4",
+                  color: deliveryType === "standard" ? "#DA1A35" : isDark?"#6E6E85":"#A4A4A4",
                 }}
               >
-                {deliveryType === "standard" ? <CircleTickIcon /> : <CircleTickEmpty />}
+                {deliveryType === "standard" ? <CircleTickIcon /> : <CircleTickEmpty color={isDark ? "#2A2A40" : "#E8E8E8"}/>}
                 {orderType === "delivery" ? "Standard Delivery" : "Standard Pickup"}
               </button>
               <button
@@ -459,10 +459,10 @@ export default function AddAddressModal({
                   fontFamily: "'Montserrat', sans-serif",
                   fontSize: 10,
                   fontWeight: 400,
-                  color: deliveryType === "schedule" ? "#DA1A35" : "#A4A4A4",
+                  color: deliveryType === "schedule" ? "#DA1A35" : isDark?"#6E6E85":"#A4A4A4",
                 }}
               >
-                {deliveryType === "schedule" ? <CircleTickIcon /> : <CircleTickEmpty />}
+                {deliveryType === "schedule" ? <CircleTickIcon /> : <CircleTickEmpty color={isDark ? "#2A2A40" : "#E8E8E8"}/>}
                 {orderType === "delivery" ? "Schedule Delivery" : "Schedule Pickup"}
               </button>
             </div>
@@ -488,7 +488,7 @@ export default function AddAddressModal({
               height: 40,
               borderRadius: 22,
               border: "none",
-              background: "#DA1A35",
+              background:isDark?"#E52E4A": "#DA1A35",
               color: "#FFFFFF",
               fontSize: 12,
               fontWeight: 400,
@@ -496,7 +496,7 @@ export default function AddAddressModal({
               fontFamily: "'Montserrat', sans-serif",
             }}
           >
-            Add
+            Add Address
           </button>
         </form>
       </div>

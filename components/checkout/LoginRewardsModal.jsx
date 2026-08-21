@@ -3,12 +3,14 @@ import Eye from "../../public/assets/icons/Eye.svg"
 import EyeSlash from "../../public/assets/icons/EyeSlash.svg"
 import ErrorIcon from "../../public/assets/icons/Error.svg"
 import CloseIcon from "../../public/assets/icons/close.svg"
+import { useTheme } from "../../context/ThemeContext";
 
 /**
  * LoginRewardsModal: A modal for logging in to the Rewards app with validations.
  * Matches the Figma design screenshots.
  */
 export default function LoginRewardsModal({ open, onClose, onLoginSuccess }) {
+  const { isDark } = useTheme();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -87,8 +89,13 @@ export default function LoginRewardsModal({ open, onClose, onLoginSuccess }) {
         onClick={handleClose}
         style={{
           position: "fixed",
-          inset: 0,
-          background: "rgba(0, 0, 0, 0.4)",
+          top: 0,
+          bottom: 0,
+          left: "50%",
+          transform: "translateX(-50%)",
+          width: "100%",
+          maxWidth: 370,
+          background: isDark ? "#F0F0F580" : "#00000080",
           zIndex: 9998,
           backdropFilter: "blur(2px)",
         }}
@@ -103,9 +110,9 @@ export default function LoginRewardsModal({ open, onClose, onLoginSuccess }) {
           transform: "translate(-50%, -50%)",
           width: "calc(100% - 32px)",
           maxWidth: 335,
-          background: "#FFFFFF",
+          background: isDark ? "#0D0D1A" : "#FFFFFF",
           borderRadius: 8,
-          boxShadow: "0 10px 40px rgba(0, 0, 0, 0.15)",
+          boxShadow: isDark ? "0 10px 40px rgba(0, 0, 0, 0.45)" : "0 10px 40px rgba(0, 0, 0, 0.15)",
           zIndex: 9999,
           padding: "20px 14px 18px",
           fontFamily: "'Montserrat', sans-serif",
@@ -126,7 +133,7 @@ export default function LoginRewardsModal({ open, onClose, onLoginSuccess }) {
             style={{
               fontSize: 14,
               fontWeight: 500,
-              color: "#333333",
+              color: isDark ? "#EAEAF2" : "#333333",
             }}
           >
             Log in to Rewards
@@ -142,22 +149,21 @@ export default function LoginRewardsModal({ open, onClose, onLoginSuccess }) {
               right: 0,
               top: "50%",
               transform: "translateY(-50%)",
-              background: "#F4F6F8",
+              background: isDark ? "#161625" : "#F4F6F8",
               border: "none",
               cursor: "pointer",
-              // padding: 3,
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
               color: "#8E8E8E",
             }}
           >
-            <CloseIcon />
+            <CloseIcon color={isDark ? "#555570" : "#333333"} />
           </button>
         </div>
 
         {/* Divider */}
-        <div style={{ height: 1, background: "#E8E8E8", marginBottom: 16 }} />
+        <div style={{ height: 1, background: isDark ? "#2A2A40" : "#E8E8E8", marginBottom: 16 }} />
 
         {/* Form */}
         <form onSubmit={handleSubmit} noValidate>
@@ -169,8 +175,7 @@ export default function LoginRewardsModal({ open, onClose, onLoginSuccess }) {
                 height:"32px",  
                 alignItems: "center",
                 gap: 8,
-                background: "#DA1A351A",
-                // border: "1px solid #FFCDCE",
+                background: isDark ? "#E52E4A1A" : "#DA1A351A",
                 borderRadius: 8,
                 padding: "10px 12px",
                 marginBottom: 15,
@@ -178,7 +183,7 @@ export default function LoginRewardsModal({ open, onClose, onLoginSuccess }) {
             >
               {/* Red Alert Warning Icon */}
               <ErrorIcon />
-              <span style={{ fontSize: 10, color: "#DA1A35", fontWeight: 400 }}>
+              <span style={{ fontSize: 10, color: isDark ? "#E52E4A" : "#DA1A35", fontWeight: 400 }}>
                 {formError}
               </span>
             </div>
@@ -191,7 +196,7 @@ export default function LoginRewardsModal({ open, onClose, onLoginSuccess }) {
                 display: "block",
                 fontSize: 12,
                 fontWeight: 400,
-                color: "#333333",
+                color: isDark ? "#EAEAF2" : "#333333",
                 marginBottom: 4,
               }}
             >
@@ -202,16 +207,16 @@ export default function LoginRewardsModal({ open, onClose, onLoginSuccess }) {
               value={email}
               onChange={handleEmailChange}
               placeholder="Enter your email"
-              className="placeholder:text-[#777777]"
+              className={isDark ? "placeholder:text-[#9595AA]" : "placeholder:text-[#777777]"}
               style={{
                 width: "100%",
                 height: "40px",
                 padding: "12px 10px",
-                border: emailError ? "1.5px solid #D00416" : "1.5px solid #F4F6F8",
+                border: emailError ? "1.5px solid #D00416" : ``,
                 borderRadius: 8,
                 fontSize: 10,
-                color: "#333333",
-                background: "#F4F6F8",
+                color: isDark ? "#EAEAF2" : "#333333",
+                background: isDark ? "#161625" : "#F4F6F8",
                 fontFamily: "'Montserrat', sans-serif",
                 boxSizing: "border-box",
                 outline: "none",
@@ -231,7 +236,7 @@ export default function LoginRewardsModal({ open, onClose, onLoginSuccess }) {
                 display: "block",
                 fontSize: 12,
                 fontWeight: 400,
-                color: "#333333",
+                color: isDark ? "#EAEAF2" : "#333333",
                 marginBottom: 4,
               }}
             >
@@ -243,16 +248,16 @@ export default function LoginRewardsModal({ open, onClose, onLoginSuccess }) {
                 value={password}
                 onChange={handlePasswordChange}
                 placeholder="Enter password"
-                className="placeholder:text-[#777777]"
+                className={isDark ? "placeholder:text-[#9595AA]" : "placeholder:text-[#777777]"}
                 style={{
                   width: "100%",
                   height: "40px",
                   padding: "12px 40px 12px 10px",
-                  border: passwordError ? "1.5px solid #D00416" : "1.5px solid #F4F6F8",
+                  border: passwordError ? "1.5px solid #D00416" : ``,
                   borderRadius: 8,
                   fontSize: 10,
-                  color: "#333333",
-                  background: "#F4F6F8",
+                  color: isDark ? "#EAEAF2" : "#333333",
+                  background: isDark ? "#161625" : "#F4F6F8",
                   fontFamily: "'Montserrat', sans-serif",
                   boxSizing: "border-box",
                   outline: "none",
@@ -272,11 +277,11 @@ export default function LoginRewardsModal({ open, onClose, onLoginSuccess }) {
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  color: "#8E8E8E",
+                  color: isDark ? "#555570" : "#8E8E8E",
                   padding: 0,
                 }}
               >
-                {showPassword ? <Eye size={16} /> : <EyeSlash size={16} />}
+                {showPassword ? <EyeSlash size={16} /> : <Eye size={16} />}
               </button>
             </div>
             {passwordError && (
@@ -286,8 +291,7 @@ export default function LoginRewardsModal({ open, onClose, onLoginSuccess }) {
             )}
           </div>
 
-          <div style={{ height: 1, background: "#E8E8E8", marginBottom: 16 }} />
-
+          <div style={{ height: 1, background: isDark ? "#2A2A40" : "#E8E8E8", marginBottom: 16 }} />
 
           {/* Submit button */}
           <button
@@ -296,7 +300,7 @@ export default function LoginRewardsModal({ open, onClose, onLoginSuccess }) {
               width: "100%",
               height: 40,
               borderRadius: 22,
-              background: "#DA1A35",
+              background: isDark ? "#E52E4A" : "#DA1A35",
               color: "#FFFFFF",
               border: "none",
               fontSize: 12,

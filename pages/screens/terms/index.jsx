@@ -2,9 +2,11 @@ import React from "react";
 import { useRouter } from "next/router";
 import ScreensFrame from "../../../src/screensFlow/Frame";
 import { PageHeader } from "../../../src/screensFlow/ui";
+import { useTheme } from "../../../context/ThemeContext";
 
 export default function TermsPage() {
   const router = useRouter();
+  const  {isDark} = useTheme();
 
   return (
     <ScreensFrame>
@@ -15,7 +17,7 @@ export default function TermsPage() {
           <p
             style={{
               fontSize: 12,
-              color: "#A4A4A4",
+              color: isDark?"#6E6E85":"#A4A4A4",
               margin: "2px 0 16px",
               fontFamily: "'Montserrat', sans-serif",
             }}
@@ -28,7 +30,7 @@ export default function TermsPage() {
               style={{
                 fontSize: 16,
                 fontWeight: 400,
-                color: "#333333",
+                color: isDark?"#EAEAF2":"#333333",
                 fontFamily: "'Montserrat', sans-serif",
               }}
             >
@@ -40,7 +42,7 @@ export default function TermsPage() {
                 fontSize: 12,
                 lineHeight: 1.2,
                 fontWeight: 400,
-                color: "#A4A4A4",
+                color: isDark?"#6E6E85":"#A4A4A4",
                 fontFamily: "'Montserrat', sans-serif",
               }}
             >

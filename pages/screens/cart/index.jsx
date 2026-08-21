@@ -8,6 +8,7 @@ import { useTheme } from "../../../context/ThemeContext";
 import PlusIcon from "../../../public/assets/icons/plus16.svg";
 import MinusIcon from "../../../public/assets/icons/minus16.svg";
 import AddIcon from "../../../public/assets/icons/add.svg"
+import EmptyCart from "../../../public/assets/icons/EmptyCart.svg"
 
 function SwipeCartItem({ item, onRemove, onQtyChange, isDark }) {
   const REVEAL = 75;
@@ -312,26 +313,13 @@ export default function ScreensCartPage() {
                 paddingBottom: 40,
               }}
             >
-              <img
-                src="/assets/icons/empty_cart.png"
-                alt="Empty cart"
-                style={{
-                  width: 136,
-                  height: 136,
-                  display: "block",
-                  marginBottom: 16,
-                  opacity: 0.9,
-                }}
-                onError={(e) => {
-                  e.target.style.display = "none";
-                }}
-              />
+              <EmptyCart width={136} height={136} color={isDark ? "#252332" : "#A4A4A4"}/>
               <p
                 style={{
                   fontSize: 14,
                   fontWeight: 400,
                   color: isDark ? "#EAEAF2" : "#333333",
-                  margin: 0,
+                  marginTop: 16,
                   textAlign: "center",
                   fontFamily: "'Montserrat',sans-serif",
                 }}

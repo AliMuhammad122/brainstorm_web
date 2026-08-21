@@ -1,6 +1,7 @@
 import React from "react";
 import CircleTickIcon from "../../public/assets/icons/selected-circle.svg";
 import CircleTickEmpty from "../../public/assets/icons/unselected-circle.svg";
+import { useTheme } from "../../context/ThemeContext";
 
 /**
  * Reward Vouchers Section component matching the Figma design.
@@ -13,13 +14,14 @@ export default function RewardVouchersSection({
   onLogoutClick,
   isLoggedIn,
 }) {
+  const {isDark} = useTheme();
   return (
     <div style={{ marginBottom: 16 }}>
       <span
         style={{
           fontSize: 16,
           fontWeight: 400,
-          color: "#333333",
+          color: isDark?"#EAEAF2":"#333333",
           letterSpacing: "0px",
           fontFamily: "'Montserrat', sans-serif",
           display: "block",
@@ -33,10 +35,10 @@ export default function RewardVouchersSection({
       {!isLoggedIn ? (
         <div
           style={{
-            border: "1px solid #F4F6F8",
+            border: `1px solid ${isDark?"#2A2A40":"#F4F6F8"}`,
             borderRadius: 8,
             padding: "14px 16px",
-            background: "#FFFFFF",
+            background: isDark?"#0D0D1A":"#FFFFFF",
             marginBottom: 16,
           }}
         >
@@ -44,7 +46,7 @@ export default function RewardVouchersSection({
             style={{
               fontSize: 14,
               fontWeight: 400,
-              color: "#333333",
+              color: isDark?"#EAEAF2":"#333333",
               margin: "0 0 12px",
               fontFamily: "'Montserrat', sans-serif",
               lineHeight: "18px",
@@ -59,7 +61,7 @@ export default function RewardVouchersSection({
               width: "100%",
               height: 40,
               borderRadius: 22,
-              background: "#DA1A35",
+              background: isDark?"#E52E4A":"#DA1A35",
               color: "#FFFFFF",
               border: "none",
               fontSize: 12,
@@ -77,10 +79,10 @@ export default function RewardVouchersSection({
       ) : (
         <div
           style={{
-            border: "1px solid #F4F6F8",
+            border: `1px solid ${isDark?"#2A2A40":"#F4F6F8"}`,
             borderRadius: 8,
             padding: "14px 16px",
-            background: "#FFFFFF",
+            background: isDark?"#0D0D1A":"#FFFFFF",
             marginBottom: 16,
             display: "flex",
             alignItems: "center",
@@ -90,7 +92,7 @@ export default function RewardVouchersSection({
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
             <span
               style={{
-                background: "#DA1A35",
+                background:isDark?"#E52E4A": "#DA1A35",
                 borderRadius: 12,
                 padding: "3px 8px",
                 height: "20px",
@@ -111,7 +113,7 @@ export default function RewardVouchersSection({
               style={{
                 fontSize: 14,
                 fontWeight: 400,
-                color: "#333333",
+                color: isDark?"#EAEAF2":"#333333",
                 fontFamily: "'Montserrat', sans-serif",
               }}
             >
@@ -128,7 +130,7 @@ export default function RewardVouchersSection({
               padding: 0,
               fontSize: 12,
               fontWeight: 400,
-              color: "#9EA2AD",
+              color:isDark?"#6E6E85": "#9EA2AD",
               textDecoration: "underline",
               fontFamily: "'inter', sans-serif",
             }}
@@ -142,10 +144,10 @@ export default function RewardVouchersSection({
       <div
         onClick={() => onSelect(selectedId === "birthday" ? null : "birthday")}
         style={{
-          border: "1.5px solid #F4F6F8",
+            border: `1px solid ${isDark?"#2A2A40":"#F4F6F8"}`,
           borderRadius: 8,
           padding: "10px 12px",
-          background: "#FFFFFF",
+          background: isDark?"#0D0D1A":"#FFFFFF",
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
@@ -159,7 +161,7 @@ export default function RewardVouchersSection({
             style={{
               fontSize: 12,
               fontWeight: 400,
-              color: "#333333",
+              color: isDark?"#EAEAF2":"#333333",
               margin: "0 0 4px",
               fontFamily: "'Montserrat', sans-serif",
             }}
@@ -169,7 +171,7 @@ export default function RewardVouchersSection({
           <p
             style={{
               fontSize: 12,
-              color: "#A4A4A4",
+              color: isDark?"#6E6E85":"#A4A4A4",
               margin: 0,
               fontWeight: 400,
               fontFamily: "'Open Sans', sans-serif",
@@ -183,7 +185,7 @@ export default function RewardVouchersSection({
           {selectedId === "birthday" ? (
             <CircleTickIcon  />
           ) : (
-            <CircleTickEmpty/>
+            <CircleTickEmpty color={isDark?"#2A2A40":"#E8E8E8"}/>
           )}
         </div>
       </div>
@@ -192,10 +194,10 @@ export default function RewardVouchersSection({
       <div
         onClick={() => onSelect(selectedId === "voucher20" ? null : "voucher20")}
         style={{
-          border: "1.5px solid #F4F6F8",
+            border: `1px solid ${isDark?"#2A2A40":"#F4F6F8"}`,
           borderRadius: 8,
           padding: "10px 12px",
-          background: "#FFFFFF",
+          background: isDark?"#0D0D1A":"#FFFFFF",
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
@@ -209,7 +211,7 @@ export default function RewardVouchersSection({
             style={{
               fontSize: 12,
               fontWeight: 400,
-              color: "#333333",
+              color: isDark?"#EAEAF2":"#333333",
               margin: "0 0 4px",
               fontFamily: "'Montserrat', sans-serif",
             }}
@@ -219,7 +221,7 @@ export default function RewardVouchersSection({
           <p
             style={{
                fontSize: 12,
-              color: "#A4A4A4",
+              color: isDark?"#6E6E85":"#A4A4A4",
               margin: 0,
               fontWeight: 400,
               fontFamily: "'Open Sans', sans-serif",
@@ -233,7 +235,7 @@ export default function RewardVouchersSection({
           {selectedId === "voucher20" ? (
             <CircleTickIcon />
           ) : (
-            <CircleTickEmpty/>
+            <CircleTickEmpty color={isDark?"#2A2A40":"#E8E8E8"}/>
           )}
         </div>
       </div>

@@ -5,20 +5,22 @@ import { PageHeader } from "../../../src/screensFlow/ui";
 import { useChangePasswordMutation } from "../../../src/store/authApiSlice";
 import Eye from "../../../public/assets/icons/Eye.svg";
 import EyeSlash from "../../../public/assets/icons/EyeSlash.svg";
+import { useTheme } from "../../../context/ThemeContext";
 
 const Field = ({ label, placeholder, value, onChange }) => {
   const [showPassword, setShowPassword] = useState(false);
+  const {isDark} = useTheme()
 
   return (
     <div style={{ marginBottom: 16 }}>
-      <div style={{ fontSize: 14, color: "#333333", marginBottom: 8, fontWeight:400 }}>
+      <div style={{ fontSize: 14, color: isDark ? "#EAEAF2" : "#333333", marginBottom: 8, fontWeight:400 }}>
         {label}
       </div>
       <div
         style={{
           height: 48,
           borderRadius: 8,
-          background: "#F4F6F8",
+          background: isDark?"#161625":"#F4F6F8",
           display: "flex",
           alignItems: "center",
           padding: "0 12px",
@@ -30,13 +32,13 @@ const Field = ({ label, placeholder, value, onChange }) => {
           type={showPassword ? "text" : "password"}
           value={value}
           onChange={onChange}
-          className="placeholder:text-[#777777]"
+          className={isDark?"placeholder:text-[#9595AA]":"placeholder:text-[#777777]"}
           style={{
             flex: 1,
             border: "none",
             background: "transparent",
             fontSize: 14,
-            // color: "#A4A4A4",
+            color: isDark ? "#EAEAF2" : "#333333",
             outline: "none",
             fontWeight:400
           }}
@@ -64,6 +66,7 @@ const Field = ({ label, placeholder, value, onChange }) => {
 
 export default function ChangePasswordPage() {
   const router = useRouter();
+  const {isDark} = useTheme()
 
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -158,7 +161,7 @@ export default function ChangePasswordPage() {
               height: 48,
               borderRadius: 26,
               border: "none",
-              background: isLoading ? "var(--disabled)" : "#DA1A35",
+              background: isLoading ? "var(--disabled)" : isDark?"#E52E4A":"#DA1A35",
               color: "#fff",
               fontSize: 14,
               fontWeight: 400,

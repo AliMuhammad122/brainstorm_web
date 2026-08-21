@@ -1,11 +1,13 @@
 import React from "react";
 import SuccessIcon from "../../public/assets/icons/payment_success.svg"
+import { useTheme } from "../../context/ThemeContext";
 
 /**
  * Payment success screen: green checkmark icon, success message, Back to Home link.
  * Matches the Figma design layout exactly.
  */
 export default function PaymentSuccessScreen({ onBackToHome, onTrackOrder }) {
+  const {isDark}= useTheme()
   return (
     <div
       style={{
@@ -16,7 +18,7 @@ export default function PaymentSuccessScreen({ onBackToHome, onTrackOrder }) {
         alignItems: "center",
         justifyContent: "center",
         padding: "40px 24px",
-        background: "#F9FAFC",
+        background: isDark?"#161625":"#f4f6f8",
         fontFamily: "'Montserrat', sans-serif",
       }}
     >
@@ -30,7 +32,7 @@ export default function PaymentSuccessScreen({ onBackToHome, onTrackOrder }) {
         style={{
           fontSize: 14,
           fontWeight: 500,
-          color: "#333333",
+          color: isDark?"#EAEAF2":"#333333",
           margin: "0 48px 16px",
           textAlign: "center",
           lineHeight: "20px",
@@ -69,7 +71,7 @@ export default function PaymentSuccessScreen({ onBackToHome, onTrackOrder }) {
           padding: 0,
           fontSize: 14,
           fontWeight: 500,
-          color: "#DA1A35",
+          color: isDark?"#E52E4A":"#DA1A35",
           textDecoration: "none",
           fontFamily: "'Montserrat', sans-serif",
         }}

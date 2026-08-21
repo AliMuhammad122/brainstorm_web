@@ -8,7 +8,7 @@ const ICON_ANCHOR = [18, 46];
 
 // function restaurantIconHtml() {
 //   const red = "#DA1A35"; // TGI primary red mapping
-  
+
 //   return <RestaurantIcon />;
 // }
 
@@ -133,21 +133,34 @@ export default function TrackOrderMap({
         ];
         map.setView(offsetLatLng, 18);
       } else {
-        // Delivery order (traditional simulated behavior)
-        L.marker([DELIVERY_RESTAURANT.lat, DELIVERY_RESTAURANT.lng], {
-          icon: storeIcon,
-        }).addTo(map);
-        L.marker([DELIVERY_DESTINATION.lat, DELIVERY_DESTINATION.lng], {
-          icon: userIcon,
-        }).addTo(map);
+        // Delivery order: Use dynamic coordinates from store and user location if available
+        const storeLat = isStoreCoordsValid ? parseFloat(storeLocation.latitude) : DELIVERY_RESTAURANT.lat;
+        const storeLng = isStoreCoordsValid ? parseFloat(storeLocation.longitude) : DELIVERY_RESTAURANT.lng;
+        const userLat = isUserCoordsValid ? parseFloat(userLocation.latitude) : DELIVERY_DESTINATION.lat;
+        const userLng = isUserCoordsValid ? parseFloat(userLocation.longitude) : DELIVERY_DESTINATION.lng;
+
+        L.marker([storeLat, storeLng], { icon: storeIcon }).addTo(map);
+        L.marker([userLat, userLng], { icon: userIcon }).addTo(map);
+
+        // Draw a simulated route between the dynamic coordinates (with slight zigzag for street matching)
+        const routeCoords = [
+          [storeLat, storeLng],
+          [storeLat + (userLat - storeLat) * 0.4, storeLng + (userLng - storeLng) * 0.1],
+          [storeLat + (userLat - storeLat) * 0.7, storeLng + (userLng - storeLng) * 0.8],
+          [userLat, userLng]
+        ];
 
         const primary = "#DA1A35";
-        L.polyline(DELIVERY_ROUTE_COORDS, {
+        L.polyline(routeCoords, {
           color: primary,
           weight: 3,
           opacity: 1,
           smoothFactor: 1,
         }).addTo(map);
+
+        // Fit map bounds to show both store and user destination with padding
+        const bounds = L.latLngBounds([storeLat, storeLng], [userLat, userLng]);
+        map.fitBounds(bounds, { padding: [50, 50] });
       }
 
       mapInstanceRef.current = map;

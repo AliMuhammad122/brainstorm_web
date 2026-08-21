@@ -1,4 +1,5 @@
 import React from "react";
+import { useTheme } from "../../context/ThemeContext";
 
 /**
  * Order summary: Sub Total, Tax, Discount, Tip, Total.
@@ -8,6 +9,7 @@ export default function SummarySection({
   discount,
   total,
 }) {
+  const {isDark}=useTheme();
   const rows = [
     { label: "Sub Total", val: `€${subtotal.toFixed(2)}`, bold: false },
     { label: "Tax", val: "€0.00", bold: false },
@@ -22,12 +24,12 @@ export default function SummarySection({
   ];
 
   return (
-    <div style={{ marginBottom: 0, borderTop: "1px solid #E8E8E8", paddingTop: "9px" }}>
+    <div style={{ marginBottom: 0, borderTop: `1px solid ${isDark?"#2A2A40":"#E8E8E8"}`, paddingTop: "9px" }}>
       <span
         style={{
           fontSize: 12,
           fontWeight: 400,
-          color: "#333333",
+          color: isDark?"#EAEAF2":"#333333",
           letterSpacing: "0px",
           fontFamily: "'Montserrat', sans-serif",
           display: "block",
@@ -39,8 +41,8 @@ export default function SummarySection({
       <p
         style={{
           fontSize: 12,
-          color: "#A4A4A4",
-          margin: "5px 0 6px",
+          color: isDark?"#6E6E85":"#A4A4A4",
+          margin: "6px 0 6px",
           fontWeight: 400,
           fontFamily: "'Montserrat', sans-serif",
         }}
@@ -61,7 +63,11 @@ export default function SummarySection({
             style={{
               fontSize: 12,
               fontWeight: 400,
-              color: row.bold ? "#333333" : "#A4A4A4",
+              color: row.bold
+                ? (isDark ? "#EAEAF2" : "#333333")
+                : (row.red
+                  ? (isDark ? "#E52E4A" : "#DA1A35")
+                  : (isDark ? "#6E6E85" : "#A4A4A4")),
               letterSpacing: 0,
             }}
           >
@@ -71,7 +77,9 @@ export default function SummarySection({
             style={{
               fontSize: 12,
               fontWeight: 400,
-              color: '#333333',
+              color: row.red
+                ? (isDark ? "#E52E4A" : "#DA1A35")
+                : (isDark ? "#EAEAF2" : "#333333"),
               letterSpacing: 0,
             }}
           >

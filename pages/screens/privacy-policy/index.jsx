@@ -2,6 +2,7 @@ import React from "react";
 import { useRouter } from "next/router";
 import ScreensFrame from "../../../src/screensFlow/Frame";
 import { PageHeader } from "../../../src/screensFlow/ui";
+import { useTheme } from "../../../context/ThemeContext";
 
 const sections = [
   {
@@ -28,6 +29,7 @@ const sections = [
 
 export default function PrivacyPolicyPage() {
   const router = useRouter();
+  const {isDark} = useTheme();
 
   return (
     <ScreensFrame>
@@ -37,7 +39,7 @@ export default function PrivacyPolicyPage() {
         <div style={{ padding: "14px 18px 24px" }}>
           {sections.map((section) => (
             <div key={section.title} style={{ marginBottom: 12 }}>
-              <div style={{ fontSize: 16, fontWeight: 400, color: "#333333" }}>
+              <div style={{ fontSize: 16, fontWeight: 400, color: isDark?"#EAEAF2":"#333333" }}>
                 {section.title}
               </div>
               <p
@@ -45,7 +47,7 @@ export default function PrivacyPolicyPage() {
                   margin: "6px 0 0",
                   fontSize: 12,
                   lineHeight: 1.55,
-                  color: "#A4A4A4",
+                  color: isDark?"#6E6E85":"#A4A4A4",
                 }}
               >
                 {section.body}
