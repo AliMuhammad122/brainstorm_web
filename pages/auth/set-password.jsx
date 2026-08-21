@@ -146,8 +146,8 @@ export default function CreateNewPasswordPage() {
 
           <div className="flex flex-col items-center " style={{gap:"6px"}}>
             <h1
-              className="text-center text-[24px] font-normal uppercase"
-              style={{ fontFamily: "Anton, sans-serif", color: isDark ? "#EAEAF2" : "#333333" }}
+              className="text-center text-[24px] font-normal uppercase font-anton"
+              style={{ color: isDark ? "#EAEAF2" : "#333333" }}
             >
               Create New Password
             </h1>

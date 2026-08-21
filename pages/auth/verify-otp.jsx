@@ -192,8 +192,8 @@ export default function EnterOTPPage() {
 
           <div className="flex flex-col items-center " style={{gap:"7px"}}>
             <h1
-              className="text-center text-[24px] text-[#333333] font-normal uppercase"
-              style={{ fontFamily: "Anton, sans-serif",color: isDark ? "#EAEAF2" : "#333333" }}
+              className="text-center text-[24px] text-[#333333] font-normal uppercase font-anton"
+              style={{ color: isDark ? "#EAEAF2" : "#333333" }}
             >
               Enter OTP
             </h1>
