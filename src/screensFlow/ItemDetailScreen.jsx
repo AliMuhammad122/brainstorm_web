@@ -11,7 +11,7 @@ import {
 import BackIcon from "../../public/assets/icons/back.svg";
 import InfoIcon from "../../public/assets/icons/Prod_Info.svg"
 import TickIcon from "../../public/assets/icons/tick-circle.svg"
-import CircleTickIcon from "../../public/assets/icons/choose.svg"
+import CircleTickIcon from "../../public/assets/icons/Choose.svg"
 import PlusIcon from "../../public/assets/icons/plus.svg"
 import MinusIcon from "../../public/assets/icons/minus.svg"
 import CloseIcon from "../../public/assets/icons/close.svg"
