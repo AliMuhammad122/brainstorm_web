@@ -19,7 +19,7 @@
   /* Fonts */
   --font-heading: var(--font-nunito), sans-serif;
   --font-body: var(--font-dm-sans), sans-serif;
-  --font-anton: "Anton", sans-serif;
+  --font-anton: var(--font-anton), "Anton", sans-serif;
   --font-montserrat: "Montserrat", sans-serif;
   --font-inter: "Inter", sans-serif;
   --font-open-sans: "Open Sans", sans-serif;
@@ -321,7 +321,7 @@ textarea {
 
 /* Font utility classes */
 .font-anton {
-  font-family: "Anton", sans-serif;
+  font-family: var(--font-anton), "Anton", sans-serif;
 }
 .font-montserrat {
   font-family: "Montserrat", sans-serif;
