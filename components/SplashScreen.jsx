@@ -1,19 +1,19 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, memo } from "react";
 import { useTheme } from "../context/ThemeContext";
 
-export default function SplashScreen() {
+function SplashScreen() {
   const { isDark } = useTheme();
 
   const [show, setShow] = useState(true);
   const [fadeOut, setFadeOut] = useState(false);
 
   useEffect(() => {
-    // Start fading out after 2 seconds
+    // Start fading out after 1.5 seconds
     const fadeTimer = setTimeout(() => {
       setFadeOut(true);
     }, 1500);
 
-    // Completely remove from DOM after fade animation ends (500ms transition)
+    // Completely remove from DOM after fade animation ends
     const removeTimer = setTimeout(() => {
       setShow(false);
     }, 2000);
@@ -34,7 +34,7 @@ export default function SplashScreen() {
         left: 0,
         width: "100vw",
         height: "100vh",
-        background: isDark?"#0D0D1A":"#ffffff",
+        background: isDark ? "#0D0D1A" : "#ffffff",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -72,3 +72,6 @@ export default function SplashScreen() {
     </div>
   );
 }
+
+export default memo(SplashScreen);
+

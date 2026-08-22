@@ -1,11 +1,15 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
+import dynamic from "next/dynamic";
 import { createPortal } from "react-dom";
 import { useScreensFlow } from "../../context/ScreensFlowContext";
-import LocationModal from "./LocationModal";
 import Image from "next/image";
 import { useTheme } from "../../context/ThemeContext";
 import { useLogoutMutation } from "../store/authApiSlice";
+import { clearStoredAuth } from "../utils/auth";
+
+const LocationModal = dynamic(() => import("./LocationModal"), { ssr: false });
+
 import {
   MdKeyboardArrowDown,
   MdMenu,
@@ -811,9 +815,9 @@ export function Drawer({
     } catch (error) {
       console.error("Logout error:", error);
     } finally {
-      localStorage.removeItem("token");
+      clearStoredAuth();
       if (onClose) onClose();
-      router.push("/login");
+      router.push("/auth/login");
     }
   };
 

@@ -179,7 +179,6 @@ export default function SignupPage() {
           confirmPassword,
         };
         const response = await signup(payload).unwrap();
-        console.log("Signup Success:", response);
         showToast("Signup successful!", "success");
         sessionStorage.removeItem("signup_data");
         sessionStorage.removeItem("is_phone_verified");

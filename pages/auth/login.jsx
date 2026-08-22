@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useTheme } from "../../context/ThemeContext";
 import { useLoginMutation } from "../../src/store/authApiSlice";
+import { setStoredToken, setStoredUser } from "../../src/utils/auth";
 import LeftDecorationIcon from "../../public/assets/icons/Left_decoration.svg";
 import RightDecorationIcon from "../../public/assets/icons/Right_decoration.svg";
 import EyeIcon from "../../public/assets/icons/Eye.svg";
@@ -34,13 +35,11 @@ export default function LoginPage() {
     try {
       const response = await login({ email, password }).unwrap();
       const { auth_token, ...user } = response?.data || {};
-      console.log(user, auth_token)
-      console.log("Login Success:", response);
 
       const token = response.data?.auth_token;
       if (token) {
-        localStorage.setItem("token", token);
-        localStorage.setItem("user", JSON.stringify(user));
+        setStoredToken(token);
+        setStoredUser(user);
       }
 
       router.push("/");

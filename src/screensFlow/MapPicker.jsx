@@ -2,6 +2,8 @@ import React, { useEffect, useMemo } from "react";
 import { MapContainer, TileLayer, Marker, useMap, useMapEvents } from "react-leaflet";
 import L from "leaflet";
 import { useTheme } from "../../context/ThemeContext";
+import "leaflet/dist/leaflet.css";
+
 
 const cyprusBounds = [
   [34.3, 32.0], // Southwest

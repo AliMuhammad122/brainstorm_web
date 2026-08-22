@@ -92,7 +92,6 @@ export default function EnterOTPPage() {
     }
     try {
       const res = await requestOtp({ phone }).unwrap();
-      console.log(res)
       showToast(res?.message || "OTP resent successfully!", "success");
     } catch (err) {
       console.error("Resend OTP Error:", err);
